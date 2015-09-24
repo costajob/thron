@@ -8,6 +8,10 @@ describe Thron::Gateway::Base do
     klass::base_url.wont_be_nil
   end
 
+  it 'must set the service name' do
+    klass::service_name.must_equal 'base'
+  end
+
   it 'must valorize state' do
     base = klass.new
     %w[options].each do |attr|
