@@ -1,0 +1,14 @@
+cache:
+  redis_url: <%= ENV.fetch('REDIS_PORT') { 'tcp://localhost:6379' } %>
+  enabled: <%= ENV.fetch('CACHE_ENABLED') { false } %>
+
+logger:
+  level: <%= ENV.fetch('LOGGER_LEVEL') { 'warn' } %>
+
+thron:
+  username: <%= ENV.fetch('THRON_USERNAME') { 'none' } %>
+  password: <%= ENV.fetch('THRON_PASSWORD') { 'none' } %>
+  client_id: <%= ENV.fetch('THRON_CLIENT_ID') { 'none' } %>
+  app_id: <%= ENV.fetch('THRON_APP_ID') { 'none' } %>
+  base_url: <%= ENV.fetch('THRON_BASE_URL') { "-view.4me.it/api" } %> 
+
