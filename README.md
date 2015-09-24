@@ -1,6 +1,6 @@
 ## Table of Contents
-* Summary[#summary]
-* Sinatra[#sinatra]
+* [Summary](#summary)
+* [Sinatra](#sinatra)
 
 ## Summary
 This gem provides a simpe Ruby client for the [Thron](https://developer.4me.it/index.php) (ex 4me) CDN APIs.
