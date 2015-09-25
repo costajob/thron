@@ -6,6 +6,8 @@ module Thron
   module Routable
     include HTTParty
 
+    class NoentRouteError < StandardError; end
+      
     DEBUG = true
 
     def self.included(klass)
@@ -22,6 +24,8 @@ module Thron
       end 
     end
 
+    private
+
     def call(route:, query: {}, headers: {})
       puts "REQUEST:",
         "\t * verb: #{route.verb.upcase}",
@@ -29,6 +33,15 @@ module Thron
         "\t * query: #{query}",
         "\t * headers: #{headers.merge(route.headers)}" if DEBUG
         self.class.send(route.verb, route.url, { query: query, headers: headers.merge(route.headers) })
+    end
+
+    def routes
+      @routes ||= {}
+    end
+
+    def route(to:, query: {}, headers: {})
+      route = routes.fetch(to) { fail NoentRouteError } 
+      call(route: route, query: query, headers: headers)
     end
   end
 end

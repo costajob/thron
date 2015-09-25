@@ -8,8 +8,4 @@ describe Thron::Gateway::Base do
   it 'must set the service name' do
     klass::service_name.must_equal 'base'
   end
-
-  it 'should fail when no route exist' do
-    -> { instance.send(:route, {to: :noent }) }.must_raise Thron::Gateway::Base::NoentRouteError
-  end
 end
