@@ -16,8 +16,8 @@ module Mock
 end
 
 describe Thron::Parallelizable do
-  let(:numeric) { Mock::Numeric::new(3) }
-  let(:values) { numeric.parallelize(10) { |instance, i| instance.power_of(i) } }
+  let(:parallelizable) { Mock::Numeric::new(3) }
+  let(:values) { parallelizable.parallelize(10) { |instance, i| instance.power_of(i) } }
 
   it 'must collect results in an array' do
     values.must_be_instance_of Array

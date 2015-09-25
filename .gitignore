@@ -1,5 +1,5 @@
 .env
-/tags/
+/tags
 /.vagrant/
 /.bundle/
 /.yardoc
