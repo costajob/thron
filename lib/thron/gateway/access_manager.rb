@@ -11,18 +11,32 @@ module Thron
         @client_id = client_id
       end
 
-      def routes
-        @routes ||= {
-          login: Route::new(:post, "/#{self.class.package}/login/#{@client_id}", :json)
-        }
-      end
-
       def login(username: Config.thron.username, password: Config.thron.password)
-        options = {
+        query = {
+          clientId: @client_id,
           username: username,
           password: password
         }
-        route(:login, options)
+        route(to: :login, query: query)
+      end
+
+      def logout(token_id:)
+        query = {
+          clientId: @client_id
+        }
+        headers = {
+          'X-TOKENID' => token_id
+        }
+        route(to: :logout, query: query, headers: headers)
+      end
+
+      private
+
+      def routes
+        @routes ||= {
+          login: Route::new(verb: 'post', url: "/#{self.class.package}/login/#{@client_id}", type: Route::TYPES::JSON),
+          logout: Route::new(verb: 'post', url: "/#{self.class.package}/logout/#{@client_id}", type: Route::TYPES::PLAIN)
+        }
       end
     end
   end

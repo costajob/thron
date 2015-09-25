@@ -25,13 +25,15 @@ module Thron
         fail NotImplementedError
       end
 
+      private
+
       def routes
         @routes ||= {}
       end
 
-      def route(name, options = {})
-        route = routes.fetch(name) { fail NoentRouteError } 
-        call(route, options)
+      def route(to:, query: {}, headers: {})
+        route = routes.fetch(to) { fail NoentRouteError } 
+        call(route: route, query: query, headers: headers)
       end
     end
   end

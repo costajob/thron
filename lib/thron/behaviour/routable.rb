@@ -1,11 +1,12 @@
 require 'httparty'
 require_relative '../config'
+require_relative '../route'
 
 module Thron
-  Route = Struct::new(:method, :url, :content_type)
-
   module Routable
     include HTTParty
+
+    DEBUG = true
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -21,8 +22,13 @@ module Thron
       end 
     end
 
-    def call(route, options)
-      self.class.send(route.method, route.url, options)
+    def call(route:, query: {}, headers: {})
+      puts "REQUEST:",
+        "\t * verb: #{route.verb.upcase}",
+        "\t * url: #{self.class.base_url}#{route.url}",
+        "\t * query: #{query}",
+        "\t * headers: #{headers.merge(route.headers)}" if DEBUG
+        self.class.send(route.verb, route.url, { query: query, headers: headers.merge(route.headers) })
     end
   end
 end

@@ -10,6 +10,6 @@ describe Thron::Gateway::Base do
   end
 
   it 'should fail when no route exist' do
-    -> { instance.route(:noent) }.must_raise Thron::Gateway::Base::NoentRouteError
+    -> { instance.send(:route, {to: :noent }) }.must_raise Thron::Gateway::Base::NoentRouteError
   end
 end
