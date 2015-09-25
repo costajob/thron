@@ -19,11 +19,11 @@ describe Thron::Routable do
     let(:get_route) { Thron::Route::new(verb: 'get', url: '/get_route', type: 'json') }
     let(:post_route) { Thron::Route::new(verb: 'post', url: '/post_route', type: 'json') }
     let(:query) { { select: 'all' } }
-    let(:headers) { { cachable: true } }
+    let(:token_id) { '4b0a2f5e-2c6f-4d30-a584-ea9788505f9fjj' }
 
     it 'must call the get method' do
-      mock(Mock::Assets).get('/get_route', { query: query, headers: headers.merge(get_route.headers) }) { true }
-      assert instance.send(:call, route: get_route, query: query, headers: headers) 
+      mock(Mock::Assets).get('/get_route', { query: query, headers: instance.send(:token_headers, token_id).merge(get_route.headers) }) { true }
+      assert instance.send(:call, route: get_route, query: query, token_id: token_id) 
     end
 
     it 'must call the post method' do

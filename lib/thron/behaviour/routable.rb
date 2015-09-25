@@ -7,8 +7,6 @@ module Thron
     include HTTParty
 
     class NoentRouteError < StandardError; end
-      
-    DEBUG = true
 
     def self.included(klass)
       klass.extend ClassMethods
@@ -26,22 +24,24 @@ module Thron
 
     private
 
-    def call(route:, query: {}, headers: {})
-      puts "REQUEST:",
-        "\t * verb: #{route.verb.upcase}",
-        "\t * url: #{self.class.base_url}#{route.url}",
-        "\t * query: #{query}",
-        "\t * headers: #{headers.merge(route.headers)}" if DEBUG
-        self.class.send(route.verb, route.url, { query: query, headers: headers.merge(route.headers) })
+    def call(route:, query: {}, token_id: nil)
+      self.class.send(route.verb, 
+                      route.url, 
+                      { query: query, headers: token_headers(token_id).merge(route.headers) })
+    end
+
+    def token_headers(token_id)
+      return {} unless token_id
+      { 'X-TOKENID' => token_id }
     end
 
     def routes
       @routes ||= {}
     end
 
-    def route(to:, query: {}, headers: {})
+    def route(to:, query: {}, token_id: nil)
       route = routes.fetch(to) { fail NoentRouteError } 
-      call(route: route, query: query, headers: headers)
+      call(route: route, query: query, token_id: token_id)
     end
   end
 end
