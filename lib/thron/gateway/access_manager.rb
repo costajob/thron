@@ -66,9 +66,7 @@ module Thron
         }
       end
 
-      private
-
-      def route_url(name)
+      private def route_url(name)
         "/#{self.class.package}/#{name}/#{client_id}"
       end
     end
