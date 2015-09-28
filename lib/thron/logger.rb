@@ -17,7 +17,7 @@ module Thron
     end
   end
 
-  def logger=(logger)
+  def reset_logger(logger = Logger.new(STDOUT))
     @logger = logger
   end
 end
