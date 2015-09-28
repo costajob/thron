@@ -24,4 +24,9 @@ describe Thron::Route do
   it 'must return appropriate headers' do
     text.headers.must_equal({ "Accept" => "text/plain", "Content_Type" => "text/plain" })
   end
+
+  it 'must return appropriate headers with token_id' do
+    token_id = '4b0a2f5e-2c6f-4d30-a584-ea9788505f9fjj'
+    text.headers(token_id).must_equal({ "Accept" => "text/plain", "Content_Type" => "text/plain", 'X-TOKENID' => token_id })
+  end
 end

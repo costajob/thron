@@ -23,8 +23,13 @@ module Thron
                         end
     end
 
-    def headers
-      @headers ||= { 'Accept' => content_type, 'Content_Type' => content_type }
+    def headers(token_id = nil)
+      @headers ||= { 
+        'Accept' => content_type, 
+        'Content_Type' => content_type 
+      }.tap do |headers|
+        headers.merge!({ 'X-TOKENID' => token_id }) if token_id
+      end
     end
   end
 end

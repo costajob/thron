@@ -24,24 +24,20 @@ module Thron
 
     private
 
-    def call(route:, query: {}, token_id: nil)
-      self.class.send(route.verb, 
-                      route.url, 
-                      { query: query, headers: token_headers(token_id).merge(route.headers) })
-    end
-
     def token_headers(token_id)
       return {} unless token_id
       { 'X-TOKENID' => token_id }
     end
 
     def routes
-      @routes ||= {}
+      {}
     end
 
     def route(to:, query: {}, token_id: nil)
       route = routes.fetch(to) { fail NoentRouteError } 
-      call(route: route, query: query, token_id: token_id)
+      self.class.send(route.verb, 
+                      route.url, 
+                      { query: query, headers: route.headers(token_id) })
     end
   end
 end
