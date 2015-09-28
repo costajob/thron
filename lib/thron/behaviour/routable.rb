@@ -1,6 +1,7 @@
 require 'httparty'
 require_relative '../config'
 require_relative '../route'
+require_relative '../circuit_breaker'
 
 module Thron
   module Routable
@@ -20,6 +21,10 @@ module Thron
       def base_url
         "http://#{Config::thron.client_id}#{Config::thron.base_url}"
       end 
+
+      def circuit_breaker
+        @circuit_breaker ||= CircuitBreaker::new
+      end
     end
 
     private
@@ -35,9 +40,14 @@ module Thron
 
     def route(to:, query: {}, token_id: nil)
       route = routes.fetch(to) { fail NoentRouteError } 
-      self.class.send(route.verb, 
-                      route.url, 
-                      { query: query, headers: route.headers(token_id) })
+      self.class.circuit_breaker.monitor do
+        self.class.send(route.verb, 
+                        route.url, 
+                        { query: query, headers: route.headers(token_id) })
+      end
+    rescue CircuitBreaker::OpenError
+      warn "Circuit breaker is open for process #{$$}"
+      OpenStruct::new(parsed_response: {})
     end
   end
 end

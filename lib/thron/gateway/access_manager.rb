@@ -20,7 +20,7 @@ module Thron
           password: password
         }
         route(to: :login, query: query).tap do |http_res|
-          self.token_id = http_res.parsed_response.fetch('tokenId')
+          self.token_id = http_res.parsed_response.fetch('tokenId') { :no_token }
         end
       end
 
