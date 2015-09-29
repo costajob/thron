@@ -12,4 +12,8 @@ describe Thron::Gateway::Base do
   it 'must set the circuit breaker once' do
     klass::circuit_breaker.object_id.must_equal klass::circuit_breaker.object_id
   end
+
+  it 'must initialize state' do
+    assert instance.instance_variable_defined?(:@client_id)
+  end
 end

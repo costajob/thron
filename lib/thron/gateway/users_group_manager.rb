@@ -37,16 +37,16 @@ module Thron
         Package.new(:xsso, :resources, self.service_name)
       end
 
-      def detail_group(group_id:, fields_option: FieldsOption::default, offset:, limit:)
+      def detail_group(group_id:, fields_option: FieldsOption::default, offset: 0, limit: 0)
         check_session
-        query = { 
+        body = { 
           clientId: client_id,
           groupId: group_id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
           fieldsOption: fields_option.to_h
         }
-        route(to: :detail_group, query: query, token_id: token_id)
+        route(to: :detail_group, body: body, token_id: token_id)
       end
 
       def routes

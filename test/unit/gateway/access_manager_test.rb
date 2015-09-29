@@ -9,10 +9,6 @@ describe Thron::Gateway::AccessManager do
     klass.package.to_s.must_equal "xsso/resources/accessmanager"
   end
 
-  it 'must initialize state' do
-    assert instance.instance_variable_defined?(:@client_id)
-  end
-
   describe 'API methods' do
     let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
     let(:response) { OpenStruct::new(parsed_response: { 'tokenId' => token_id, 'resultCode' => 'OK' }) }
@@ -27,8 +23,8 @@ describe Thron::Gateway::AccessManager do
       it 'must call post to login' do
         route = instance.routes.fetch(:login)
         username, password = 'username', 'password'
-        query = { clientId: instance.client_id, username: username, password: password }
-        mock(klass).post(route.url, { query: query, headers: route.headers }) { response }
+        query = { username: username, password: password }
+        mock(klass).post(route.url, { query: query, body: {}, headers: route.headers }) { response }
         instance.login(username: username, password: password) 
       end
 
@@ -47,11 +43,10 @@ describe Thron::Gateway::AccessManager do
       instance.token_id.must_be_nil
     end
 
-    { logout: {}, validate_capabilities: { capabilities: [] }, validate_roles: { role: [] }, validate_token: {} }.each do |message, options|
+    { logout: {}, validate_capabilities: { capabilities: '' }, validate_roles: { role: '' }, validate_token: {} }.each do |message, query|
       it "must call post to #{message}" do
         route = instance.routes.fetch(message)
-        query = { clientId: instance.client_id }.merge(options)
-        mock(klass).post(route.url, { query: query, headers: route.headers(token_id) })
+        mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id) })
         instance.token_id = token_id
         instance.send(message)
       end

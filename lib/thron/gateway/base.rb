@@ -17,14 +17,19 @@ module Thron
       include Routable
       include Parallelizable
 
-      attr_accessor :token_id
-
       def self.service_name
         self.name.split('::').last.downcase
       end
 
       def self.package
         fail NotImplementedError
+      end
+
+      attr_accessor :token_id
+      attr_reader :client_id
+
+      def initialize(client_id: Config.thron.client_id)
+        @client_id = client_id
       end
 
       private def check_session

@@ -23,6 +23,10 @@ module Thron
                         end
     end
 
+    def json?
+      @type == TYPES::JSON
+    end
+
     def headers(token_id = nil)
       @headers ||= { 
         'Accept' => content_type, 

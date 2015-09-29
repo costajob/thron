@@ -7,15 +7,8 @@ module Thron
         Package.new(:xsso, :resources, self.service_name)
       end
 
-      attr_reader :client_id
-
-      def initialize(client_id: Config.thron.client_id)
-        @client_id = client_id
-      end
-
       def login(username: Config.thron.username, password: Config.thron.password)
         query = {
-          clientId: client_id,
           username: username,
           password: password
         }
@@ -26,8 +19,7 @@ module Thron
 
       def logout
         check_session
-        query = { clientId: client_id }
-        route(to: :logout, query: query, token_id: token_id).tap do |http_res|
+        route(to: :logout, token_id: token_id).tap do |http_res|
           self.token_id = nil
         end
       end
@@ -35,8 +27,7 @@ module Thron
       def validate_capabilities(capabilities = [])
         check_session
         query = {
-          clientId: client_id,
-          capabilities: capabilities
+          capabilities: capabilities.join(',')
         }
         route(to: :validate_capabilities, query: query, token_id: token_id)
       end
@@ -44,16 +35,14 @@ module Thron
       def validate_roles(roles = [])
         check_session
         query = {
-          clientId: client_id,
-          role: roles
+          role: roles.join(',')
         }
         route(to: :validate_roles, query: query, token_id: token_id)
       end
 
       def validate_token
         check_session
-        query = { clientId: client_id }
-        route(to: :validate_token, query: query, token_id: token_id)
+        route(to: :validate_token, token_id: token_id)
       end
 
       def routes

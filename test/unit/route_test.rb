@@ -21,6 +21,10 @@ describe Thron::Route do
     json.content_type.must_equal 'application/json'
   end
 
+  it 'must detect JSON type' do
+    assert json.json?
+  end
+
   it 'must return appropriate headers' do
     text.headers.must_equal({ "Accept" => "text/plain", "Content_Type" => "text/plain" })
   end
