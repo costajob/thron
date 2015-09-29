@@ -31,37 +31,32 @@ module Thron
 
     private
 
-    def token_headers(token_id)
-      return {} unless token_id
-      { 'X-TOKENID' => token_id }
-    end
-
     def routes
       {}
     end
 
-    def route(to:, query: {}, body: {}, token_id: nil)
+    def route(to:, query: {}, body: {}, token_id: nil, dash: nil)
       route = routes.fetch(to) { fail NoentRouteError } 
       body = body.to_json if !body.empty? && route.json?
-      info(query, body, route, token_id)
+      info(query, body, route, token_id, dash)
       self.class.circuit_breaker.monitor do
         self.class.send(route.verb, 
                         route.url, 
-                        { query: query, body: body, headers: route.headers(token_id) })
+                        { query: query, body: body, headers: route.headers(token_id: token_id, dash: dash) })
       end
     rescue CircuitBreaker::OpenError
       warn "Circuit breaker is open for process #{$$}"
       OpenStruct::new(parsed_response: {})
     end
 
-    def info(query, body, route, token_id)
+    def info(query, body, route, token_id, dash)
       return unless DEBUG
       puts "*" * 50,
         "#{route.verb.upcase} REQUEST:",
         "  * url: #{route.url}",
         "  * query: #{query.inspect}",
         "  * body: #{body.inspect}",
-        "  * headers: #{route.headers(token_id)}",
+        "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
         "*" * 50,
         "\n"
     end
