@@ -29,7 +29,7 @@ describe Thron::Route do
     end
 
     it 'must create a custom route' do
-      route = klass::factory(name: :test_me, package: package, extra: %w[clientid groupid], verb: klass::VERBS::GET, json: false) 
+      route = klass::factory(name: :test_me, package: package, params: %w[clientid groupid], verb: klass::VERBS::GET, json: false) 
       route.url.must_equal '/xsso/resources/accessmanager/test_me/clientid/groupid'
       route.verb.must_equal klass::VERBS::GET
       refute route.json?

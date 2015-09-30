@@ -6,7 +6,7 @@ describe Thron::Gateway::AccessManager do
   let(:instance) { klass::new }
 
   it 'must set the package' do
-    klass.package.to_s.must_equal "xsso/resources/accessmanager"
+    klass::PACKAGE.to_s.must_equal "xsso/resources/accessmanager"
   end
 
   describe 'API methods' do

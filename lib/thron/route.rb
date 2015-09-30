@@ -14,9 +14,9 @@ module Thron
       end
     end
 
-    def self.factory(name:, package:, extra: [], verb: VERBS::POST, json: true)
+    def self.factory(name:, package:, params: [], verb: VERBS::POST, json: true)
       url = "/#{package}/#{name}"
-      url << "/#{extra.join('/')}" unless extra.empty?
+      url << "/#{params.join('/')}" unless params.empty?
       type = json ? TYPES::JSON : TYPES::PLAIN
       Route::new(verb: verb, url: url, type: type)
     end

@@ -21,10 +21,6 @@ module Thron
         self.name.split('::').last.downcase
       end
 
-      def self.package
-        fail NotImplementedError
-      end
-
       attr_accessor :token_id
       attr_reader :client_id
 

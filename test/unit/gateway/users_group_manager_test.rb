@@ -6,7 +6,7 @@ describe Thron::Gateway::UsersGroupManager do
   let(:instance) { klass::new }
 
   it 'must set the package' do
-    klass.package.to_s.must_equal "xsso/resources/usersgroupmanager"
+    klass::PACKAGE.to_s.must_equal "xsso/resources/usersgroupmanager"
   end
 
   describe 'API methods' do

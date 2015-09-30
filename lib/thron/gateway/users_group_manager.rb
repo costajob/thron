@@ -6,9 +6,8 @@ require_relative '../entity/group_criteria'
 module Thron
   module Gateway
     class UsersGroupManager < Base
-      def self.package
-        Package.new(:xsso, :resources, self.service_name)
-      end
+
+      PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
       def create_group(group: Entity::Group::default)
         check_session
@@ -71,7 +70,7 @@ module Thron
       end
 
       def update(group:)
-        routes[:update] = Route::factory(name: 'update', package: self.class.package, extra: [self.client_id, group.id])
+        routes[:update] = Route::factory(name: 'update', package: PACKAGE, params: [self.client_id, group.id])
         check_session
         body = {
           update: group.to_h 
@@ -81,12 +80,12 @@ module Thron
 
       def routes
         @routes ||= {
-          create_group: Route::factory(name: 'createGroup', package: self.class.package),
-          remove_group: Route::factory(name: 'removeGroup', package: self.class.package),
-          detail_group: Route::factory(name: 'detailGroup', package: self.class.package),
-          find_groups: Route::factory(name: 'findGroupsByProperties', package: self.class.package),
-          link_users: Route::factory(name: 'linkUserToGroup', package: self.class.package),
-          unlink_users: Route::factory(name: 'unlinkUserToGroup', package: self.class.package)
+          create_group: Route::factory(name: 'createGroup', package: PACKAGE),
+          remove_group: Route::factory(name: 'removeGroup', package: PACKAGE),
+          detail_group: Route::factory(name: 'detailGroup', package: PACKAGE),
+          find_groups: Route::factory(name: 'findGroupsByProperties', package: PACKAGE),
+          link_users: Route::factory(name: 'linkUserToGroup', package: PACKAGE),
+          unlink_users: Route::factory(name: 'unlinkUserToGroup', package: PACKAGE)
         }
       end
     end
