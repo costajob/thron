@@ -1,11 +1,15 @@
+require_relative '../behaviour/mappable'
+
 module Thron
   module Entity
-    Patch = Struct::new(:op, :field) do
-      def self.default
-        new
+    class Patch 
+      def self.mappings
+        @mappings ||= { 
+          op: Mappable::Attribute::new('op'),
+          field: Mappable::Attribute::new('field')
+        }
       end
-
-      alias_method :to_payload, :to_h
+      include Mappable
     end
   end
 end

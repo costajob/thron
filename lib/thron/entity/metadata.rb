@@ -1,11 +1,15 @@
+require_relative '../behaviour/mappable'
+
 module Thron
   module Entity
-    Metadata = Struct::new(:name, :value) do
-      def self.default
-        new
+    class Metadata
+      def self.mappings
+        @mappings ||= { 
+          name: Mappable::Attribute::new('name'),
+          value: Mappable::Attribute::new('value')
+        }
       end
-
-      alias_method :to_payload, :to_h
+      include Mappable
     end
   end
 end

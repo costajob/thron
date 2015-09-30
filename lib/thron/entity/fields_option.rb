@@ -1,17 +1,16 @@
+require_relative '../behaviour/mappable'
+
 module Thron
   module Entity
-    FieldsOption = Struct::new(:own_acl, :tags, :metadata) do
-      def self.default
-        new(false, false, false)
-      end
-
-      def to_payload
-        {
-          returnOwnAcl: own_acl,
-          returnItags: tags,
-          returnImetadata: metadata
+    class FieldsOption
+      def self.mappings
+        @mappings ||= { 
+          own_acl: Mappable::Attribute::new('returnOwnAcl', Mappable::Attribute::BOOL),
+          itags: Mappable::Attribute::new('returnItags', Mappable::Attribute::BOOL),
+          imetadata: Mappable::Attribute::new('returnImetadata', Mappable::Attribute::BOOL),
         }
       end
+      include Mappable
     end
   end
 end

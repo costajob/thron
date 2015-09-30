@@ -90,7 +90,7 @@ describe Thron::Gateway::UsersGroupManager do
     it 'must call post to update group details' do
       group = Thron::Entity::Group::default.tap do |group|
         group.id = group_id
-        group.metadata = 3.times.map { |i| Thron::Entity::Metadata::new("name#{i}", "value#{i}") }
+        group.metadata = 3.times.map { |i| Thron::Entity::Metadata::new(name: "name#{i}", value: "value#{i}") }
       end
       route = instance.routes.fetch(:update).call([instance.client_id, group.id])
       body = { 
@@ -104,7 +104,7 @@ describe Thron::Gateway::UsersGroupManager do
     it 'must call post to update external id' do
       group = Thron::Entity::Group::default.tap do |group|
         group.id = group_id
-        group.external_id = Thron::Entity::ExternalId::new('ext_01', 'type_01')
+        group.external_id = Thron::Entity::ExternalId::new(id: 'ext_01', type: 'type_01')
       end
       route = instance.routes.fetch(:update_external_id).call([instance.client_id, group.id])
       body = { 
