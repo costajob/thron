@@ -1,11 +1,12 @@
 require_relative 'metadata'
 require_relative 'patch'
+require_relative 'external_id'
 
 module Thron
   module Entity
-    Group = Struct::new(:id, :type, :active, :name, :description, :capabilities, :roles, :solutions, :metadata, :patches) do
+    Group = Struct::new(:id, :external_id, :type, :active, :name, :description, :capabilities, :roles, :solutions, :metadata, :patches) do
       def self.default
-        new(nil, nil, false, 'default', nil, [], [], [], [], [])
+        new(nil, nil, nil, false, 'default', nil, [], [], [], [], [])
       end
 
       def to_payload(update = false)

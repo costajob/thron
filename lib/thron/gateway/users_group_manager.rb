@@ -70,12 +70,19 @@ module Thron
       end
 
       def update(group:)
-        routes[:update] = Route::factory(name: 'update', package: PACKAGE, params: [self.client_id, group.id])
         check_session
         body = {
           update: group.to_payload(true)
         }
-        route(to: name, body: body, token_id: self.token_id, dash: true)
+        route(to: __callee__, body: body, token_id: self.token_id, dash: true, params: [self.client_id, group.id])
+      end
+
+      def update_external_id(group:)
+        check_session
+        body = {
+          externalId: group.external_id.to_payload
+        }
+        route(to: __callee__, body: body, token_id: self.token_id, dash: true, params: [self.client_id, group.id])
       end
 
       def routes
@@ -85,7 +92,9 @@ module Thron
           detail_group: Route::factory(name: 'detailGroup', package: PACKAGE),
           find_groups: Route::factory(name: 'findGroupsByProperties', package: PACKAGE),
           link_users: Route::factory(name: 'linkUserToGroup', package: PACKAGE),
-          unlink_users: Route::factory(name: 'unlinkUserToGroup', package: PACKAGE)
+          unlink_users: Route::factory(name: 'unlinkUserToGroup', package: PACKAGE),
+          update: Route::lazy_factory(name: 'update', package: PACKAGE),
+          update_external_id: Route::lazy_factory(name: 'updateExternalId', package: PACKAGE)
         }
       end
     end
