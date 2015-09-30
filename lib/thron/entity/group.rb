@@ -1,15 +1,23 @@
 require_relative 'metadata'
 require_relative 'patch'
 require_relative 'external_id'
+require_relative 'acl_rule'
 
 module Thron
   module Entity
-    Group = Struct::new(:id, :external_id, :type, :active, :name, :description, :capabilities, :roles, :solutions, :metadata, :patches) do
-      def self.default
-        new(nil, nil, nil, false, 'default', nil, [], [], [], [], [])
+    Group = Struct::new(:id, :external_id, :type, :active, :name, :description, :owner, :acl_rules, :capabilities, :roles, :solutions, :metadata, :patches) do
+      attr_reader :created_at
+
+      def initialize(*args)
+        @created_at = Time::now
+        super
       end
 
-      def to_payload(update = false)
+      def self.default
+        new(nil, nil, nil, false, 'default', nil, nil, [], [], [], [], [], [])
+      end
+
+      def to_payload
         {
           groupType: type,
           active: active,
@@ -19,14 +27,7 @@ module Thron
             enabledSolutions: solutions
           },
           description: description,
-          name: name
-        }.tap do |payload|
-          payload.merge!(update_payload) if update
-        end
-      end
-
-      private def update_payload
-        {
+          name: name,
           metadata: metadata.map(&:to_payload),
           patch: patches.map(&:to_payload)
         }

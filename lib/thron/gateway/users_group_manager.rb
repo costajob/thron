@@ -72,7 +72,7 @@ module Thron
       def update(group:)
         check_session
         body = {
-          update: group.to_payload(true)
+          update: group.to_payload
         }
         route(to: __callee__, body: body, token_id: self.token_id, dash: true, params: [self.client_id, group.id])
       end

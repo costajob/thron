@@ -94,7 +94,7 @@ describe Thron::Gateway::UsersGroupManager do
       end
       route = instance.routes.fetch(:update).call([instance.client_id, group.id])
       body = { 
-        update: group.to_payload(true)
+        update: group.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
       instance.token_id = token_id
