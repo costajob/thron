@@ -21,10 +21,19 @@ module Thron
       Route::new(verb: verb, url: url, type: type)
     end
 
+    def self.lazy_factory(args)
+      args.delete(:params)
+      ->(params) { factory(args.merge({ params: params })) }
+    end
+
     def initialize(verb:, url:, type:)
       @verb = verb
       @url  = url
       @type = type
+    end
+
+    def call(*args)
+      self
     end
 
     def content_type

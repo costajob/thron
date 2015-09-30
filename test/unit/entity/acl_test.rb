@@ -10,8 +10,8 @@ describe Thron::Entity::Acl do
     default.rules.must_be_empty
   end
 
-  it 'must return key-value form' do
-    options = klass::new('context1', %w[rule1 rule2])
-    options.to_h.must_equal({ onContext: 'context1', rules: %w[rule1 rule2] })
+  it 'must return the payload form' do
+    entity = klass::new('context1', %w[rule1 rule2])
+    entity.to_payload.must_equal({ onContext: 'context1', rules: %w[rule1 rule2] })
   end
 end

@@ -5,7 +5,7 @@ module Thron
         new(false, false, false)
       end
 
-      def to_h
+      def to_payload
         {
           returnOwnAcl: own_acl,
           returnItags: tags,

@@ -16,9 +16,9 @@ describe Thron::Entity::GroupCriteria do
     end
   end
 
-  it 'must return key-value form' do
+  it 'must return payload form' do
     acl = Thron::Entity::Acl::new('context1', %w[rule1 rule2])
-    criteria = klass::new(%w[id1 id2 id3], 'foo', false, 'linked', %w[role1 role2], %w[solution1], acl, 'type 1', 'owner', 'external')
-    criteria.to_h.must_equal({ ids: %w[id1 id2 id3], textSearch: 'foo', active: false, linkedUsername: 'linked', groupRoles: %w[role1 role2], usersEnabledSolutions: %w[solution1], acl: acl.to_h, groupType: 'type 1', ownerUsername: 'owner', externalId: 'external' })
+    entity = klass::new(%w[id1 id2 id3], 'foo', false, 'linked', %w[role1 role2], %w[solution1], acl, 'type 1', 'owner', 'external')
+    entity.to_payload.must_equal({ ids: %w[id1 id2 id3], textSearch: 'foo', active: false, linkedUsername: 'linked', groupRoles: %w[role1 role2], usersEnabledSolutions: %w[solution1], acl: acl.to_payload, groupType: 'type 1', ownerUsername: 'owner', externalId: 'external' })
   end
 end

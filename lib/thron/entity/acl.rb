@@ -5,7 +5,7 @@ module Thron
         new(nil, [])
       end
 
-      def to_h
+      def to_payload
         {
           onContext: on_context,
           rules: rules

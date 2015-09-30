@@ -13,7 +13,7 @@ module Thron
         check_session
         body = { 
           clientId: self.client_id,
-          usersGroup: group.to_h
+          usersGroup: group.to_payload
         }
         route(to: :create_group, body: body, token_id: self.token_id, dash: true)
       end
@@ -35,7 +35,7 @@ module Thron
           groupId: group_id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
-          fieldsOption: fields_option.to_h
+          fieldsOption: fields_option.to_payload
         }
         route(to: __callee__, body: body, token_id: self.token_id, dash: true)
       end
@@ -44,9 +44,9 @@ module Thron
         check_session
         body = { 
           clientId: self.client_id,
-          criteria: criteria.to_h,
+          criteria: criteria.to_payload,
           orderBy: order_by,
-          fieldsOption: fields_option.to_h,
+          fieldsOption: fields_option.to_payload,
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
@@ -73,7 +73,7 @@ module Thron
         routes[:update] = Route::factory(name: 'update', package: PACKAGE, params: [self.client_id, group.id])
         check_session
         body = {
-          update: group.to_h 
+          update: group.to_payload(true)
         }
         route(to: name, body: body, token_id: self.token_id, dash: true)
       end

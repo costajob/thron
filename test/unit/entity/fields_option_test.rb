@@ -9,8 +9,8 @@ describe Thron::Entity::FieldsOption do
     assert default.values.all? { |attr| !attr }
   end
 
-  it 'must return key-value form' do
-    options = klass::new(true, false, true)
-    options.to_h.must_equal({ returnOwnAcl: true, returnItags: false, returnImetadata: true })
+  it 'must return payload form' do
+    entity = klass::new(true, false, true)
+    entity.to_payload.must_equal({ returnOwnAcl: true, returnItags: false, returnImetadata: true })
   end
 end

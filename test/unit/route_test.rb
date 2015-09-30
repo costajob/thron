@@ -34,12 +34,24 @@ describe Thron::Route do
       route.verb.must_equal klass::VERBS::GET
       refute route.json?
     end
+
+    it 'must return a proc to be evauated' do
+      lazy = klass::lazy_factory(name: :test_me, package: package)
+      route = lazy.call(%w[param1 param2 param3])
+      route.url.must_equal '/xsso/resources/accessmanager/test_me/param1/param2/param3'
+      route.verb.must_equal klass::VERBS::POST
+      assert route.json?
+    end
   end
 
   it 'must initialize state' do
     %w[verb url type].each do |attr|
       assert json.instance_variable_defined?(:"@#{attr}")
     end
+  end
+
+  it 'must return itself' do
+    json.call('arg1', 'arg2').must_equal json
   end
 
   it 'must return appropriate content type' do

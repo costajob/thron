@@ -35,8 +35,8 @@ module Thron
       {}
     end
 
-    def route(to:, query: {}, body: {}, token_id: nil, dash: nil)
-      route = routes.fetch(to) { fail NoentRouteError } 
+    def route(to:, query: {}, body: {}, token_id: nil, dash: nil, params: [])
+      route = fetch_route(to, params)
       body = body.to_json if !body.empty? && route.json?
       info(query, body, route, token_id, dash)
       self.class.circuit_breaker.monitor do
@@ -47,6 +47,10 @@ module Thron
     rescue CircuitBreaker::OpenError
       warn "Circuit breaker is open for process #{$$}"
       OpenStruct::new(parsed_response: {})
+    end
+
+    def fetch_route(to, params)
+      routes.fetch(to) { fail NoentRouteError }.call(params)
     end
 
     def info(query, body, route, token_id, dash)

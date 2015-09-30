@@ -23,7 +23,7 @@ describe Thron::Gateway::UsersGroupManager do
       route = instance.routes.fetch(:create_group)
       body = { 
         clientId: instance.client_id,
-        usersGroup: Thron::Entity::Group::default.to_h
+        usersGroup: Thron::Entity::Group::default.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body,  headers: route.headers(token_id: token_id, dash: true) })
       instance.token_id = token_id
@@ -49,7 +49,7 @@ describe Thron::Gateway::UsersGroupManager do
         groupId: group_id,
         offset: 0,
         numberOfResult: 0,
-        fieldsOption: Thron::Entity::FieldsOption::default.to_h
+        fieldsOption: Thron::Entity::FieldsOption::default.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body,  headers: route.headers(token_id: token_id, dash: true) })
       instance.token_id = token_id
@@ -60,9 +60,9 @@ describe Thron::Gateway::UsersGroupManager do
       route = instance.routes.fetch(:find_groups)
       body = { 
         clientId: instance.client_id,
-        criteria: Thron::Entity::GroupCriteria::default.to_h,
+        criteria: Thron::Entity::GroupCriteria::default.to_payload,
         orderBy: nil,
-        fieldsOption: Thron::Entity::FieldsOption::default.to_h,
+        fieldsOption: Thron::Entity::FieldsOption::default.to_payload,
         offset: 0,
         numberOfResult: 0
       }.to_json
