@@ -16,7 +16,7 @@ entities.map { |f| File.basename(f, '.rb').camelize }.each do |name|
     end
 
     it 'must inherit mappable instance methods' do
-      %i[to_payload].each do |message|
+      %i[to_h to_payload].each do |message|
         klass.instance_methods.must_include message
       end
     end

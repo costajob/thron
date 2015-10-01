@@ -1,4 +1,5 @@
 require 'date'
+require 'time'
 
 module Thron
   module Mappable
@@ -71,18 +72,34 @@ module Thron
       end
     end
 
+    def to_h
+      self.class.mappings.reduce({}) do |acc, (attr, mapping)|
+        value = send(attr)
+        acc[attr] = value_by_type(type: mapping.type, value: value, message: __callee__)
+        acc
+      end
+    end
+
     def to_payload
       self.class.mappings.reduce({}) do |acc, (attr, mapping)|
         value = send(attr)
-        acc[mapping.name] = case(type = mapping.type)
-                            when Array
-                              value.map(&:to_payload)
-                            when Class
-                              value.to_payload
-                            else
-                              value
-                            end
+        acc[mapping.name] = value_by_type(type: mapping.type, value: value, message: __callee__)
         acc
+      end
+    end
+
+    private def value_by_type(type:, value:, message:)
+      case type
+      when Array
+        value.map(&message)
+      when Class
+        value.send(message)
+      when Attribute::DATE
+        Date::parse(value.to_s).to_s
+      when Attribute::TIME
+        Time::parse(value.to_s).iso8601
+      else
+        value
       end
     end
   end

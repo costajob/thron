@@ -55,7 +55,8 @@ module Thron
 
     def info(query, body, route, token_id, dash)
       return unless DEBUG
-      puts "*" * 50,
+      puts "\n",
+        "*" * 50,
         "#{route.verb.upcase} REQUEST:",
         "  * url: #{route.url}",
         "  * query: #{query.inspect}",

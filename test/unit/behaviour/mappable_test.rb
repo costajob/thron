@@ -32,7 +32,8 @@ module Mock
         awards: Thron::Mappable::Attribute::new('wonAwards', [Mock::Award]),
         spouse: Thron::Mappable::Attribute::new('lastSpouse', Mock::Spouse),
         weight: Thron::Mappable::Attribute::new('weightInKgs', Thron::Mappable::Attribute::FLOAT),
-        dead: Thron::Mappable::Attribute::new('isDead', Thron::Mappable::Attribute::BOOL)
+        dead: Thron::Mappable::Attribute::new('isDead', Thron::Mappable::Attribute::BOOL),
+        created_at: Thron::Mappable::Attribute::new('createdAt', Thron::Mappable::Attribute::TIME),
       }
     end
     include Thron::Mappable
@@ -41,7 +42,7 @@ end
 
 describe Thron::Mappable do
   let(:klass) { Mock::Entity }
-  let(:instance) { klass::new(first: 'Elvis', last: 'Presley', dob: Date::new(1935,1,8), grammys: 3, awards: [1967, 1972, 1974].map { |year| Mock::Award::new(name: 'Grammy', year: year) }, spouse: Mock::Spouse::new(first: 'Priscilla', last: 'Ann Wagner'), weight: 101.5, dead: true) }
+  let(:instance) { klass::new(first: 'Elvis', last: 'Presley', dob: Date::new(1935,1,8), grammys: 3, awards: [1967, 1972, 1974].map { |year| Mock::Award::new(name: 'Grammy', year: year) }, spouse: Mock::Spouse::new(first: 'Priscilla', last: 'Ann Wagner'), weight: 101.5, dead: true, created_at: Time::new(2015,10,29,2,0,59)) }
 
   describe Thron::Mappable::Attribute do
     let(:klass) { Thron::Mappable::Attribute }
@@ -71,7 +72,8 @@ describe Thron::Mappable do
       'wonAwards' => awards.map(&:to_payload),
       'lastSpouse' => spouse.to_payload,
       'weightInKgs' => 61.5,
-      'isDead' => false
+      'isDead' => false,
+      'createdAt' => Time::now
     }
     entity = klass::factory(data)
     entity.must_be_instance_of klass
@@ -83,6 +85,7 @@ describe Thron::Mappable do
     entity.spouse.must_be_instance_of Mock::Spouse
     entity.weight.must_equal 61.5
     refute entity.dead
+    entity.created_at.must_be_instance_of Time
   end
 
   it 'must create a default factory' do
@@ -96,17 +99,32 @@ describe Thron::Mappable do
     entity.spouse.must_be_instance_of Mock::Spouse
     entity.weight.must_equal 0.0
     refute entity.dead
+    entity.created_at.must_be_instance_of Time
+  end
+
+  it 'must return the key-value form' do
+    instance.to_h.must_equal({ 
+      first: instance.first, 
+      last: instance.last, 
+      dob: instance.dob.to_s, 
+      grammys: instance.grammys, 
+      awards: instance.awards.map(&:to_h), 
+      spouse: instance.spouse.to_h,
+      weight: instance.weight, 
+      dead: instance.dead,
+      created_at: instance.created_at.iso8601 })
   end
 
   it 'must return the payload form' do
     instance.to_payload.must_equal({ 
       'firstName'    => instance.first, 
       'lastName'     => instance.last, 
-      'dateOfBirth'  => instance.dob, 
+      'dateOfBirth'  => instance.dob.to_s, 
       'grammyAwards' => instance.grammys, 
       'wonAwards'    => instance.awards.map(&:to_payload), 
       'lastSpouse'   => instance.spouse.to_payload,
       'weightInKgs'  => instance.weight, 
-      'isDead'       => instance.dead })
+      'isDead'       => instance.dead,
+      'createdAt'    => instance.created_at.iso8601 })
   end
 end
