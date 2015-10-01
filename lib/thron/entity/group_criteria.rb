@@ -14,7 +14,7 @@ module Thron
           acl: Mappable::Attribute::new('acl', Acl),
           type: Mappable::Attribute::new('groupType'),
           owner: Mappable::Attribute::new('ownerUsername'),
-          external_id: Mappable::Attribute::new('externalId'),
+          external_id: Mappable::Attribute::new('externalId', ExternalId)
         }
       end
       include Mappable

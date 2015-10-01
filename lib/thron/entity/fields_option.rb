@@ -6,8 +6,8 @@ module Thron
       def self.mappings
         @mappings ||= { 
           own_acl: Mappable::Attribute::new('returnOwnAcl', Mappable::Attribute::BOOL),
-          itags: Mappable::Attribute::new('returnItags', Mappable::Attribute::BOOL),
-          imetadata: Mappable::Attribute::new('returnImetadata', Mappable::Attribute::BOOL),
+          i_tags: Mappable::Attribute::new('returnItags', Mappable::Attribute::BOOL),
+          i_metadata: Mappable::Attribute::new('returnImetadata', Mappable::Attribute::BOOL)
         }
       end
       include Mappable
