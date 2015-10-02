@@ -10,7 +10,7 @@ module Thron
       @state       = CLOSED
       @threshold   = threshold
       @error_count = 0
-      @ignored     = ignored
+      @ignored     = Array(ignored)
     end
 
     def monitor
