@@ -11,14 +11,14 @@ module Thron
           username: username,
           password: password
         }
-        route(to: __callee__, query: query).tap do |http_res|
-          self.token_id = http_res.parsed_response.fetch('tokenId') { :no_token }
+        route(to: __callee__, query: query).tap do |response|
+          self.token_id = response.body.fetch('tokenId') { :no_token }
         end
       end
 
       def logout
         check_session
-        route(to: __callee__, token_id: self.token_id).tap do |http_res|
+        route(to: __callee__, token_id: self.token_id).tap do |response|
           self.token_id = nil
         end
       end

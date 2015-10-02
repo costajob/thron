@@ -14,25 +14,25 @@ module Thron
     class User
       def self.mappings
         @mappings ||= { 
-          type: Mappable::Attribute::new('type'),
-          password_updated_at: Mappable::Attribute::new('passwordUpdate', Mappable::Attribute::TIME),
-          created_at: Mappable::Attribute::new('creationDate', Mappable::Attribute::TIME),
-          capabilities: Mappable::Attribute::new('userCapabilities', Capabilities),
-          active: Mappable::Attribute::new('active', Mappable::Attribute::BOOL),
-          expiration_at: Mappable::Attribute::new('expiryDate', Mappable::Attribute::DATE),
-          preferences: Mappable::Attribute::new('userPreferences', [Preference]),
-          created_by: Mappable::Attribute::new('createdBy'),
-          picture: Mappable::Attribute::new('profilePicture', Picture),
-          acl_rules: Mappable::Attribute::new('ownAclRules', [AclRule]),
-          quota: Mappable::Attribute::new('userQuota', Mappable::Attribute::INT),
-          lock_template: Mappable::Attribute::new('userLockTemplate'),
-          i_metadata: Mappable::Attribute::new('imetadata', [IMetadata]),
-          i_tags: Mappable::Attribute::new('itags', [ITag]),
-          external_id: Mappable::Attribute::new('externalId', ExternalId),
-          contact_id: Mappable::Attribute::new('contactId'),
-          metadata: Mappable::Attribute::new('metadata', [Metadata]),
-          detail: Mappable::Attribute::new('detail', UserDetail),
-          credentials: Mappable::Attribute::new('credential', Credentials)
+          type: Mappable::Attribute::new(name: 'type'),
+          password_updated_at: Mappable::Attribute::new(name: 'passwordUpdate', type: Mappable::Attribute::TIME),
+          created_at: Mappable::Attribute::new(name: 'creationDate', type: Mappable::Attribute::TIME),
+          capabilities: Mappable::Attribute::new(name: 'userCapabilities', type: Capabilities),
+          active: Mappable::Attribute::new(name: 'active', type: Mappable::Attribute::BOOL),
+          expiration_at: Mappable::Attribute::new(name: 'expiryDate', type: Mappable::Attribute::DATE),
+          preferences: Mappable::Attribute::new(name: 'userPreferences', type: [Preference]),
+          created_by: Mappable::Attribute::new(name: 'createdBy'),
+          picture: Mappable::Attribute::new(name: 'profilePicture', type: Picture),
+          acl_rules: Mappable::Attribute::new(name: 'ownAclRules', type: [AclRule]),
+          quota: Mappable::Attribute::new(name: 'userQuota', type: Mappable::Attribute::INT),
+          lock_template: Mappable::Attribute::new(name: 'userLockTemplate'),
+          i_metadata: Mappable::Attribute::new(name: 'imetadata', type: [IMetadata]),
+          i_tags: Mappable::Attribute::new(name: 'itags', type: [ITag]),
+          external_id: Mappable::Attribute::new(name: 'externalId', type: ExternalId),
+          contact_id: Mappable::Attribute::new(name: 'contactId'),
+          metadata: Mappable::Attribute::new(name: 'metadata', type: [Metadata]),
+          detail: Mappable::Attribute::new(name: 'detail', type: UserDetail),
+          credentials: Mappable::Attribute::new(name: 'credential', type: Credentials)
         }
       end
       include Mappable

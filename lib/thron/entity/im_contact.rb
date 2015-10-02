@@ -5,8 +5,8 @@ module Thron
     class ImContact
       def self.mappings
         @mappings ||= { 
-          id: Mappable::Attribute::new('imId'),
-          type: Mappable::Attribute::new('imType')
+          id: Mappable::Attribute::new(name: 'imId'),
+          type: Mappable::Attribute::new(name: 'imType')
         }
       end
       include Mappable

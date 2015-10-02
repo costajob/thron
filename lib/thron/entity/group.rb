@@ -17,19 +17,19 @@ module Thron
       
       def self.mappings
         @mappings ||= { 
-          id: Mappable::Attribute::new('id'),
-          type: Mappable::Attribute::new('type'),
-          name: Mappable::Attribute::new('name'),
-          description: Mappable::Attribute::new('description'),
-          created_at: Mappable::Attribute::new('creationDate', Mappable::Attribute::TIME),
-          active: Mappable::Attribute::new('active', Mappable::Attribute::BOOL),
-          capabilities: Mappable::Attribute::new('groupCapabilities', Capabilities),
-          owner: Mappable::Attribute::new('ownerUsername'),
-          acl_rules: Mappable::Attribute::new('ownAclRules', [AclRule]),
-          i_metadata: Mappable::Attribute::new('imetadata', [IMetadata]),
-          i_tags: Mappable::Attribute::new('itags', [ITag]),
-          external_id: Mappable::Attribute::new('externalId', ExternalId),
-          metadata: Mappable::Attribute::new('metadata', [Metadata])
+          id: Mappable::Attribute::new(name: 'id'),
+          type: Mappable::Attribute::new(name: 'type'),
+          name: Mappable::Attribute::new(name: 'name'),
+          description: Mappable::Attribute::new(name: 'description'),
+          created_at: Mappable::Attribute::new(name: 'creationDate', type: Mappable::Attribute::TIME),
+          active: Mappable::Attribute::new(name: 'active', type: Mappable::Attribute::BOOL),
+          capabilities: Mappable::Attribute::new(name: 'groupCapabilities', type: Capabilities),
+          owner: Mappable::Attribute::new(name: 'ownerUsername'),
+          acl_rules: Mappable::Attribute::new(name: 'ownAclRules', type: [AclRule]),
+          i_metadata: Mappable::Attribute::new(name: 'imetadata', type: [IMetadata]),
+          i_tags: Mappable::Attribute::new(name: 'itags', type: [ITag]),
+          external_id: Mappable::Attribute::new(name: 'externalId', type: ExternalId),
+          metadata: Mappable::Attribute::new(name: 'metadata', type: [Metadata])
         }
       end
       include Mappable

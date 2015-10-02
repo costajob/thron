@@ -17,6 +17,8 @@ module Thron
       include Routable
       include Parallelizable
 
+      NO_ACTIVE_SESSION = "Please provide a valid token ID"
+
       def self.service_name
         self.name.split('::').last.downcase
       end
@@ -29,7 +31,7 @@ module Thron
       end
 
       private def check_session
-        fail NoActiveSessionError unless token_id
+        fail NoActiveSessionError, NO_ACTIVE_SESSION unless token_id
       end
     end
   end

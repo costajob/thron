@@ -11,7 +11,7 @@ describe Thron::Gateway::AccessManager do
 
   describe 'API methods' do
     let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
-    let(:response) { OpenStruct::new(parsed_response: { 'tokenId' => token_id, 'resultCode' => 'OK' }) }
+    let(:response) { OpenStruct::new(code: 200, parsed_response: { 'tokenId' => token_id, 'resultCode' => 'OK' }) }
 
     it 'must raise an exception when calling session-based APIs without token' do
       %i[logout validate_capabilities validate_roles validate_token].each do |message|
@@ -46,7 +46,7 @@ describe Thron::Gateway::AccessManager do
     { logout: {}, validate_capabilities: { capabilities: '' }, validate_roles: { role: '' }, validate_token: {} }.each do |message, query|
       it "must call post to #{message}" do
         route = instance.routes.fetch(message)
-        mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) })
+        mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) }) { response }
         instance.token_id = token_id
         instance.send(message)
       end

@@ -5,10 +5,10 @@ module Thron
     class AclRule
       def self.mappings
         @mappings ||= { 
-          target_id: Mappable::Attribute::new('targetObjId'),
-          target_class: Mappable::Attribute::new('targetObjClass'),
-          enabled: Mappable::Attribute::new('rules', Mappable::Attribute::LIST),
-          disabled: Mappable::Attribute::new('disabledRules', Mappable::Attribute::LIST)
+          target_id: Mappable::Attribute::new(name: 'targetObjId'),
+          target_class: Mappable::Attribute::new(name: 'targetObjClass'),
+          enabled: Mappable::Attribute::new(name: 'rules', type: Mappable::Attribute::LIST),
+          disabled: Mappable::Attribute::new(name: 'disabledRules', type: Mappable::Attribute::LIST)
         }
       end
       include Mappable

@@ -5,11 +5,11 @@ module Thron
     class IMetadata
       def self.mappings
         @mappings ||= { 
-          classification_id: Mappable::Attribute::new('classificationId'),
-          key: Mappable::Attribute::new('key'),
-          value: Mappable::Attribute::new('value'),
-          lang: Mappable::Attribute::new('lang'),
-          definition_id: Mappable::Attribute::new('metadataDefinitionId')
+          classification_id: Mappable::Attribute::new(name: 'classificationId'),
+          key: Mappable::Attribute::new(name: 'key'),
+          value: Mappable::Attribute::new(name: 'value'),
+          lang: Mappable::Attribute::new(name: 'lang'),
+          definition_id: Mappable::Attribute::new(name: 'metadataDefinitionId')
         }
       end
       include Mappable

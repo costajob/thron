@@ -5,8 +5,8 @@ module Thron
     class Credentials
       def self.mappings
         @mappings ||= { 
-          username: Mappable::Attribute::new('username'),
-          password: Mappable::Attribute::new('password')
+          username: Mappable::Attribute::new(name: 'username'),
+          password: Mappable::Attribute::new(name: 'password')
         }
       end
       include Mappable

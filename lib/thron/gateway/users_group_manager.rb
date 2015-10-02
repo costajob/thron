@@ -9,6 +9,11 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
+      def initialize(args)
+        @token_id = args.delete(:token_id)
+        super
+      end
+
       def create_group(group: Entity::Group::default)
         check_session
         body = { 
@@ -18,21 +23,21 @@ module Thron
         route(to: :create_group, body: body, token_id: self.token_id, dash: true)
       end
 
-      def remove_group(group_id:, force: false)
+      def remove_group(id:, force: false)
         check_session
         body = { 
           clientId: self.client_id,
-          groupId: group_id,
+          groupId: id,
           force: force
         }
         route(to: __callee__, body: body, token_id: self.token_id, dash: true)
       end
 
-      def detail_group(group_id:, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
+      def detail_group(id:, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
         check_session
         body = { 
           clientId: self.client_id,
-          groupId: group_id,
+          groupId: id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
           fieldsOption: fields_option.to_payload
@@ -55,7 +60,7 @@ module Thron
 
       %i[link_users unlink_users].each do |name|
         define_method(name) do |*args|
-          group_id = args.last.fetch(:group_id)
+          group_id = args.last.fetch(:id)
           users    = args.last.fetch(:users) { [] }
           check_session
           body = { 

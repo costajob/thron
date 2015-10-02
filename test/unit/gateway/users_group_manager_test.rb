@@ -3,18 +3,27 @@ require_relative Thron.root.join('lib', 'thron', 'gateway', 'users_group_manager
 
 describe Thron::Gateway::UsersGroupManager do
   let(:klass) { Thron::Gateway::UsersGroupManager }
-  let(:instance) { klass::new }
+  let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
+  let(:instance) { klass::new(token_id: token_id) }
+  let(:response) { OpenStruct::new(code: 200) }
 
   it 'must set the package' do
     klass::PACKAGE.to_s.must_equal "xsso/resources/usersgroupmanager"
   end
 
+  it 'must initialize state' do
+    instance = klass::new(client_id: 'client', token_id: 'token')
+    %i[client_id token_id].each do |attr|
+      assert instance.instance_variable_defined?(:"@#{attr}")
+    end
+  end
+
   describe 'API methods' do
-    let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
     let(:group_id) { '184f842e-8ca2-4c26-9bfd-719a85a2a73f' }
 
     it 'must raise an exception when calling session-based APIs without token' do
-      { create_group: { group: nil }, remove_group: { group_id: nil }, detail_group: { group_id: nil }, find_groups: { criteria: nil }, link_users: { group_id: nil }, unlink_users: { group_id: nil}, update: { group: nil }, update_external_id: { group: nil } }.each do |message, args|
+      instance = klass::new(client_id: 'client')
+      { create_group: { group: nil }, remove_group: { id: nil }, detail_group: { id: nil }, find_groups: { criteria: nil }, link_users: { id: nil }, unlink_users: { id: nil}, update: { group: nil }, update_external_id: { group: nil } }.each do |message, args|
         -> { instance.send(message, args) }.must_raise Thron::Gateway::NoActiveSessionError
       end
     end
@@ -25,8 +34,7 @@ describe Thron::Gateway::UsersGroupManager do
         clientId: instance.client_id,
         usersGroup: Thron::Entity::Group::default.to_payload
       }.to_json
-      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-      instance.token_id = token_id
+      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
       instance.create_group
     end
 
@@ -37,9 +45,8 @@ describe Thron::Gateway::UsersGroupManager do
         groupId: group_id,
         force: true
       }.to_json
-      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-      instance.token_id = token_id
-      instance.remove_group(group_id: group_id, force: true)
+      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
+      instance.remove_group(id: group_id, force: true)
     end
 
     it 'must call post to get group detail' do
@@ -51,9 +58,8 @@ describe Thron::Gateway::UsersGroupManager do
         numberOfResult: 0,
         fieldsOption: Thron::Entity::FieldsOption::default.to_payload
       }.to_json
-      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-      instance.token_id = token_id
-      instance.detail_group(group_id: group_id)
+      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
+      instance.detail_group(id: group_id)
     end
 
     it 'must call post to find group by properties' do
@@ -66,8 +72,7 @@ describe Thron::Gateway::UsersGroupManager do
         offset: 0,
         numberOfResult: 0
       }.to_json
-      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-      instance.token_id = token_id
+      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
       instance.find_groups
     end
 
@@ -81,9 +86,8 @@ describe Thron::Gateway::UsersGroupManager do
           },
           groupId: group_id
         }.to_json
-        mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-        instance.token_id = token_id
-        instance.send(message, group_id: group_id, users: %w[user1 user2])
+        mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
+        instance.send(message, id: group_id, users: %w[user1 user2])
       end
     end
 
@@ -96,8 +100,7 @@ describe Thron::Gateway::UsersGroupManager do
       body = { 
         update: group.to_payload
       }.to_json
-      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-      instance.token_id = token_id
+      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
       instance.update(group: group)
     end
 
@@ -110,8 +113,7 @@ describe Thron::Gateway::UsersGroupManager do
       body = { 
         externalId: group.external_id.to_payload
       }.to_json
-      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) })
-      instance.token_id = token_id
+      mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
       instance.update_external_id(group: group)
     end
   end

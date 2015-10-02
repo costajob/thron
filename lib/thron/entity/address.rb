@@ -5,15 +5,15 @@ module Thron
     class Address
       def self.mappings
         @mappings ||= { 
-          category: Mappable::Attribute::new('addressCategory'),
-          street: Mappable::Attribute::new('street'),
-          pobox: Mappable::Attribute::new('pobox'),
-          local_area: Mappable::Attribute::new('localArea'),
-          city: Mappable::Attribute::new('city'),
-          area: Mappable::Attribute::new('area'),
-          zip: Mappable::Attribute::new('postcode'),
-          country: Mappable::Attribute::new('country'),
-          primary: Mappable::Attribute::new('primary', Mappable::Attribute::BOOL)
+          category: Mappable::Attribute::new(name: 'addressCategory'),
+          street: Mappable::Attribute::new(name: 'street'),
+          pobox: Mappable::Attribute::new(name: 'pobox'),
+          local_area: Mappable::Attribute::new(name: 'localArea'),
+          city: Mappable::Attribute::new(name: 'city'),
+          area: Mappable::Attribute::new(name: 'area'),
+          zip: Mappable::Attribute::new(name: 'postcode'),
+          country: Mappable::Attribute::new(name: 'country'),
+          primary: Mappable::Attribute::new(name: 'primary', type: Mappable::Attribute::BOOL)
         }
       end
       include Mappable

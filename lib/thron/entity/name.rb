@@ -5,11 +5,11 @@ module Thron
     class Name
       def self.mappings
         @mappings ||= { 
-          prefix: Mappable::Attribute::new('prefix'),
-          first: Mappable::Attribute::new('firstName'),
-          middle: Mappable::Attribute::new('middleName'),
-          last: Mappable::Attribute::new('lastName'),
-          suffix: Mappable::Attribute::new('suffix')
+          prefix: Mappable::Attribute::new(name: 'prefix'),
+          first: Mappable::Attribute::new(name: 'firstName'),
+          middle: Mappable::Attribute::new(name: 'middleName'),
+          last: Mappable::Attribute::new(name: 'lastName'),
+          suffix: Mappable::Attribute::new(name: 'suffix')
         }
       end
       include Mappable

@@ -8,17 +8,50 @@ module Thron
         const_set(type.upcase, type)
       end
 
-      attr_accessor :name, :type  
+      attr_accessor :name, :type, :mandatory
 
-      def initialize(name, type = STRING)
-        @name, @type = name, type
+      def initialize(name:, type: STRING, mandatory: false)
+        @name, @type, @mandatory = name, type, mandatory
       end
     end
 
+    class MissingAttributeError < StandardError; end
+
+    NullObj = Struct::new(:to_payload)
+    NULL_OBJ = NullObj::new
+
     module ClassMethods
+      def default_value(type)
+        case type
+        when Attribute::INT
+          0
+        when Attribute::FLOAT
+          0.0
+        when Attribute::LIST, Array
+          []
+        when Attribute::DATE
+          Date::today
+        when Attribute::TIME
+          Time::now
+        when Attribute::BOOL
+          false
+        when Class
+          NULL_OBJ
+        else
+          nil
+        end
+      end
+
+      def fetch_value(data:, mapped_attribute:)
+        data.fetch(mapped_attribute.name.to_s) do
+          fail MissingAttributeError, "Mandatory attribute is missing: #{name}" if mapped_attribute.mandatory
+          default_value(mapped_attribute.type)
+        end
+      end
+
       def factory(data)
         args = mappings.reduce({}) do |acc, (attr, mapping)|
-          value = data.fetch(mapping.name.to_s)
+          value = fetch_value(data: data, mapped_attribute: mapping)
           acc[attr] = case(type = mapping.type)
                       when Array
                         entity = type.first
@@ -35,26 +68,7 @@ module Thron
 
       def default(args = {})
         args = mappings.reduce({}) do |acc, (attr, mapping)|
-          acc[attr] = args.fetch(attr) { 
-            case(type = mapping.type)
-            when Attribute::INT
-              0
-            when Attribute::FLOAT
-              0.0
-            when Attribute::LIST, Array
-              []
-            when Attribute::DATE
-              Date::today
-            when Attribute::TIME
-              Time::now
-            when Attribute::BOOL
-              false
-            when Class
-              type.default
-            else
-              nil
-            end
-          }
+          acc[attr] = args.fetch(attr) { default_value(mapping.type) }
           acc
         end
         new(args)

@@ -12,20 +12,20 @@ module Thron
     class UserDetail
       def self.mappings
         @mappings ||= { 
-          dob: Mappable::Attribute::new('dob'),
-          gender: Mappable::Attribute::new('gender'),
-          contact_type: Mappable::Attribute::new('contactType'),
-          note: Mappable::Attribute::new('note'),
-          reference_id: Mappable::Attribute::new('externalReferenceId'),
-          i_calls: Mappable::Attribute::new('icalls', [ICall]),
-          addresses: Mappable::Attribute::new('addresses', [Address]),
-          picture: Mappable::Attribute::new('image', Picture),
-          name: Mappable::Attribute::new('name', Name),
-          emails: Mappable::Attribute::new('emails', [Email]),
-          phones: Mappable::Attribute::new('phoneNumbers', [Phone]),
-          urls: Mappable::Attribute::new('urls', [Url]),
-          im_contacts: Mappable::Attribute::new('imcontacts', [ImContact]),
-          business_detail: Mappable::Attribute::new('businessDetail', BusinessDetail)
+          dob: Mappable::Attribute::new(name: 'dob'),
+          gender: Mappable::Attribute::new(name: 'gender'),
+          contact_type: Mappable::Attribute::new(name: 'contactType'),
+          note: Mappable::Attribute::new(name: 'note'),
+          reference_id: Mappable::Attribute::new(name: 'externalReferenceId'),
+          i_calls: Mappable::Attribute::new(name: 'icalls', type: [ICall]),
+          addresses: Mappable::Attribute::new(name: 'addresses', type: [Address]),
+          picture: Mappable::Attribute::new(name: 'image', type: Picture),
+          name: Mappable::Attribute::new(name: 'name', type: Name),
+          emails: Mappable::Attribute::new(name: 'emails', type: [Email]),
+          phones: Mappable::Attribute::new(name: 'phoneNumbers', type: [Phone]),
+          urls: Mappable::Attribute::new(name: 'urls', type: [Url]),
+          im_contacts: Mappable::Attribute::new(name: 'imcontacts', type: [ImContact]),
+          business_detail: Mappable::Attribute::new(name: 'businessDetail', type: BusinessDetail)
         }
       end
       include Mappable

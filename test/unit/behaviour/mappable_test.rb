@@ -5,8 +5,8 @@ module Mock
   class Award
     def self.mappings
       @mappings ||= {
-        name: Thron::Mappable::Attribute::new('awardName'),
-        year: Thron::Mappable::Attribute::new('wonYear')
+        name: Thron::Mappable::Attribute::new(name: 'awardName'),
+        year: Thron::Mappable::Attribute::new(name: 'wonYear')
       }
     end
     include Thron::Mappable
@@ -15,8 +15,8 @@ module Mock
   class Spouse
     def self.mappings
       @mappings ||= {
-        first: Thron::Mappable::Attribute::new('firstName'),
-        last: Thron::Mappable::Attribute::new('lastName')
+        first: Thron::Mappable::Attribute::new(name: 'firstName'),
+        last: Thron::Mappable::Attribute::new(name: 'lastName')
       }
     end
     include Thron::Mappable
@@ -25,15 +25,15 @@ module Mock
   class Entity
     def self.mappings 
       @mappings ||= { 
-        first: Thron::Mappable::Attribute::new('firstName'),
-        last: Thron::Mappable::Attribute::new('lastName'),
-        dob: Thron::Mappable::Attribute::new('dateOfBirth', Thron::Mappable::Attribute::DATE),
-        grammys: Thron::Mappable::Attribute::new('grammyAwards', Thron::Mappable::Attribute::INT),
-        awards: Thron::Mappable::Attribute::new('wonAwards', [Mock::Award]),
-        spouse: Thron::Mappable::Attribute::new('lastSpouse', Mock::Spouse),
-        weight: Thron::Mappable::Attribute::new('weightInKgs', Thron::Mappable::Attribute::FLOAT),
-        dead: Thron::Mappable::Attribute::new('isDead', Thron::Mappable::Attribute::BOOL),
-        created_at: Thron::Mappable::Attribute::new('createdAt', Thron::Mappable::Attribute::TIME),
+        first: Thron::Mappable::Attribute::new(name: 'firstName', mandatory: true),
+        last: Thron::Mappable::Attribute::new(name: 'lastName', mandatory: true),
+        dob: Thron::Mappable::Attribute::new(name: 'dateOfBirth', type: Thron::Mappable::Attribute::DATE),
+        grammys: Thron::Mappable::Attribute::new(name: 'grammyAwards', type: Thron::Mappable::Attribute::INT),
+        awards: Thron::Mappable::Attribute::new(name: 'wonAwards', type: [Mock::Award]),
+        spouse: Thron::Mappable::Attribute::new(name: 'lastSpouse', type: Mock::Spouse),
+        weight: Thron::Mappable::Attribute::new(name: 'weightInKgs', type: Thron::Mappable::Attribute::FLOAT),
+        dead: Thron::Mappable::Attribute::new(name: 'isDead', type: Thron::Mappable::Attribute::BOOL),
+        created_at: Thron::Mappable::Attribute::new(name: 'createdAt', type: Thron::Mappable::Attribute::TIME),
       }
     end
     include Thron::Mappable
@@ -71,7 +71,6 @@ describe Thron::Mappable do
       'grammyAwards' => 10,
       'wonAwards' => awards.map(&:to_payload),
       'lastSpouse' => spouse.to_payload,
-      'weightInKgs' => 61.5,
       'isDead' => false,
       'createdAt' => Time::now
     }
@@ -83,9 +82,13 @@ describe Thron::Mappable do
     entity.grammys.must_equal 10
     assert entity.awards.all? { |award| award.instance_of?(Mock::Award)}
     entity.spouse.must_be_instance_of Mock::Spouse
-    entity.weight.must_equal 61.5
+    entity.weight.must_equal 0.0
     refute entity.dead
     entity.created_at.must_be_instance_of Time
+  end
+
+  it 'must check mandatory atributes' do
+    -> { klass::factory({}) }.must_raise klass::MissingAttributeError 
   end
 
   it 'must create a default factory' do
@@ -96,7 +99,7 @@ describe Thron::Mappable do
     entity.dob.must_equal Date::today
     entity.grammys.must_equal 0
     entity.awards.must_be_empty
-    entity.spouse.must_be_instance_of Mock::Spouse
+    entity.spouse.must_be_instance_of Thron::Mappable::NullObj
     entity.weight.must_equal 0.0
     refute entity.dead
     entity.created_at.must_be_instance_of Time

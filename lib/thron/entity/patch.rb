@@ -5,8 +5,8 @@ module Thron
     class Patch 
       def self.mappings
         @mappings ||= { 
-          op: Mappable::Attribute::new('op'),
-          field: Mappable::Attribute::new('field')
+          op: Mappable::Attribute::new(name: 'op'),
+          field: Mappable::Attribute::new(name: 'field')
         }
       end
       include Mappable

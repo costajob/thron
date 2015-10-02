@@ -5,8 +5,8 @@ module Thron
     class Phone
       def self.mappings
         @mappings ||= { 
-          category: Mappable::Attribute::new('phoneCategory'),
-          number: Mappable::Attribute::new('phoneNumber')
+          category: Mappable::Attribute::new(name: 'phoneCategory'),
+          number: Mappable::Attribute::new(name: 'phoneNumber')
         }
       end
       include Mappable

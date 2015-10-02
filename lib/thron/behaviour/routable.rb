@@ -1,6 +1,7 @@
 require 'httparty'
 require_relative '../config'
 require_relative '../route'
+require_relative '../response'
 require_relative '../circuit_breaker'
 
 module Thron
@@ -25,7 +26,7 @@ module Thron
       end 
 
       def circuit_breaker
-        @circuit_breaker ||= CircuitBreaker::new
+        @circuit_breaker ||= CircuitBreaker::new(ignored: [Response::NotTwoHundredError])
       end
     end
 
@@ -40,13 +41,16 @@ module Thron
       body = body.to_json if !body.empty? && route.json?
       info(query, body, route, token_id, dash)
       self.class.circuit_breaker.monitor do
-        self.class.send(route.verb, 
-                        route.url, 
-                        { query: query, body: body, headers: route.headers(token_id: token_id, dash: dash) })
+        raw = self.class.send(route.verb, 
+                              route.url, 
+                              { query: query, 
+                                body: body, 
+                                headers: route.headers(token_id: token_id, dash: dash) })
+        Response::new(raw)
       end
     rescue CircuitBreaker::OpenError
       warn "Circuit breaker is open for process #{$$}"
-      OpenStruct::new(parsed_response: {})
+      Response::new(OpenStruct::new(code: 200))
     end
 
     def fetch_route(to, params)

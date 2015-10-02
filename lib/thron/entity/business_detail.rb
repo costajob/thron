@@ -5,9 +5,9 @@ module Thron
     class BusinessDetail
       def self.mappings
         @mappings ||= { 
-          company: Mappable::Attribute::new('companyName'),
-          city: Mappable::Attribute::new('city'),
-          country: Mappable::Attribute::new('country')
+          company: Mappable::Attribute::new(name: 'companyName'),
+          city: Mappable::Attribute::new(name: 'city'),
+          country: Mappable::Attribute::new(name: 'country')
         }
       end
       include Mappable

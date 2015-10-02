@@ -6,10 +6,11 @@ module Thron
       const_set(name.upcase.to_sym, name.to_sym)
     end
 
-    def initialize(threshold: 5)
+    def initialize(threshold: 5, ignored: [])
       @state       = CLOSED
       @threshold   = threshold
       @error_count = 0
+      @ignored     = ignored
     end
 
     def monitor
@@ -20,7 +21,7 @@ module Thron
     rescue OpenError
       raise
     rescue => error
-      handle_error(error)
+      handle_error(error) unless @ignored.include?(error.class)
       raise
     end
 

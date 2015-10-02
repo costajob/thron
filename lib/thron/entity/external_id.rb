@@ -5,8 +5,8 @@ module Thron
     class ExternalId
       def self.mappings
         @mappings ||= { 
-          id: Mappable::Attribute::new('id'),
-          type: Mappable::Attribute::new('externalType')
+          id: Mappable::Attribute::new(name: 'id'),
+          type: Mappable::Attribute::new(name: 'externalType')
         }
       end
       include Mappable
