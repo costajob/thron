@@ -8,7 +8,7 @@ module Thron
   module Routable
     include HTTParty
 
-    DEBUG = true
+    DEBUG = false
 
     class NoentRouteError < StandardError; end
 

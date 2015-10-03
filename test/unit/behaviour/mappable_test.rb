@@ -61,7 +61,7 @@ describe Thron::Mappable do
     end
   end
 
-  it 'must create an instance by data mappings' do
+  it '::factory' do
     awards = [1965, 1967, 1968, 1970, 1971, 1977, 1983, 1997].map { |year| Mock::Award::new(name: 'Grammy', year: year) }
     spouse = Mock::Spouse::new(first: 'Barbara', last: 'Goldbach')
     data = { 
@@ -91,7 +91,7 @@ describe Thron::Mappable do
     -> { klass::factory({}) }.must_raise klass::MissingAttributeError 
   end
 
-  it 'must create a default factory' do
+  it '::default' do
     entity = klass::default(last: 'Harrison')
     entity.must_be_instance_of klass
     entity.first.must_be_nil

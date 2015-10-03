@@ -17,7 +17,9 @@ module Thron
 
     class MissingAttributeError < StandardError; end
 
-    NullObj = Struct::new(:to_payload)
+    NullObj = Struct::new(:payload) do
+      def to_h(payload: false); {}; end
+    end
     NULL_OBJ = NullObj::new
 
     module ClassMethods
@@ -86,28 +88,25 @@ module Thron
       end
     end
 
-    def to_h
+    def to_h(payload: false)
       self.class.mappings.reduce({}) do |acc, (attr, mapping)|
         value = send(attr)
-        acc[attr] = value_by_type(type: mapping.type, value: value, message: __callee__)
+        key = payload ? mapping.name : attr
+        acc[key] = value_by_type(type: mapping.type, value: value, payload: payload)
         acc
       end
     end
 
     def to_payload
-      self.class.mappings.reduce({}) do |acc, (attr, mapping)|
-        value = send(attr)
-        acc[mapping.name] = value_by_type(type: mapping.type, value: value, message: __callee__)
-        acc
-      end
+      to_h(payload: true)
     end
 
-    private def value_by_type(type:, value:, message:)
+    private def value_by_type(type:, value:, payload:)
       case type
       when Array
-        value.map(&message)
+        value.map { |v| v.to_h(payload: payload) }
       when Class
-        value.send(message)
+        value.to_h(payload: payload)
       when Attribute::DATE
         Date::parse(value.to_s).to_s
       when Attribute::TIME
