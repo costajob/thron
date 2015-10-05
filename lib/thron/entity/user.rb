@@ -14,7 +14,7 @@ module Thron
     class User
       def self.mappings
         @mappings ||= { 
-          type: Mappable::Attribute::new(name: 'type'),
+          type: Mappable::Attribute::new(name: 'userType'),
           password_updated_at: Mappable::Attribute::new(name: 'passwordUpdate', type: Mappable::Attribute::TIME),
           created_at: Mappable::Attribute::new(name: 'creationDate', type: Mappable::Attribute::TIME),
           capabilities: Mappable::Attribute::new(name: 'userCapabilities', type: Capabilities),
@@ -26,6 +26,7 @@ module Thron
           acl_rules: Mappable::Attribute::new(name: 'ownAclRules', type: [AclRule]),
           quota: Mappable::Attribute::new(name: 'userQuota', type: Mappable::Attribute::INT),
           lock_template: Mappable::Attribute::new(name: 'userLockTemplate'),
+          notify_first_access: Mappable::Attribute::new(name: 'sendFirstAccessNotification', type: Mappable::Attribute::BOOL),
           i_metadata: Mappable::Attribute::new(name: 'imetadata', type: [IMetadata]),
           i_tags: Mappable::Attribute::new(name: 'itags', type: [ITag]),
           external_id: Mappable::Attribute::new(name: 'externalId', type: ExternalId),

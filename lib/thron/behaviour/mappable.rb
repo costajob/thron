@@ -17,12 +17,6 @@ module Thron
 
     class MissingAttributeError < StandardError; end
 
-    NullObj = Struct::new(:payload) do
-      def to_h(*args); nil; end
-      def fetch(*args, &b); nil; end
-    end
-    NULL_OBJ = NullObj::new
-
     module ClassMethods
       def default_value(type)
         case type
@@ -38,8 +32,6 @@ module Thron
           Time::now
         when Attribute::BOOL
           false
-        when Class
-          NULL_OBJ
         else
           nil
         end
@@ -52,19 +44,23 @@ module Thron
         end
       end
 
+      def map_value(value:, mapping:)
+        return value if value.nil?
+        case(type = mapping.type)
+        when Array
+          entity = type.first
+          value.map { |data| entity.factory(data) }
+        when Class
+          type.factory(value)
+        else
+          value
+        end
+      end
+
       def factory(data)
         args = mappings.reduce({}) do |acc, (attr, mapping)|
           value = fetch_value(data: data, mapped_attribute: mapping)
-          acc[attr] = case(type = mapping.type)
-                      when Array
-                        entity = type.first
-                        value.map { |data| entity.factory(data) }
-                      when Class
-                        type.factory(value)
-                      else
-                        value
-                      end
-          acc
+          acc[attr] = map_value(value: value, mapping: mapping); acc
         end
         new(args)
       end
@@ -103,6 +99,7 @@ module Thron
     end
 
     private def value_by_type(type:, value:, payload:)
+      return value if value.nil?
       case type
       when Array
         value.map { |v| v.to_h(payload: payload) }

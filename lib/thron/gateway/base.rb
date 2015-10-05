@@ -20,8 +20,8 @@ module Thron
         self.name.split('::').last.downcase
       end
 
-      attr_accessor :token_id
       attr_reader :client_id
+      attr_accessor :token_id
 
       def initialize(client_id: Config.thron.client_id)
         @client_id = client_id

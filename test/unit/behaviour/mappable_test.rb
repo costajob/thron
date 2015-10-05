@@ -61,7 +61,7 @@ describe Thron::Mappable do
     end
   end
 
-  it '::factory' do
+  it 'must factory an instance with valid attributes' do
     awards = [1965, 1967, 1968, 1970, 1971, 1977, 1983, 1997].map { |year| Mock::Award::new(name: 'Grammy', year: year) }
     spouse = Mock::Spouse::new(first: 'Barbara', last: 'Goldbach')
     data = { 
@@ -87,11 +87,28 @@ describe Thron::Mappable do
     entity.created_at.must_be_instance_of Time
   end
 
+  it 'must factory an instance when attributes are nil' do
+    data = { 
+      'firstName' => 'Ringo',
+      'lastName' => 'Starr',
+      'grammyAwards' => nil,
+      'wonAwards' => nil,
+      'lastSpouse' => nil
+    }
+    entity = klass::factory(data)
+    entity.must_be_instance_of klass
+    entity.first.must_equal 'Ringo'
+    entity.last.must_equal 'Starr'
+    %i[awards spouse].each do |message|
+      entity.send(message).must_be_nil
+    end
+  end
+
   it 'must check mandatory atributes' do
     -> { klass::factory({}) }.must_raise klass::MissingAttributeError 
   end
 
-  it '::default' do
+  it 'must factory an instance with default values' do
     entity = klass::default(last: 'Harrison')
     entity.must_be_instance_of klass
     entity.first.must_be_nil
@@ -99,7 +116,7 @@ describe Thron::Mappable do
     entity.dob.must_equal Date::today
     entity.grammys.must_equal 0
     entity.awards.must_be_empty
-    entity.spouse.must_be_instance_of Thron::Mappable::NullObj
+    entity.spouse.must_be_nil
     entity.weight.must_equal 0.0
     refute entity.dead
     entity.created_at.must_be_instance_of Time

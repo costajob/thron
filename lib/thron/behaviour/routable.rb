@@ -36,7 +36,7 @@ module Thron
       {}
     end
 
-    def route(to:, query: {}, body: {}, token_id: nil, dash: nil, params: [])
+    def route(to:, query: {}, body: {}, token_id: nil, dash: true, params: [])
       route = fetch_route(to, params)
       body = body.to_json if !body.empty? && route.json?
       self.class.circuit_breaker.monitor do
