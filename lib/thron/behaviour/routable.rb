@@ -8,7 +8,7 @@ module Thron
   module Routable
     include HTTParty
 
-    DEBUG = false
+    DEBUG = true
 
     class NoentRouteError < StandardError; end
 
@@ -39,7 +39,6 @@ module Thron
     def route(to:, query: {}, body: {}, token_id: nil, dash: nil, params: [])
       route = fetch_route(to, params)
       body = body.to_json if !body.empty? && route.json?
-      info(query, body, route, token_id, dash)
       self.class.circuit_breaker.monitor do
         raw = Thread.new do 
           self.class.send(route.verb, 
@@ -48,6 +47,7 @@ module Thron
                             body: body, 
                             headers: route.headers(token_id: token_id, dash: dash) })
         end
+        info(query, body, route, token_id, dash, raw)
         Response::new(raw.value).tap do |response|
           yield(response) if block_given?
         end
@@ -61,8 +61,7 @@ module Thron
       routes.fetch(to) { fail NoentRouteError }.call(params)
     end
 
-    def info(query, body, route, token_id, dash)
-      return unless DEBUG
+    def info(query, body, route, token_id, dash, raw)
       puts "\n",
         "*" * 50,
         "#{route.verb.upcase} REQUEST:",
@@ -70,8 +69,9 @@ module Thron
         "  * query: #{query.inspect}",
         "  * body: #{body.inspect}",
         "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
+        "  * raw: #{raw.value.inspect}",
         "*" * 50,
-        "\n"
+        "\n" if DEBUG
     end
   end
 end
