@@ -1,7 +1,5 @@
 require 'httparty'
-require_relative '../config'
 require_relative '../behaviour/routable'
-require_relative '../behaviour/parallelizable'
 
 module Thron
   module Gateway
@@ -15,7 +13,6 @@ module Thron
 
     class Base
       include Routable
-      include Parallelizable
 
       NO_ACTIVE_SESSION = "Please provide a valid token ID"
 

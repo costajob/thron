@@ -18,7 +18,8 @@ module Thron
     class MissingAttributeError < StandardError; end
 
     NullObj = Struct::new(:payload) do
-      def to_h(payload: false); {}; end
+      def to_h(*args); nil; end
+      def fetch(*args, &b); nil; end
     end
     NULL_OBJ = NullObj::new
 

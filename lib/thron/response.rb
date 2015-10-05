@@ -22,7 +22,7 @@ module Thron
     end
 
     def check_http_code
-      fail NotTwoHundredError, @body.to_s unless is_200?
+      fail NotTwoHundredError, "#{@http_code}: #{@body}" unless is_200?
     end
 
     def is_200?

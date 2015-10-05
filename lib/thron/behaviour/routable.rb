@@ -41,12 +41,16 @@ module Thron
       body = body.to_json if !body.empty? && route.json?
       info(query, body, route, token_id, dash)
       self.class.circuit_breaker.monitor do
-        raw = self.class.send(route.verb, 
-                              route.url, 
-                              { query: query, 
-                                body: body, 
-                                headers: route.headers(token_id: token_id, dash: dash) })
-        Response::new(raw)
+        raw = Thread.new do 
+          self.class.send(route.verb, 
+                          route.url, 
+                          { query: query, 
+                            body: body, 
+                            headers: route.headers(token_id: token_id, dash: dash) })
+        end
+        Response::new(raw.value).tap do |response|
+          yield(response) if block_given?
+        end
       end
     rescue CircuitBreaker::OpenError
       warn "Circuit breaker is open for process #{$$}"

@@ -20,7 +20,9 @@ module Thron
           clientId: self.client_id,
           usersGroup: group.to_payload
         }
-        route(to: :create_group, body: body, token_id: self.token_id, dash: true)
+        route(to: :create_group, body: body, token_id: self.token_id, dash: true) do |response|
+          return Entity::Group::factory(response.body.fetch('group') { {} })
+        end
       end
 
       def remove_group(id:, force: false)
@@ -42,7 +44,9 @@ module Thron
           numberOfResult: limit.to_i,
           fieldsOption: fields_option.to_payload
         }
-        route(to: __callee__, body: body, token_id: self.token_id, dash: true)
+        route(to: __callee__, body: body, token_id: self.token_id, dash: true) do |response|
+          return Entity::Group::factory(response.body.fetch('group') { {} })
+        end
       end
 
       def find_groups(criteria: Entity::GroupCriteria::default, order_by: nil, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
@@ -55,7 +59,11 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: __callee__, body: body, token_id: self.token_id, dash: true)
+        route(to: __callee__, body: body, token_id: self.token_id, dash: true) do |response|
+          return response.body.fetch('groups') { [] }.map do |group|
+            Entity::Group::factory(group.fetch('groupDetail') { {} })
+          end
+        end
       end
 
       %i[link_users unlink_users].each do |name|

@@ -11,19 +11,19 @@ module Thron
           username: username,
           password: password
         }
-        route(to: __callee__, query: query).tap do |response|
+        route(to: __callee__, query: query) do |response|
           self.token_id = response.body.fetch('tokenId') { :no_token }
         end
       end
 
       def logout
         check_session
-        route(to: __callee__, token_id: self.token_id).tap do |response|
+        route(to: __callee__, token_id: self.token_id) do |response|
           self.token_id = nil
         end
       end
 
-      def validate_capabilities(capabilities = [])
+      def validate_capabilities(capabilities: [])
         check_session
         query = {
           capabilities: capabilities.join(',')
@@ -31,10 +31,11 @@ module Thron
         route(to: __callee__, query: query, token_id: self.token_id)
       end
 
-      def validate_roles(roles = [])
+      def validate_roles(roles: [], xor: false)
         check_session
+        separator = xor ? '|' : ','
         query = {
-          role: roles.join(',')
+          role: roles.join(separator)
         }
         route(to: __callee__, query: query, token_id: self.token_id)
       end

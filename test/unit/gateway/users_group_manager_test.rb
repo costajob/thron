@@ -28,14 +28,15 @@ describe Thron::Gateway::UsersGroupManager do
       end
     end
 
+
     it 'must call post to create a new group' do
       route = instance.routes.fetch(:create_group)
       body = { 
-        clientId: instance.client_id,
+        clientId: instance.client_id, 
         usersGroup: Thron::Entity::Group::default.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.create_group
+      instance.create_group.must_be_instance_of Thron::Entity::Group
     end
 
     it 'must call post to remove an existing group' do
@@ -59,7 +60,7 @@ describe Thron::Gateway::UsersGroupManager do
         fieldsOption: Thron::Entity::FieldsOption::default.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.detail_group(id: group_id)
+      instance.detail_group(id: group_id).must_be_instance_of Thron::Entity::Group
     end
 
     it 'must call post to find group by properties' do
@@ -73,7 +74,7 @@ describe Thron::Gateway::UsersGroupManager do
         numberOfResult: 0
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.find_groups
+      instance.find_groups.must_be_instance_of Array
     end
 
     %i[link_users unlink_users].each do |message|
