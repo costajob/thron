@@ -26,7 +26,7 @@ module Thron
       end 
 
       def circuit_breaker
-        @circuit_breaker ||= CircuitBreaker::new(ignored: [Response::NotTwoHundredError])
+        @circuit_breaker ||= CircuitBreaker::new
       end
     end
 
