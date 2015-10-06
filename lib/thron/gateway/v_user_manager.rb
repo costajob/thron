@@ -70,13 +70,25 @@ module Thron
         end
       end
 
+      def active?(username:, password:)
+        query = { 
+          clientId: self.client_id,
+          username: username,
+          password: password
+        }
+        route(to: __callee__, query: query, token_id: @token_id, dash: false) do |response|
+          return Entity::User::factory(response.body.fetch('user') { {} }) if response.is_200?
+        end
+      end
+
       def routes
         @routes ||= {
           create: Route::factory(name: 'create', package: PACKAGE),
           change_password: Route::factory(name: 'changePassword', package: PACKAGE),
           change_status: Route::factory(name: 'changeUserStatus', package: PACKAGE),
           detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::VERBS::GET),
-          find: Route::factory(name: 'findByProperties', package: PACKAGE)
+          find: Route::factory(name: 'findByProperties', package: PACKAGE),
+          active?: Route::factory(name: 'login', package: PACKAGE)
         }
       end
     end

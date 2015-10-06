@@ -73,4 +73,15 @@ describe Thron::Gateway::VUserManager do
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.find.must_be_instance_of Array
   end
+
+  it 'must call post to check user validity' do
+    route = instance.routes.fetch(:active?)
+    query = { 
+      clientId: instance.client_id,
+      username: 'elvis',
+      password: 'lovemetender'
+    }
+    mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
+    instance.active?(username: 'elvis', password: 'lovemetender').must_be_instance_of Thron::Entity::User
+  end
 end
