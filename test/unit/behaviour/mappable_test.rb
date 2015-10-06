@@ -42,7 +42,8 @@ end
 
 describe Thron::Mappable do
   let(:klass) { Mock::Entity }
-  let(:instance) { klass::new(first: 'Elvis', last: 'Presley', dob: Date::new(1935,1,8), grammys: 3, awards: [1967, 1972, 1974].map { |year| Mock::Award::new(name: 'Grammy', year: year) }, spouse: Mock::Spouse::new(first: 'Priscilla', last: 'Ann Wagner'), weight: 101.5, dead: true, created_at: Time::new(2015,10,29,2,0,59)) }
+  let(:elvis) { { first: 'Elvis', last: 'Presley', dob: Date::new(1935,1,8), grammys: 3, awards: [1967, 1972, 1974].map { |year| Mock::Award::new(name: 'Grammy', year: year) }, spouse: Mock::Spouse::new(first: 'Priscilla', last: 'Ann Wagner'), weight: 101.5, dead: true, created_at: Time::new(2015,10,29,2,0,59) } }
+  let(:instance) { klass::new(elvis) }
 
   describe Thron::Mappable::Attribute do
     let(:klass) { Thron::Mappable::Attribute }
@@ -146,5 +147,27 @@ describe Thron::Mappable do
       'weightInKgs'  => instance.weight, 
       'isDead'       => instance.dead,
       'createdAt'    => instance.created_at.iso8601 })
+  end
+
+  describe 'equality methods' do
+    let(:timestamp) { Time::now }
+    let(:default_proc) { -> { klass::default(created_at: timestamp) } }
+    let(:elvis_proc) { -> { klass::new(elvis) } }
+
+    it 'must return hash based on values only' do
+      default_proc.call.hash.must_equal default_proc.call.hash
+    end
+
+    it 'must call the hash method on nested objects attributes' do
+      elvis_proc.call.hash.must_equal elvis_proc.call.hash
+    end
+
+    it 'must define equality' do
+      default_proc.call.must_equal default_proc.call
+    end
+
+    it 'must define deep equality' do
+      Array::new(10) { elvis_proc.call }.uniq.must_equal [elvis_proc.call]
+    end
   end
 end

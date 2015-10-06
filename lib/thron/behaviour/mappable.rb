@@ -98,6 +98,26 @@ module Thron
       to_h(payload: true)
     end
 
+    def hash
+      @hash ||= instance_variables.reduce(0) do |acc, attr|
+        value = self.instance_variable_get(attr)
+        code = case value
+               when Array
+                 value.empty? ? 0 : value.map(&:hash).reduce(&:+)
+               else
+                 value.hash
+               end
+        acc += code
+      end
+    end
+
+    def ==(other)
+      self.hash == other.hash
+    end
+
+    alias_method :eql?, :==
+
+
     private def value_by_type(type:, value:, payload:)
       return value if value.nil?
       case type
