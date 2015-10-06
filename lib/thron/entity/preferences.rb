@@ -2,7 +2,7 @@ require_relative 'notification'
 
 module Thron
   module Entity
-    class Preference
+    class Preferences
       def self.mappings
         @mappings ||= { 
           timezone_id: Mappable::Attribute::new(name: 'timeZoneId'),

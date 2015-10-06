@@ -8,8 +8,6 @@ module Thron
   module Routable
     include HTTParty
 
-    DEBUG = false
-
     class NoentRouteError < StandardError; end
 
     def self.included(klass)
@@ -71,7 +69,7 @@ module Thron
         "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
         "  * raw: #{raw.value.inspect}",
         "*" * 50,
-        "\n" if DEBUG
+        "\n" if Config::debug.routing
     end
   end
 end

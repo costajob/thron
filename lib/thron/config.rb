@@ -28,8 +28,12 @@ module Thron
       Logger::const_get(level.upcase)
     end
 
-    def thron
-      @thron ||= OpenStruct.new(dump_yaml['thron'])
+    %w[thron debug].each do |message|
+      define_method(message) do
+        attribute = instance_variable_get(:"@#{message}")
+        return attribute if attribute
+        instance_variable_set(:"@#{message}", OpenStruct.new(dump_yaml[message]))
+      end
     end
   end
 end

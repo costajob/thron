@@ -91,7 +91,7 @@ module Thron
         key = payload ? mapping.name : attr
         acc[key] = value_by_type(type: mapping.type, value: value, payload: payload)
         acc
-      end
+      end.reject { |k,v| v.nil? || v == [] }
     end
 
     def to_payload

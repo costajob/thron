@@ -13,28 +13,28 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to create a new group' do
-    route = instance.routes.fetch(:create_group)
+    route = instance.routes.fetch(:create)
     body = { 
       clientId: instance.client_id, 
       usersGroup: Thron::Entity::Group::default.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create_group.must_be_instance_of Thron::Entity::Group
+    instance.create.must_be_instance_of Thron::Entity::Group
   end
 
   it 'must call post to remove an existing group' do
-    route = instance.routes.fetch(:remove_group)
+    route = instance.routes.fetch(:remove)
     body = { 
       clientId: instance.client_id,
       groupId: group_id,
       force: true
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_group(id: group_id, force: true)
+    instance.remove(id: group_id, force: true)
   end
 
   it 'must call post to get group detail' do
-    route = instance.routes.fetch(:detail_group)
+    route = instance.routes.fetch(:detail)
     body = { 
       clientId: instance.client_id,
       groupId: group_id,
@@ -43,11 +43,11 @@ describe Thron::Gateway::UsersGroupManager do
       fieldsOption: Thron::Entity::FieldsOption::default.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.detail_group(id: group_id).must_be_instance_of Thron::Entity::Group
+    instance.detail(id: group_id).must_be_instance_of Thron::Entity::Group
   end
 
   it 'must call post to find group by properties' do
-    route = instance.routes.fetch(:find_groups)
+    route = instance.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
       criteria: Thron::Entity::GroupCriteria::default.to_payload,
@@ -57,7 +57,7 @@ describe Thron::Gateway::UsersGroupManager do
       numberOfResult: 0
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find_groups.must_be_instance_of Array
+    instance.find.must_be_instance_of Array
   end
 
   %i[link_users unlink_users].each do |message|

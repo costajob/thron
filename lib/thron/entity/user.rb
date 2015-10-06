@@ -1,5 +1,5 @@
 require_relative 'capabilities'
-require_relative 'preference'
+require_relative 'preferences'
 require_relative 'picture'
 require_relative 'acl_rule'
 require_relative 'i_metadata'
@@ -19,8 +19,8 @@ module Thron
           created_at: Mappable::Attribute::new(name: 'creationDate', type: Mappable::Attribute::TIME),
           capabilities: Mappable::Attribute::new(name: 'userCapabilities', type: Capabilities),
           active: Mappable::Attribute::new(name: 'active', type: Mappable::Attribute::BOOL),
-          expiration_at: Mappable::Attribute::new(name: 'expiryDate', type: Mappable::Attribute::DATE),
-          preferences: Mappable::Attribute::new(name: 'userPreferences', type: [Preference]),
+          expire_at: Mappable::Attribute::new(name: 'expiryDate', type: Mappable::Attribute::DATE),
+          preferences: Mappable::Attribute::new(name: 'userPreferences', type: Preferences),
           created_by: Mappable::Attribute::new(name: 'createdBy'),
           picture: Mappable::Attribute::new(name: 'profilePicture', type: Picture),
           acl_rules: Mappable::Attribute::new(name: 'ownAclRules', type: [AclRule]),

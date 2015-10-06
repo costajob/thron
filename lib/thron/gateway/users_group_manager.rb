@@ -9,17 +9,17 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create_group(group: Entity::Group::default)
+      def create(group: Entity::Group::default)
         body = { 
           clientId: self.client_id,
           usersGroup: group.to_payload
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
-          return Entity::Group::factory(response.body.fetch('group') { {} })
+          return Entity::Group::factory(response.body.fetch('group') { {} }) if response.is_200?
         end
       end
 
-      def remove_group(id:, force: false)
+      def remove(id:, force: false)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -28,7 +28,7 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id)
       end
 
-      def detail_group(id:, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
+      def detail(id:, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -37,11 +37,11 @@ module Thron
           fieldsOption: fields_option.to_payload
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
-          return Entity::Group::factory(response.body.fetch('group') { {} })
+          return Entity::Group::factory(response.body.fetch('group') { {} }) if response.is_200?
         end
       end
 
-      def find_groups(criteria: Entity::GroupCriteria::default, order_by: nil, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
+      def find(criteria: Entity::GroupCriteria::default, order_by: nil, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -53,7 +53,7 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id) do |response|
           return response.body.fetch('groups') { [] }.map do |group|
             Entity::Group::factory(group.fetch('groupDetail') { {} })
-          end
+          end if response.is_200?
         end
       end
 
@@ -88,10 +88,10 @@ module Thron
 
       def routes
         @routes ||= {
-          create_group: Route::factory(name: 'createGroup', package: PACKAGE),
-          remove_group: Route::factory(name: 'removeGroup', package: PACKAGE),
-          detail_group: Route::factory(name: 'detailGroup', package: PACKAGE),
-          find_groups: Route::factory(name: 'findGroupsByProperties', package: PACKAGE),
+          create: Route::factory(name: 'createGroup', package: PACKAGE),
+          remove: Route::factory(name: 'removeGroup', package: PACKAGE),
+          detail: Route::factory(name: 'detailGroup', package: PACKAGE),
+          find: Route::factory(name: 'findGroupsByProperties', package: PACKAGE),
           link_users: Route::factory(name: 'linkUserToGroup', package: PACKAGE),
           unlink_users: Route::factory(name: 'unlinkUserToGroup', package: PACKAGE),
           update: Route::lazy_factory(name: 'update', package: PACKAGE),

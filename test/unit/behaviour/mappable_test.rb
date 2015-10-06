@@ -81,8 +81,8 @@ describe Thron::Mappable do
     entity.last.must_equal 'Starr'
     entity.dob.must_equal Date::new(1940,7,7)
     entity.grammys.must_equal 10
-    assert entity.awards.all? { |award| award.instance_of?(Mock::Award)}
-    entity.spouse.must_be_instance_of Mock::Spouse
+    assert entity.awards.must_equal awards
+    entity.spouse.must_equal spouse
     entity.weight.must_equal 0.0
     refute entity.dead
     entity.created_at.must_be_instance_of Time
@@ -134,6 +134,10 @@ describe Thron::Mappable do
       weight: instance.weight, 
       dead: instance.dead,
       created_at: instance.created_at.iso8601 })
+  end
+
+  it 'must discard nil key-values' do
+    klass::default(first: 'George').to_h.keys.sort.must_equal %i[created_at dead dob first grammys weight]
   end
 
   it 'must return the payload form' do

@@ -21,4 +21,10 @@ describe Thron::Config do
       Thron::Config::thron.send(message).wont_be_nil
     end
   end
+
+  it 'must valorize the debug configuration' do
+    %i[routing].each do |message|
+      Thron::Config::debug.send(message).wont_be_nil
+    end
+  end
 end
