@@ -12,17 +12,11 @@ describe Thron::Gateway::UsersGroupManager do
     klass::PACKAGE.to_s.must_equal "xsso/resources/usersgroupmanager"
   end
 
-  it 'must initialize state' do
-    %i[criteria fields_option group_data].each do |attr|
-      assert instance.instance_variable_defined?(:"@#{attr}")
-    end
-  end
-
   it 'must call post to create a new group' do
     route = instance.routes.fetch(:create)
     body = { 
       clientId: instance.client_id, 
-      usersGroup: instance.group_data.to_payload
+      usersGroup: Thron::Entity::Group::new.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.create
@@ -46,7 +40,7 @@ describe Thron::Gateway::UsersGroupManager do
       groupId: group_id,
       offset: 0,
       numberOfResult: 0,
-      fieldsOption: instance.fields_option.to_payload
+      fieldsOption: Thron::Entity::FieldsOption::new.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.detail(id: group_id)
@@ -56,9 +50,9 @@ describe Thron::Gateway::UsersGroupManager do
     route = instance.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: instance.criteria.to_payload,
+      criteria: Thron::Entity::GroupCriteria::new.to_payload,
       orderBy: nil,
-      fieldsOption: instance.fields_option.to_payload,
+      fieldsOption: Thron::Entity::FieldsOption::new.to_payload,
       offset: 0,
       numberOfResult: 0
     }.to_json

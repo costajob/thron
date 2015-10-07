@@ -11,16 +11,7 @@ module Thron
       PACKAGE      = Package.new(:xsso, :resources, self.service_name)
       DEFAULT_TYPE = 'PLATFORM_USER'
 
-      attr_reader :criteria, :fields_option, :user_data
-
-      def initialize(*args)
-        @criteria      = Entity::UserCriteria::new
-        @fields_option = Entity::FieldsOption::new
-        @user_data     = Entity::User::new(type: DEFAULT_TYPE)
-        super
-      end
-
-      def create(user: @user_data)
+      def create(user: Entity::User::new)
         body = user.to_payload.tap do |payload|
           payload['newUser'] = payload.delete('credential')
         end.merge({ clientId: self.client_id })
@@ -29,7 +20,7 @@ module Thron
         end
       end
 
-      def detail(username:, fields_option: @fields_option, offset: 0, limit: 0)
+      def detail(username:, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
         query = {
           clientId: self.client_id,
           username: username,
@@ -43,7 +34,7 @@ module Thron
         end
       end
 
-      def find(criteria: @criteria, order_by: nil, fields_option: @fields_option, offset: 0, limit: 0)
+      def find(criteria: Entity::UserCriteria::new, order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -101,7 +92,7 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id)
       end
 
-      def update_capabilities(username:, capabilities: @user_data.capabilities)
+      def update_capabilities(username:, capabilities: Entity::Capabilities::new)
         body = { 
           clientId: self.client_id,
           username: username,
@@ -138,14 +129,14 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id)
       end
 
-      def update(username:, data: @user_data)
+      def update(username:, data: Entity::User::new)
         body = {
           update: data.to_payload
         }
         route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, username])
       end
 
-      def upgrade(username:, password:, data: @user_data)
+      def upgrade(username:, password:, data: Entity::User::new)
         body = data.to_payload.tap do |payload|
           payload['newUserDetail'] = payload.delete('detail')
           preferences = payload.delete('userPreferences') { {} }

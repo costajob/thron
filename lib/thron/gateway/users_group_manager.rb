@@ -9,16 +9,7 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      attr_reader :criteria, :fields_option, :group_data
-
-      def initialize(*args)
-        @criteria      = Entity::GroupCriteria::new
-        @fields_option = Entity::FieldsOption::new
-        @group_data    = Entity::Group::new
-        super
-      end
-
-      def create(group: @group_data)
+      def create(group: Entity::Group::new)
         body = { 
           clientId: self.client_id,
           usersGroup: group.to_payload
@@ -37,7 +28,7 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id)
       end
 
-      def detail(id:, fields_option: @fields_option, offset: 0, limit: 0)
+      def detail(id:, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -50,7 +41,7 @@ module Thron
         end
       end
 
-      def find(criteria: @criteria, order_by: nil, fields_option: @fields_option, offset: 0, limit: 0)
+      def find(criteria: Entity::GroupCriteria::new, order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,

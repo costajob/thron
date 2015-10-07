@@ -12,12 +12,6 @@ describe Thron::Gateway::VUserManager do
     klass::PACKAGE.to_s.must_equal "xsso/resources/vusermanager"
   end
 
-  it 'must initialize state' do
-    %i[criteria fields_option user_data].each do |attr|
-      assert instance.instance_variable_defined?(:"@#{attr}")
-    end
-  end
-
   it 'must call post to create a new user' do
     route = instance.routes.fetch(:create)
     data = Thron::Entity::User::new(type: klass::DEFAULT_TYPE)
@@ -25,7 +19,7 @@ describe Thron::Gateway::VUserManager do
       payload['newUser'] = payload.delete('credential')
     end.merge({ clientId: instance.client_id }).to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create
+    instance.create(user: data)
   end
 
   it 'must call get to fetch detail' do
@@ -46,9 +40,9 @@ describe Thron::Gateway::VUserManager do
     route = instance.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: instance.criteria.to_payload,
+      criteria: Thron::Entity::UserCriteria::new.to_payload,
       orderBy: nil,
-      fieldsOption: instance.fields_option.to_payload,
+      fieldsOption: Thron::Entity::FieldsOption::new.to_payload,
       offset: 0,
       numberOfResult: 0
     }.to_json
