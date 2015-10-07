@@ -37,10 +37,11 @@ module Thron
         end
       end
 
-      def fetch_value(data:, mapped_attribute:)
-        data.fetch(mapped_attribute.name.to_s) do
-          fail MissingAttributeError, "Mandatory attribute is missing: #{name}" if mapped_attribute.mandatory
-          default_value(mapped_attribute.type)
+      def fetch_value(data:, attr: nil, mapping:)
+        key = attr ? attr : mapping.name.to_s
+        data.fetch(key) do
+          fail MissingAttributeError, "Mandatory attribute is missing: #{key}" if mapping.mandatory
+          default_value(mapping.type)
         end
       end
 
@@ -52,6 +53,12 @@ module Thron
           value.map { |data| entity.factory(data) }
         when Class
           type.factory(value)
+        when Attribute::DATE
+          Date::parse(value.to_s)
+        when Attribute::TIME
+          Time::parse(value.to_s)
+        when Attribute::BOOL
+          value == 'false' ? false : !!value
         else
           value
         end
@@ -59,16 +66,8 @@ module Thron
 
       def factory(data)
         args = mappings.reduce({}) do |acc, (attr, mapping)|
-          value = fetch_value(data: data, mapped_attribute: mapping)
+          value = fetch_value(data: data, mapping: mapping)
           acc[attr] = map_value(value: value, mapping: mapping); acc
-        end
-        new(args)
-      end
-
-      def default(args = {})
-        args = mappings.reduce({}) do |acc, (attr, mapping)|
-          acc[attr] = args.fetch(attr) { default_value(mapping.type) }
-          acc
         end
         new(args)
       end
@@ -79,9 +78,9 @@ module Thron
       klass.send(:attr_accessor, *klass.mappings.keys)
     end
 
-    def initialize(args)
-      self.class.mappings.keys.each do |attr|
-        instance_variable_set(:"@#{attr}", args.fetch(attr))
+    def initialize(args = {})
+      self.class.mappings.each do |attr, mapping|
+        instance_variable_set(:"@#{attr}", self.class.fetch_value(data: args, attr: attr, mapping: mapping))
       end
     end
 
@@ -116,7 +115,6 @@ module Thron
     end
 
     alias_method :eql?, :==
-
 
     private def value_by_type(type:, value:, payload:)
       return value if value.nil?

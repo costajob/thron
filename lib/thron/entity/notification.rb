@@ -5,10 +5,10 @@ module Thron
     class Notification
       def self.mappings
         @mappings ||= { 
-          email: Mappable::Attribute::new(name: 'email'),
-          phone: Mappable::Attribute::new(name: 'phoneNumber'),
-          notify_by: Mappable::Attribute::new(name: 'notifyBy', type: Mappable::Attribute::LIST),
-          auto_subscription: Mappable::Attribute::new(name: 'autoSubscribeToCategories', type: Mappable::Attribute::BOOL)
+          email: Attribute::new(name: 'email'),
+          phone: Attribute::new(name: 'phoneNumber'),
+          notify_by: Attribute::new(name: 'notifyBy', type: Attribute::LIST),
+          auto_subscription: Attribute::new(name: 'autoSubscribeToCategories', type: Attribute::BOOL)
         }
       end
       include Mappable

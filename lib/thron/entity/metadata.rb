@@ -5,8 +5,8 @@ module Thron
     class Metadata
       def self.mappings
         @mappings ||= { 
-          name: Mappable::Attribute::new(name: 'name'),
-          value: Mappable::Attribute::new(name: 'value')
+          name: Attribute::new(name: 'name'),
+          value: Attribute::new(name: 'value')
         }
       end
       include Mappable

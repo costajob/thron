@@ -9,13 +9,22 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create(group: Entity::Group::default)
+      attr_reader :criteria, :fields_option, :group_data
+
+      def initialize(*args)
+        @criteria      = Entity::GroupCriteria::new
+        @fields_option = Entity::FieldsOption::new
+        @group_data    = Entity::Group::new
+        super
+      end
+
+      def create(group: @group_data)
         body = { 
           clientId: self.client_id,
           usersGroup: group.to_payload
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
-          return Entity::Group::factory(response.body.fetch('group') { {} }) if response.is_200?
+          response.mapped = Entity::Group::factory(response.body.fetch('group') { {} })
         end
       end
 
@@ -28,7 +37,7 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id)
       end
 
-      def detail(id:, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
+      def detail(id:, fields_option: @fields_option, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -37,11 +46,11 @@ module Thron
           fieldsOption: fields_option.to_payload
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
-          return Entity::Group::factory(response.body.fetch('group') { {} }) if response.is_200?
+          response.mapped = Entity::Group::factory(response.body.fetch('group') { {} })
         end
       end
 
-      def find(criteria: Entity::GroupCriteria::default, order_by: nil, fields_option: Entity::FieldsOption::default, offset: 0, limit: 0)
+      def find(criteria: @criteria, order_by: nil, fields_option: @fields_option, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -51,9 +60,9 @@ module Thron
           numberOfResult: limit.to_i
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
-          return response.body.fetch('groups') { [] }.map do |group|
+          response.mapped = response.body.fetch('groups') { [] }.map do |group|
             Entity::Group::factory(group.fetch('groupDetail') { {} })
-          end if response.is_200?
+          end
         end
       end
 
@@ -79,11 +88,11 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, group.id])
       end
 
-      def update_external_id(group:)
+      def update_external_id(id:, external_id:)
         body = {
-          externalId: group.external_id.to_payload
+          externalId: external_id.to_payload
         }
-        route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, group.id])
+        route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, id])
       end
 
       def routes

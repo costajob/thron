@@ -5,8 +5,8 @@ module Thron
     class Url
       def self.mappings
         @mappings ||= { 
-          category: Mappable::Attribute::new(name: 'urlCategory'),
-          address: Mappable::Attribute::new(name: 'url')
+          category: Attribute::new(name: 'urlCategory'),
+          address: Attribute::new(name: 'url')
         }
       end
       include Mappable

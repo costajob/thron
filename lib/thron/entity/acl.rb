@@ -5,8 +5,8 @@ module Thron
     class Acl
       def self.mappings
         @mappings ||= { 
-          on_context: Mappable::Attribute::new(name: 'onContext'),
-          rules: Mappable::Attribute::new(name: 'rules', type: [AclRule])
+          on_context: Attribute::new(name: 'onContext'),
+          rules: Attribute::new(name: 'rules', type: [AclRule])
         }
       end
       include Mappable

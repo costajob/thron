@@ -5,9 +5,9 @@ module Thron
     class Capabilities
       def self.mappings
         @mappings ||= { 
-          capabilities: Mappable::Attribute::new(name: 'capabilities', type: Mappable::Attribute::LIST),
-          roles: Mappable::Attribute::new(name: 'userRoles', type: Mappable::Attribute::LIST),
-          solutions: Mappable::Attribute::new(name: 'enabledSolutions', type: Mappable::Attribute::LIST)
+          capabilities: Attribute::new(name: 'capabilities', type: Attribute::LIST),
+          roles: Attribute::new(name: 'userRoles', type: Attribute::LIST),
+          solutions: Attribute::new(name: 'enabledSolutions', type: Attribute::LIST)
         }
       end
       include Mappable

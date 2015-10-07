@@ -5,11 +5,11 @@ module Thron
     class ITag
       def self.mappings
         @mappings ||= { 
-          id: Mappable::Attribute::new(name: 'id'),
-          clasification_id: Mappable::Attribute::new(name: 'classificationId'),
-          approved: Mappable::Attribute::new(name: 'approved', type: Mappable::Attribute::BOOL),
-          sources: Mappable::Attribute::new(name: 'sources', type: [Source]),
-          stypes: Mappable::Attribute::new(name: 'stypes', type: Mappable::Attribute::LIST)
+          id: Attribute::new(name: 'id'),
+          clasification_id: Attribute::new(name: 'classificationId'),
+          approved: Attribute::new(name: 'approved', type: Attribute::BOOL),
+          sources: Attribute::new(name: 'sources', type: [Source]),
+          stypes: Attribute::new(name: 'stypes', type: Attribute::LIST)
         }
       end
       include Mappable

@@ -5,8 +5,8 @@ module Thron
     class ICall
       def self.mappings
         @mappings ||= { 
-          category: Mappable::Attribute::new(name: 'inumberCategory'),
-          number: Mappable::Attribute::new(name: 'inumber')
+          category: Attribute::new(name: 'inumberCategory'),
+          number: Attribute::new(name: 'inumber')
         }
       end
       include Mappable

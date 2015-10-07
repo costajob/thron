@@ -2,7 +2,7 @@ require_relative 'logger'
 
 module Thron
   class Response
-    attr_reader :http_code, :body, :result_code, :sso_code, :total, :error
+    attr_reader :http_code, :body, :result_code, :sso_code, :total, :error, :mapped
 
     ERROR_KEY = 'errorDescription'
 
@@ -17,6 +17,10 @@ module Thron
 
     def is_200?
       (@http_code.to_i / 100) == 2
+    end
+
+    def mapped=(data)
+      @mapped = data if is_200?
     end
 
     private

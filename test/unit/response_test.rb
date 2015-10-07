@@ -16,12 +16,23 @@ describe Thron::Response do
       end
     end
 
+    it 'must respond to accessors' do
+      %i[http_code body result_code sso_code total error mapped].each do |message|
+        instance.must_respond_to message
+      end
+    end
+
     it 'must remove response keys and leave data' do
       instance.body.must_equal({ "field1" => "Elvis", "field2" => "Presley" })
     end
 
     it 'must detect 200 http code' do
       assert instance.is_200?
+    end
+
+    it 'must set mapped attribute only for 200 responses' do
+      instance.mapped = :data
+      instance.mapped.must_equal :data
     end
   end
 
@@ -35,5 +46,11 @@ describe Thron::Response do
     %i[result_code sso_code error].each do |message|
       instance.send(message).must_be_nil
     end
+  end
+
+  it 'must prevent set of mapped attribute for non-200 responses' do
+    instance = klass::new(ko)
+    instance.mapped = :data
+    instance.mapped.must_be_nil
   end
 end

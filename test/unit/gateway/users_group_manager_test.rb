@@ -12,14 +12,20 @@ describe Thron::Gateway::UsersGroupManager do
     klass::PACKAGE.to_s.must_equal "xsso/resources/usersgroupmanager"
   end
 
+  it 'must initialize state' do
+    %i[criteria fields_option group_data].each do |attr|
+      assert instance.instance_variable_defined?(:"@#{attr}")
+    end
+  end
+
   it 'must call post to create a new group' do
     route = instance.routes.fetch(:create)
     body = { 
       clientId: instance.client_id, 
-      usersGroup: Thron::Entity::Group::default.to_payload
+      usersGroup: instance.group_data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create.must_be_instance_of Thron::Entity::Group
+    instance.create
   end
 
   it 'must call post to remove an existing group' do
@@ -40,24 +46,24 @@ describe Thron::Gateway::UsersGroupManager do
       groupId: group_id,
       offset: 0,
       numberOfResult: 0,
-      fieldsOption: Thron::Entity::FieldsOption::default.to_payload
+      fieldsOption: instance.fields_option.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.detail(id: group_id).must_be_instance_of Thron::Entity::Group
+    instance.detail(id: group_id)
   end
 
   it 'must call post to find group by properties' do
     route = instance.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::GroupCriteria::default.to_payload,
+      criteria: instance.criteria.to_payload,
       orderBy: nil,
-      fieldsOption: Thron::Entity::FieldsOption::default.to_payload,
+      fieldsOption: instance.fields_option.to_payload,
       offset: 0,
       numberOfResult: 0
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find.must_be_instance_of Array
+    instance.find
   end
 
   %i[link_users unlink_users].each do |message|
@@ -76,7 +82,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update group details' do
-    group = Thron::Entity::Group::default.tap do |group|
+    group = Thron::Entity::Group::new.tap do |group|
       group.id = group_id
       group.metadata = 3.times.map { |i| Thron::Entity::Metadata::new(name: "name#{i}", value: "value#{i}") }
     end
@@ -89,15 +95,12 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update external id' do
-    group = Thron::Entity::Group::default.tap do |group|
-      group.id = group_id
-      group.external_id = Thron::Entity::ExternalId::new(id: 'ext_01', type: 'type_01')
-    end
-    route = instance.routes.fetch(:update_external_id).call([instance.client_id, group.id])
+    external_id = Thron::Entity::ExternalId::new(id: 'ext_01', type: 'type_01')
+    route = instance.routes.fetch(:update_external_id).call([instance.client_id, group_id])
     body = { 
-      externalId: group.external_id.to_payload
+      externalId: external_id.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_external_id(group: group)
+    instance.update_external_id(id: group_id, external_id: external_id)
   end
 end

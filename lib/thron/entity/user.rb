@@ -8,32 +8,34 @@ require_relative 'external_id'
 require_relative 'metadata'
 require_relative 'user_detail'
 require_relative 'credentials'
+require_relative 'patch'
 
 module Thron
   module Entity
     class User
       def self.mappings
         @mappings ||= { 
-          type: Mappable::Attribute::new(name: 'userType'),
-          password_updated_at: Mappable::Attribute::new(name: 'passwordUpdate', type: Mappable::Attribute::TIME),
-          created_at: Mappable::Attribute::new(name: 'creationDate', type: Mappable::Attribute::TIME),
-          capabilities: Mappable::Attribute::new(name: 'userCapabilities', type: Capabilities),
-          active: Mappable::Attribute::new(name: 'active', type: Mappable::Attribute::BOOL),
-          expire_at: Mappable::Attribute::new(name: 'expiryDate', type: Mappable::Attribute::DATE),
-          preferences: Mappable::Attribute::new(name: 'userPreferences', type: Preferences),
-          created_by: Mappable::Attribute::new(name: 'createdBy'),
-          picture: Mappable::Attribute::new(name: 'profilePicture', type: Picture),
-          acl_rules: Mappable::Attribute::new(name: 'ownAclRules', type: [AclRule]),
-          quota: Mappable::Attribute::new(name: 'userQuota', type: Mappable::Attribute::INT),
-          lock_template: Mappable::Attribute::new(name: 'userLockTemplate'),
-          notify_first_access: Mappable::Attribute::new(name: 'sendFirstAccessNotification', type: Mappable::Attribute::BOOL),
-          i_metadata: Mappable::Attribute::new(name: 'imetadata', type: [IMetadata]),
-          i_tags: Mappable::Attribute::new(name: 'itags', type: [ITag]),
-          external_id: Mappable::Attribute::new(name: 'externalId', type: ExternalId),
-          contact_id: Mappable::Attribute::new(name: 'contactId'),
-          metadata: Mappable::Attribute::new(name: 'metadata', type: [Metadata]),
-          detail: Mappable::Attribute::new(name: 'detail', type: UserDetail),
-          credentials: Mappable::Attribute::new(name: 'credential', type: Credentials)
+          type: Attribute::new(name: 'userType'),
+          password_updated_at: Attribute::new(name: 'passwordUpdate', type: Attribute::TIME),
+          created_at: Attribute::new(name: 'creationDate', type: Attribute::TIME),
+          capabilities: Attribute::new(name: 'userCapabilities', type: Capabilities),
+          active: Attribute::new(name: 'active', type: Attribute::BOOL),
+          expire_at: Attribute::new(name: 'expiryDate', type: Attribute::DATE),
+          preferences: Attribute::new(name: 'userPreferences', type: Preferences),
+          created_by: Attribute::new(name: 'createdBy'),
+          picture: Attribute::new(name: 'profilePicture', type: Picture),
+          acl_rules: Attribute::new(name: 'ownAclRules', type: [AclRule]),
+          quota: Attribute::new(name: 'userQuota', type: Attribute::INT),
+          lock_template: Attribute::new(name: 'userLockTemplate'),
+          notify_first_access: Attribute::new(name: 'sendFirstAccessNotification', type: Attribute::BOOL),
+          i_metadata: Attribute::new(name: 'imetadata', type: [IMetadata]),
+          i_tags: Attribute::new(name: 'itags', type: [ITag]),
+          external_id: Attribute::new(name: 'externalId', type: ExternalId),
+          contact_id: Attribute::new(name: 'contactId'),
+          metadata: Attribute::new(name: 'metadata', type: [Metadata]),
+          detail: Attribute::new(name: 'detail', type: UserDetail),
+          credentials: Attribute::new(name: 'credential', type: Credentials),
+          patches: Attribute::new(name: 'patch', type: [Patch])
         }
       end
       include Mappable

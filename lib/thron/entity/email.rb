@@ -5,8 +5,8 @@ module Thron
     class Email
       def self.mappings
         @mappings ||= { 
-          category: Mappable::Attribute::new(name: 'emailCategory'),
-          address: Mappable::Attribute::new(name: 'email')
+          category: Attribute::new(name: 'emailCategory'),
+          address: Attribute::new(name: 'email')
         }
       end
       include Mappable

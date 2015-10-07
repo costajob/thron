@@ -12,20 +12,20 @@ module Thron
     class UserDetail
       def self.mappings
         @mappings ||= { 
-          dob: Mappable::Attribute::new(name: 'dob'),
-          gender: Mappable::Attribute::new(name: 'gender'),
-          contact_type: Mappable::Attribute::new(name: 'contactType'),
-          note: Mappable::Attribute::new(name: 'note'),
-          reference_id: Mappable::Attribute::new(name: 'externalReferenceId'),
-          i_calls: Mappable::Attribute::new(name: 'icalls', type: [ICall]),
-          addresses: Mappable::Attribute::new(name: 'addresses', type: [Address]),
-          picture: Mappable::Attribute::new(name: 'image', type: Picture),
-          name: Mappable::Attribute::new(name: 'name', type: Name),
-          emails: Mappable::Attribute::new(name: 'emails', type: [Email]),
-          phones: Mappable::Attribute::new(name: 'phoneNumbers', type: [Phone]),
-          urls: Mappable::Attribute::new(name: 'urls', type: [Url]),
-          im_contacts: Mappable::Attribute::new(name: 'imcontacts', type: [ImContact]),
-          business_detail: Mappable::Attribute::new(name: 'businessDetail', type: BusinessDetail)
+          dob: Attribute::new(name: 'dob'),
+          gender: Attribute::new(name: 'gender'),
+          contact_type: Attribute::new(name: 'contactType'),
+          note: Attribute::new(name: 'note'),
+          reference_id: Attribute::new(name: 'externalReferenceId'),
+          i_calls: Attribute::new(name: 'icalls', type: [ICall]),
+          addresses: Attribute::new(name: 'addresses', type: [Address]),
+          picture: Attribute::new(name: 'image', type: Picture),
+          name: Attribute::new(name: 'name', type: Name),
+          emails: Attribute::new(name: 'emails', type: [Email]),
+          phones: Attribute::new(name: 'phoneNumbers', type: [Phone]),
+          urls: Attribute::new(name: 'urls', type: [Url]),
+          im_contacts: Attribute::new(name: 'imcontacts', type: [ImContact]),
+          business_detail: Attribute::new(name: 'businessDetail', type: BusinessDetail)
         }
       end
       include Mappable

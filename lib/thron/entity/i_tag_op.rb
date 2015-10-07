@@ -5,8 +5,8 @@ module Thron
     class ITagOp
       def self.mappings
         @mappings ||= { 
-          i_tags: Mappable::Attribute::new(name: 'itags', type: [ITag]),
-          operation: Mappable::Attribute::new(name: 'operation')
+          i_tags: Attribute::new(name: 'itags', type: [ITag]),
+          operation: Attribute::new(name: 'operation')
         }
       end
       include Mappable

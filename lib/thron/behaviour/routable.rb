@@ -67,7 +67,6 @@ module Thron
         "  * query: #{query.inspect}",
         "  * body: #{body.inspect}",
         "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
-        "  * raw: #{raw.value.inspect}",
         "*" * 50,
         "\n" if Config::debug.routing
     end

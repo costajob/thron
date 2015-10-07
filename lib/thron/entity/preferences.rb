@@ -5,10 +5,10 @@ module Thron
     class Preferences
       def self.mappings
         @mappings ||= { 
-          timezone_id: Mappable::Attribute::new(name: 'timeZoneId'),
-          locale: Mappable::Attribute::new(name: 'locale'),
-          notification: Mappable::Attribute::new(name: 'notificationProperty', type: Notification),
-          default_category_id: Mappable::Attribute::new(name: 'defaultCategoryId')
+          timezone_id: Attribute::new(name: 'timeZoneId'),
+          locale: Attribute::new(name: 'locale'),
+          notification: Attribute::new(name: 'notificationProperty', type: Notification),
+          default_category_id: Attribute::new(name: 'defaultCategoryId')
         }
       end
       include Mappable

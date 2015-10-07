@@ -62,65 +62,73 @@ describe Thron::Mappable do
     end
   end
 
-  it 'must factory an instance with valid attributes' do
-    awards = [1965, 1967, 1968, 1970, 1971, 1977, 1983, 1997].map { |year| Mock::Award::new(name: 'Grammy', year: year) }
-    spouse = Mock::Spouse::new(first: 'Barbara', last: 'Goldbach')
-    data = { 
-      'firstName' => 'Ringo',
-      'lastName' => 'Starr',
-      'dateOfBirth' => Date::new(1940,7,7),
-      'grammyAwards' => 10,
-      'wonAwards' => awards.map(&:to_payload),
-      'lastSpouse' => spouse.to_payload,
-      'isDead' => false,
-      'createdAt' => Time::now
-    }
-    entity = klass::factory(data)
-    entity.must_be_instance_of klass
-    entity.first.must_equal 'Ringo'
-    entity.last.must_equal 'Starr'
-    entity.dob.must_equal Date::new(1940,7,7)
-    entity.grammys.must_equal 10
-    assert entity.awards.must_equal awards
-    entity.spouse.must_equal spouse
-    entity.weight.must_equal 0.0
-    refute entity.dead
-    entity.created_at.must_be_instance_of Time
-  end
+  describe '::factory' do
+    it 'must factory an instance with valid attributes' do
+      awards = [1965, 1967, 1968, 1970, 1971, 1977, 1983, 1997].map { |year| Mock::Award::new(name: 'Grammy', year: year) }
+      spouse = Mock::Spouse::new(first: 'Barbara', last: 'Goldbach')
+      data = { 
+        'firstName' => 'Ringo',
+        'lastName' => 'Starr',
+        'dateOfBirth' => Date::new(1940,7,7).to_s,
+        'grammyAwards' => 10,
+        'wonAwards' => awards.map(&:to_payload),
+        'lastSpouse' => spouse.to_payload,
+        'isDead' => 'false',
+        'createdAt' => Time::now.to_s
+      }
+      entity = klass::factory(data)
+      entity.must_be_instance_of klass
+      entity.first.must_equal 'Ringo'
+      entity.last.must_equal 'Starr'
+      entity.dob.must_equal Date::new(1940,7,7)
+      entity.grammys.must_equal 10
+      assert entity.awards.must_equal awards
+      entity.spouse.must_equal spouse
+      entity.weight.must_equal 0.0
+      refute entity.dead
+      entity.created_at.must_be_instance_of Time
+    end
 
-  it 'must factory an instance when attributes are nil' do
-    data = { 
-      'firstName' => 'Ringo',
-      'lastName' => 'Starr',
-      'grammyAwards' => nil,
-      'wonAwards' => nil,
-      'lastSpouse' => nil
-    }
-    entity = klass::factory(data)
-    entity.must_be_instance_of klass
-    entity.first.must_equal 'Ringo'
-    entity.last.must_equal 'Starr'
-    %i[awards spouse].each do |message|
-      entity.send(message).must_be_nil
+    it 'must factory an instance when attributes are nil' do
+      data = { 
+        'firstName' => 'Ringo',
+        'lastName' => 'Starr',
+        'grammyAwards' => nil,
+        'wonAwards' => nil,
+        'lastSpouse' => nil
+      }
+      entity = klass::factory(data)
+      entity.must_be_instance_of klass
+      entity.first.must_equal 'Ringo'
+      entity.last.must_equal 'Starr'
+      %i[awards spouse].each do |message|
+        entity.send(message).must_be_nil
+      end
+    end
+
+    it 'must check for mandatory attributes' do
+      -> { klass::factory({}) }.must_raise klass::MissingAttributeError 
     end
   end
 
-  it 'must check mandatory atributes' do
-    -> { klass::factory({}) }.must_raise klass::MissingAttributeError 
-  end
+  describe 'constructor' do
+    it 'must initialize an instance with default values' do
+      entity = klass::new(first: 'George', last: 'Harrison')
+      entity.must_be_instance_of klass
+      entity.first.must_equal 'George'
+      entity.last.must_equal 'Harrison'
+      entity.dob.must_equal Date::today
+      entity.grammys.must_equal 0
+      entity.awards.must_be_empty
+      entity.spouse.must_be_nil
+      entity.weight.must_equal 0.0
+      refute entity.dead
+      entity.created_at.must_be_instance_of Time
+    end
 
-  it 'must factory an instance with default values' do
-    entity = klass::default(last: 'Harrison')
-    entity.must_be_instance_of klass
-    entity.first.must_be_nil
-    entity.last.must_equal 'Harrison'
-    entity.dob.must_equal Date::today
-    entity.grammys.must_equal 0
-    entity.awards.must_be_empty
-    entity.spouse.must_be_nil
-    entity.weight.must_equal 0.0
-    refute entity.dead
-    entity.created_at.must_be_instance_of Time
+    it 'must check for mandatory attributes' do
+      -> { klass::new({}) }.must_raise klass::MissingAttributeError 
+    end
   end
 
   it 'must return the key-value form' do
@@ -136,10 +144,6 @@ describe Thron::Mappable do
       created_at: instance.created_at.iso8601 })
   end
 
-  it 'must discard nil key-values' do
-    klass::default(first: 'George').to_h.keys.sort.must_equal %i[created_at dead dob first grammys weight]
-  end
-
   it 'must return the payload form' do
     instance.to_payload.must_equal({ 
       'firstName'    => instance.first, 
@@ -153,21 +157,20 @@ describe Thron::Mappable do
       'createdAt'    => instance.created_at.iso8601 })
   end
 
+  it 'must discard nil key-values' do
+    klass::new(first: 'John', last: 'Lennon').to_h.keys.sort.must_equal %i[created_at dead dob first grammys last weight]
+  end
+
   describe 'equality methods' do
     let(:timestamp) { Time::now }
-    let(:default_proc) { -> { klass::default(created_at: timestamp) } }
     let(:elvis_proc) { -> { klass::new(elvis) } }
-
-    it 'must return hash based on values only' do
-      default_proc.call.hash.must_equal default_proc.call.hash
-    end
 
     it 'must call the hash method on nested objects attributes' do
       elvis_proc.call.hash.must_equal elvis_proc.call.hash
     end
 
     it 'must define equality' do
-      default_proc.call.must_equal default_proc.call
+      elvis_proc.call.must_equal elvis_proc.call
     end
 
     it 'must define deep equality' do

@@ -5,7 +5,7 @@ module Thron
     class Picture
       def self.mappings
         @mappings ||= { 
-          url: Mappable::Attribute::new(name: 'imageUrl')
+          url: Attribute::new(name: 'imageUrl')
         }
       end
       include Mappable

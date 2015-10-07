@@ -1,4 +1,5 @@
 require 'minitest/autorun'
 require 'rr'
 require 'ostruct'
+require 'tempfile'
 require_relative '../lib/thron/root'
