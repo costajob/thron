@@ -8,8 +8,7 @@ module Thron
           id: Attribute::new(name: 'id'),
           clasification_id: Attribute::new(name: 'classificationId'),
           approved: Attribute::new(name: 'approved', type: Attribute::BOOL),
-          sources: Attribute::new(name: 'sources', type: [Source]),
-          stypes: Attribute::new(name: 'stypes', type: Attribute::LIST)
+          sources: Attribute::new(name: 'sources', type: [Source])
         }
       end
       include Mappable

@@ -1,14 +1,9 @@
-require_relative '../behaviour/mappable'
+require_relative 'base'
 
 module Thron
   module Entity
-    class Patch 
-      def self.mappings
-        @mappings ||= { 
-          op: Attribute::new(name: 'op'),
-          field: Attribute::new(name: 'field')
-        }
-      end
+    class Patch < Base 
+      self.mappings = %w[op field]
       include Mappable
     end
   end

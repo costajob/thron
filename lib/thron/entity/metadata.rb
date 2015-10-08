@@ -1,14 +1,9 @@
-require_relative '../behaviour/mappable'
+require_relative 'base'
 
 module Thron
   module Entity
-    class Metadata
-      def self.mappings
-        @mappings ||= { 
-          name: Attribute::new(name: 'name'),
-          value: Attribute::new(name: 'value')
-        }
-      end
+    class Metadata < Base
+      self.mappings = %w[name value locale]
       include Mappable
     end
   end

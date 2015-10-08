@@ -2,8 +2,8 @@ require_relative 'base'
 
 module Thron
   module Entity
-    class Credentials < Base
-      self.mappings = %w[username password]
+    class PrettyId < Base
+      self.mappings = %w[id locale]
       include Mappable
     end
   end

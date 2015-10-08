@@ -1,16 +1,10 @@
-require_relative '../behaviour/mappable'
+require_relative 'base'
 
 module Thron
   module Entity
-    class CropArea
-      def self.mappings
-        @mappings ||= { 
-          x: Attribute::new(name: 'x', type: Attribute::INT),
-          y: Attribute::new(name: 'y', type: Attribute::INT),
-          height: Attribute::new(name: 'height', type: Attribute::INT),
-          width: Attribute::new(name: 'width', type: Attribute::INT)
-        }
-      end
+    class CropArea < Base
+      self.type = Mappable::Attribute::INT
+      self.mappings = %w[x y height width]
       include Mappable
     end
   end
