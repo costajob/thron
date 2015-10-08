@@ -2,22 +2,22 @@ module Thron
   class Route
     attr_reader :verb, :url
 
-    module TYPES
+    module Types
       %w[json plain].each do |type|
         const_set(type.upcase, type)
       end
     end
 
-    module VERBS
+    module Verbs
       %w[post get].each do |type|
         const_set(type.upcase, type)
       end
     end
 
-    def self.factory(name:, package:, params: [], verb: VERBS::POST, json: true)
+    def self.factory(name:, package:, params: [], verb: Verbs::POST, json: true)
       url = "/#{package}/#{name}"
       url << "/#{params.join('/')}" unless params.empty?
-      type = json ? TYPES::JSON : TYPES::PLAIN
+      type = json ? Types::JSON : Types::PLAIN
       Route::new(verb: verb, url: url, type: type)
     end
 
@@ -38,7 +38,7 @@ module Thron
 
     def content_type
       @content_type ||= case @type.to_s
-                        when TYPES::JSON
+                        when Types::JSON
                           'application/json'
                         else
                           'text/plain'
@@ -46,7 +46,7 @@ module Thron
     end
 
     def json?
-      @type == TYPES::JSON
+      @type == Types::JSON
     end
 
     def headers(token_id: nil, dash: nil)

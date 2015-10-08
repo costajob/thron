@@ -24,7 +24,7 @@ module Thron
 
       def routes
         @routes ||= {
-          find: Route::factory(name: 'showContents', package: PACKAGE, verb: Route::VERBS::GET)
+          find: Route::factory(name: 'showContents', package: PACKAGE, verb: Route::Verbs::GET)
         }
       end
     end

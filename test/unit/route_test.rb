@@ -8,13 +8,13 @@ describe Thron::Route do
 
   it 'must define type constants' do
     %w[json plain].each do |type|
-      klass::TYPES.const_get(type.upcase).wont_be_nil
+      klass::Types.const_get(type.upcase).wont_be_nil
     end
   end
 
   it 'must define verb constants' do
     %w[post get].each do |type|
-      klass::VERBS.const_get(type.upcase).wont_be_nil
+      klass::Verbs.const_get(type.upcase).wont_be_nil
     end
   end
 
@@ -24,14 +24,14 @@ describe Thron::Route do
     it 'must create a route with defaults' do
       route = klass::factory(name: :test_me, package: package) 
       route.url.must_equal '/xsso/resources/accessmanager/test_me'
-      route.verb.must_equal klass::VERBS::POST
+      route.verb.must_equal klass::Verbs::POST
       assert route.json?
     end
 
     it 'must create a custom route' do
-      route = klass::factory(name: :test_me, package: package, params: %w[clientid groupid], verb: klass::VERBS::GET, json: false) 
+      route = klass::factory(name: :test_me, package: package, params: %w[clientid groupid], verb: klass::Verbs::GET, json: false) 
       route.url.must_equal '/xsso/resources/accessmanager/test_me/clientid/groupid'
-      route.verb.must_equal klass::VERBS::GET
+      route.verb.must_equal klass::Verbs::GET
       refute route.json?
     end
 
@@ -39,7 +39,7 @@ describe Thron::Route do
       lazy = klass::lazy_factory(name: :test_me, package: package)
       route = lazy.call(%w[param1 param2 param3])
       route.url.must_equal '/xsso/resources/accessmanager/test_me/param1/param2/param3'
-      route.verb.must_equal klass::VERBS::POST
+      route.verb.must_equal klass::Verbs::POST
       assert route.json?
     end
   end

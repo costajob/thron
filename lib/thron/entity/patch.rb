@@ -1,8 +1,9 @@
-require_relative 'base'
+require_relative '../behaviour/simply_mappable'
 
 module Thron
   module Entity
-    class Patch < Base 
+    class Patch
+      include SimplyMappable
       self.mappings = %w[op field]
       include Mappable
     end

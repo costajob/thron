@@ -1,8 +1,9 @@
-require_relative 'base'
+require_relative '../behaviour/simply_mappable'
 
 module Thron
   module Entity
-    class Metadata < Base
+    class Metadata
+      include SimplyMappable
       self.mappings = %w[name value locale]
       include Mappable
     end

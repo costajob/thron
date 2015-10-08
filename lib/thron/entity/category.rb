@@ -1,6 +1,7 @@
 require_relative 'pretty_id'
 require_relative 'metadata'
 require_relative 'locale'
+require_relative 'user_values'
 
 module Thron
   module Entity
@@ -21,7 +22,13 @@ module Thron
           sorted_by: Attribute::new(name: 'sortingField'),
           version: Attribute::new(name: 'version', type: Attribute::INT),
           locales: Attribute::new(name: 'locales', type: [Locale]),
-          linked_categories: Attribute::new(name: 'linkedCategories', type: Attribute::LIST)
+          linked_categories: Attribute::new(name: 'linkedCategories', type: Attribute::LIST),
+          user_values: Attribute::new(name: 'userSpecificValues', type: UserValues),
+          contents_count: Attribute::new(name: 'numberOfContents', type: Attribute::INT),
+          unread_contents_count: Attribute::new(name: 'numberOfUnreadContents', type: Attribute::INT),
+          unread_nested_contents_count: Attribute::new(name: 'numberOfUnreadContentsInSubCategories', type: Attribute::INT),
+          subcategories_count: Attribute::new(name: 'numberOfSubCategories', type: Attribute::INT),
+          owner: Attribute::new(name: 'ownerFullname')
         }
       end
       include Mappable

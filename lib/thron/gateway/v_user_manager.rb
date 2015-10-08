@@ -154,7 +154,7 @@ module Thron
       def routes
         @routes ||= {
           create: Route::factory(name: 'create', package: PACKAGE),
-          detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::VERBS::GET),
+          detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
           find: Route::factory(name: 'findByProperties', package: PACKAGE),
           active?: Route::factory(name: 'login', package: PACKAGE),
           temp_token: Route::factory(name: 'resetPassword', package: PACKAGE),

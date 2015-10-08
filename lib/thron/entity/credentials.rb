@@ -1,8 +1,9 @@
-require_relative 'base'
+require_relative '../behaviour/simply_mappable'
 
 module Thron
   module Entity
-    class Credentials < Base
+    class Credentials
+      include SimplyMappable
       self.mappings = %w[username password]
       include Mappable
     end
