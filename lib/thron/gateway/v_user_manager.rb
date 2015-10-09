@@ -30,11 +30,12 @@ module Thron
           numberOfResults: limit.to_i
         }
         route(to: __callee__, query: query, token_id: @token_id, dash: false) do |response|
-          response.mapped = Entity::User::factory(response.body.fetch('user') { {} })
+          detail = response.body.delete('user') { {} }
+          response.mapped = Entity::User::factory(response.body.merge!(detail))
         end
       end
 
-      def find(criteria: Entity::UserCriteria::new, order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
+      def find(criteria: Entity::UserCriteria::new(active: true), order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -45,7 +46,8 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
           response.mapped = response.body.fetch('users') { [] }.map do |user|
-            Entity::User::factory(user.fetch('userDetail') { {} })
+            detail = user.delete('userDetail') { {} }
+            Entity::User::factory(user.merge!(detail))
           end
         end
       end

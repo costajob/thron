@@ -1,4 +1,4 @@
-require_relative 'metadata'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -11,7 +11,7 @@ module Thron
           best_thumb_url: Attribute::new(name: 'bestThumbUrl'),
           content_descriptor_url: Attribute::new(name: 'contentDescriptorUrl'),
           content_url: Attribute::new(name: 'contentUrl'),
-          sys_metadata: Attribute::new(name: 'sysMetadata', type: [Metadata])
+          sys_metadata: Attribute::new(name: 'sysMetadata', type: [:Plain])
         }
       end
       include Mappable

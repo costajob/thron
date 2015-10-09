@@ -1,4 +1,4 @@
-require_relative 'notification'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -7,7 +7,7 @@ module Thron
         @mappings ||= { 
           timezone_id: Attribute::new(name: 'timeZoneId'),
           locale: Attribute::new(name: 'locale'),
-          notification: Attribute::new(name: 'notificationProperty', type: Notification),
+          notification: Attribute::new(name: 'notificationProperty', type: :Notification),
           default_category_id: Attribute::new(name: 'defaultCategoryId')
         }
       end

@@ -1,4 +1,4 @@
-require_relative 'acl'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -11,10 +11,10 @@ module Thron
           linked_username: Attribute::new(name: 'linkedUsername'),
           roles: Attribute::new(name: 'groupRoles', type: Attribute::LIST),
           solutions: Attribute::new(name: 'usersEnabledSolutions', type: Attribute::LIST),
-          acl: Attribute::new(name: 'acl', type: Acl),
+          acl: Attribute::new(name: 'acl', type: :Acl),
           type: Attribute::new(name: 'groupType'),
           owner: Attribute::new(name: 'ownerUsername'),
-          external_id: Attribute::new(name: 'externalId', type: ExternalId)
+          external_id: Attribute::new(name: 'externalId', type: :ExternalId)
         }
       end
       include Mappable

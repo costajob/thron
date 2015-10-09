@@ -1,7 +1,4 @@
 require_relative 'session'
-require_relative '../entity/group'
-require_relative '../entity/fields_option'
-require_relative '../entity/group_criteria'
 
 module Thron
   module Gateway
@@ -37,11 +34,12 @@ module Thron
           fieldsOption: fields_option.to_payload
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
-          response.mapped = Entity::Group::factory(response.body.fetch('group') { {} })
+          detail = response.body.delete('group') { {} }
+          response.mapped = Entity::Group::factory(response.body.merge!(detail))
         end
       end
 
-      def find(criteria: Entity::GroupCriteria::new, order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
+      def find(criteria: Entity::GroupCriteria::new(active: true), order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -52,7 +50,8 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: @token_id) do |response|
           response.mapped = response.body.fetch('groups') { [] }.map do |group|
-            Entity::Group::factory(group.fetch('groupDetail') { {} })
+            detail = group.delete('groupDetail') { {} }
+            Entity::Group::factory(group.merge!(detail))
           end
         end
       end

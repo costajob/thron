@@ -1,4 +1,4 @@
-require_relative 'acl_rule'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -6,7 +6,7 @@ module Thron
       def self.mappings
         @mappings ||= { 
           on_context: Attribute::new(name: 'onContext'),
-          rules: Attribute::new(name: 'rules', type: [AclRule])
+          rules: Attribute::new(name: 'rules', type: [:AclRule])
         }
       end
       include Mappable

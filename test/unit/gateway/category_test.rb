@@ -14,7 +14,7 @@ describe Thron::Gateway::Category do
 
   it 'must call post to add locale data' do
     route = instance.routes.fetch(:add_locale)
-    locale = Thron::Entity::Locale::new(name: 'ialiano', locale: 'IT')
+    locale = Thron::Entity::Plain::new(name: 'ialiano', locale: 'IT')
     body = { 
       client: { clientId: instance.client_id },
       catId: cat_id,

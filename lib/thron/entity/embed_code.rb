@@ -10,7 +10,7 @@ module Thron
           template_id: Attribute::new(name: 'useTemplateId'),
           target: Attribute::new(name: 'embedTarget'),
           enabled: Attribute::new(name: 'enabled', type: Attribute::BOOL),
-          values: Attribute::new(name: 'values', type: [Metadata]),
+          values: Attribute::new(name: 'values', type: [:Plain]),
           ga_tracker: Attribute::new(name: 'trackerGA'),
           context_id: Attribute::new(name: 'useContextId')
         }

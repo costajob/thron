@@ -6,7 +6,7 @@ describe Thron::Gateway::VUserManager do
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:username) { 'elvis' }
   let(:instance) { klass::new(token_id: token_id) }
-  let(:response) { OpenStruct::new(code: 200) }
+  let(:response) { OpenStruct::new(code: 200, body: {}) }
 
   it 'must set the package' do
     klass::PACKAGE.to_s.must_equal "xsso/resources/vusermanager"
@@ -40,7 +40,7 @@ describe Thron::Gateway::VUserManager do
     route = instance.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::UserCriteria::new.to_payload,
+      criteria: Thron::Entity::UserCriteria::new(active: true).to_payload,
       orderBy: nil,
       fieldsOption: Thron::Entity::FieldsOption::new.to_payload,
       offset: 0,

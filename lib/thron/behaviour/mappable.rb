@@ -1,8 +1,9 @@
 require 'date'
 require 'time'
+require_relative '../entity/plain'
 
 module Thron
-  module Mappable
+  module Mappable 
     class Attribute
       %w[string int float list date time bool].each do |type|
         const_set(type.upcase, type)
@@ -45,14 +46,25 @@ module Thron
         end
       end
 
+      def ns
+        @ns ||= self.name.split('::').tap do |parts|
+          parts.pop
+        end.join('::')
+      end
+
+      def base_module
+        return Object if ns == ''
+        Object.const_get(ns)
+      end
+
       def map_value(value:, mapping:)
         return value if value.nil?
         case(type = mapping.type)
         when Array
-          entity = type.first
-          value.map { |data| entity.factory(data) }
-        when Class
-          type.factory(value)
+          entity = base_module::const_get(type.first.to_s)
+          value.map { |data| entity::factory(data) }
+        when Symbol
+          base_module::const_get(type.to_s)::factory(value)
         when Attribute::DATE
           Date::parse(value.to_s)
         when Attribute::TIME
@@ -64,7 +76,7 @@ module Thron
         end
       end
 
-      def factory(data)
+      def factory(data = {})
         args = mappings.reduce({}) do |acc, (attr, mapping)|
           value = fetch_value(data: data, mapping: mapping)
           acc[attr] = map_value(value: value, mapping: mapping); acc
@@ -120,8 +132,8 @@ module Thron
       return value if value.nil?
       case type
       when Array
-        value.map { |v| v.to_h(payload: payload) }
-      when Class
+        value.map { |entity| entity.to_h(payload: payload) }
+      when Symbol
         value.to_h(payload: payload)
       when Attribute::DATE
         Date::parse(value.to_s).to_s

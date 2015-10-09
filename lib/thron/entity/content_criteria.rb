@@ -1,4 +1,4 @@
-require_relative 'metadata'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -13,7 +13,7 @@ module Thron
           channel: Attribute::new(name: 'channelType'),
           keyword: Attribute::new(name: 'searchKey'),
           tags: Attribute::new(name: 'tags', type: Attribute::LIST),
-          metadata: Attribute::new(name: 'metadata', type: [Metadata]),
+          metadata: Attribute::new(name: 'metadata', type: [:Plain]),
           solution: Attribute::new(name: 'availableInSolution'),
           active: Attribute::new(name: 'onlyActiveContents', type: Attribute::BOOL),
           ugc: Attribute::new(name: 'ugc', type: Attribute::BOOL),

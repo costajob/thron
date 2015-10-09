@@ -1,5 +1,5 @@
 debug:
-  routing: true
+  routing: false
 
 cache:
   redis_url: <%= ENV.fetch('REDIS_PORT') { 'tcp://localhost:6379' } %>

@@ -1,4 +1,4 @@
-require_relative 'crop_area'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -6,7 +6,7 @@ module Thron
       def self.mappings
         @mappings ||= { 
           buffer: Attribute::new(name: 'buffer', type: Attribute::LIST),
-          crop_area: Attribute::new(name: 'cropArea', type: CropArea),
+          crop_area: Attribute::new(name: 'cropArea', type: :Plain),
           mime_type: Attribute::new(name: 'mimeType')
         }
       end

@@ -1,5 +1,4 @@
-require_relative 'acl'
-require_relative 'i_tag_op'
+require_relative '../behaviour/mappable'
 
 module Thron
   module Entity
@@ -15,8 +14,8 @@ module Thron
           keyword: Attribute::new(name: 'textSearch'),
           last: Attribute::new(name: 'lastname'),
           first: Attribute::new(name: 'firstname'),
-          acl: Attribute::new(name: 'acl', type: Acl),
-          i_tag_op: Attribute::new(name: 'itagOp', type: ITagOp),
+          acl: Attribute::new(name: 'acl', type: :Acl),
+          i_tag_op: Attribute::new(name: 'itagOp', type: :ITagOp),
           phone: Attribute::new(name: 'phoneNumber'),
           email: Attribute::new(name: 'email'),
           created_by: Attribute::new(name: 'createdBy'),

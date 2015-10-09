@@ -2,11 +2,13 @@ require 'test_helper'
 require_relative Thron.root.join('lib', 'thron', 'behaviour', 'mappable')
 
 module Mock
+  class Plain < Thron::Entity::Plain; end
+
   class Award
     def self.mappings
       @mappings ||= {
-        name: Thron::Mappable::Attribute::new(name: 'awardName'),
-        year: Thron::Mappable::Attribute::new(name: 'wonYear')
+        type: Attribute::new(name: 'awardType'),
+        year: Attribute::new(name: 'wonYear')
       }
     end
     include Thron::Mappable
@@ -15,25 +17,27 @@ module Mock
   class Spouse
     def self.mappings
       @mappings ||= {
-        first: Thron::Mappable::Attribute::new(name: 'firstName'),
-        last: Thron::Mappable::Attribute::new(name: 'lastName')
+        first: Attribute::new(name: 'firstName'),
+        last: Attribute::new(name: 'lastName')
       }
     end
     include Thron::Mappable
   end
 
-  class Entity
+  class RockStar
     def self.mappings 
       @mappings ||= { 
-        first: Thron::Mappable::Attribute::new(name: 'firstName', mandatory: true),
-        last: Thron::Mappable::Attribute::new(name: 'lastName', mandatory: true),
-        dob: Thron::Mappable::Attribute::new(name: 'dateOfBirth', type: Thron::Mappable::Attribute::DATE),
-        grammys: Thron::Mappable::Attribute::new(name: 'grammyAwards', type: Thron::Mappable::Attribute::INT),
-        awards: Thron::Mappable::Attribute::new(name: 'wonAwards', type: [Mock::Award]),
-        spouse: Thron::Mappable::Attribute::new(name: 'lastSpouse', type: Mock::Spouse),
-        weight: Thron::Mappable::Attribute::new(name: 'weightInKgs', type: Thron::Mappable::Attribute::FLOAT),
-        dead: Thron::Mappable::Attribute::new(name: 'isDead', type: Thron::Mappable::Attribute::BOOL),
-        created_at: Thron::Mappable::Attribute::new(name: 'createdAt', type: Thron::Mappable::Attribute::TIME),
+        first: Attribute::new(name: 'firstName', mandatory: true),
+        last: Attribute::new(name: 'lastName', mandatory: true),
+        dob: Attribute::new(name: 'dateOfBirth', type: Attribute::DATE),
+        grammys: Attribute::new(name: 'grammyAwards', type: Attribute::INT),
+        awards: Attribute::new(name: 'wonAwards', type: [:Award]),
+        spouse: Attribute::new(name: 'lastSpouse', type: :Spouse),
+        mother: Attribute::new(name: 'naturalMother', type: :Plain),
+        weight: Attribute::new(name: 'weightInKgs', type: Attribute::FLOAT),
+        dead: Attribute::new(name: 'isDead', type: Attribute::BOOL),
+        hits: Attribute::new(name: 'albumHits', type: [:Plain]),
+        created_at: Attribute::new(name: 'createdAt', type: Attribute::TIME)
       }
     end
     include Thron::Mappable
@@ -41,8 +45,9 @@ module Mock
 end
 
 describe Thron::Mappable do
-  let(:klass) { Mock::Entity }
-  let(:elvis) { { first: 'Elvis', last: 'Presley', dob: Date::new(1935,1,8), grammys: 3, awards: [1967, 1972, 1974].map { |year| Mock::Award::new(name: 'Grammy', year: year) }, spouse: Mock::Spouse::new(first: 'Priscilla', last: 'Ann Wagner'), weight: 101.5, dead: true, created_at: Time::new(2015,10,29,2,0,59) } }
+  let(:klass) { Mock::RockStar }
+  let(:elvis) { { first: 'Elvis', last: 'Presley', dob: Date::new(1935,1,8), grammys: 3, awards: [1967, 1972, 1974].map { |year| Mock::Award::new(type: 'Grammy', year: year) }, spouse: Mock::Spouse::new(first: 'Priscilla', last: 'Ann Wagner'), mother: Mock::Plain::new(first: 'Gladys', last: 'Presley'), weight: 101.5, dead: true, created_at: Time::new(2015,10,29,2,0,59), :hits => [Mock::Plain::new(title: 'Elv1s', year: 2002), Mock::Plain::new(title: 'Elvis Gold', year: 2011)] } }
+  let(:data) { { 'firstName' => 'Ringo', 'lastName' => 'Starr', 'dateOfBirth' => Date::new(1940,7,7).to_s, 'grammyAwards' => 10, 'wonAwards' => [1965, 1967, 1968, 1970, 1971, 1977, 1983, 1997].map { |year| { 'awardType' => 'Grammy', 'wonYear' => year } }, 'lastSpouse' => { 'firstName' => 'Barbara', 'lastName' => 'Goldbach' }, 'naturalMother' => { 'first' => 'Elsie', 'last' => 'Starkey' }, 'isDead' => 'false', 'createdAt' => Time::now.to_s, 'albumHits' => [{ 'title' => 'The Red Album', 'year' => 1973 }, { 'title' => 'The Blue Album', 'year' => 1973 }] } }
   let(:instance) { klass::new(elvis) }
 
   describe Thron::Mappable::Attribute do
@@ -55,6 +60,10 @@ describe Thron::Mappable do
     end
   end
 
+  it 'must return the name space' do
+    klass::base_module.must_equal Mock
+  end
+
   it 'must define accessors' do
     klass.mappings.keys.each do |message|
       instance.must_respond_to message
@@ -64,28 +73,18 @@ describe Thron::Mappable do
 
   describe '::factory' do
     it 'must factory an instance with valid attributes' do
-      awards = [1965, 1967, 1968, 1970, 1971, 1977, 1983, 1997].map { |year| Mock::Award::new(name: 'Grammy', year: year) }
-      spouse = Mock::Spouse::new(first: 'Barbara', last: 'Goldbach')
-      data = { 
-        'firstName' => 'Ringo',
-        'lastName' => 'Starr',
-        'dateOfBirth' => Date::new(1940,7,7).to_s,
-        'grammyAwards' => 10,
-        'wonAwards' => awards.map(&:to_payload),
-        'lastSpouse' => spouse.to_payload,
-        'isDead' => 'false',
-        'createdAt' => Time::now.to_s
-      }
       entity = klass::factory(data)
       entity.must_be_instance_of klass
       entity.first.must_equal 'Ringo'
       entity.last.must_equal 'Starr'
       entity.dob.must_equal Date::new(1940,7,7)
       entity.grammys.must_equal 10
-      assert entity.awards.must_equal awards
-      entity.spouse.must_equal spouse
+      assert entity.awards.all? { |award| award.instance_of?(Mock::Award) }
+      entity.spouse.must_be_instance_of Mock::Spouse
+      entity.mother.must_be_instance_of Mock::Plain
       entity.weight.must_equal 0.0
       refute entity.dead
+      assert entity.hits.all? { |hit| hit.instance_of?(Mock::Plain) }
       entity.created_at.must_be_instance_of Time
     end
 
@@ -139,22 +138,26 @@ describe Thron::Mappable do
       grammys: instance.grammys, 
       awards: instance.awards.map(&:to_h), 
       spouse: instance.spouse.to_h,
+      mother: instance.mother.to_h,
       weight: instance.weight, 
       dead: instance.dead,
+      hits: instance.hits.map(&:to_h),
       created_at: instance.created_at.iso8601 })
   end
 
   it 'must return the payload form' do
     instance.to_payload.must_equal({ 
-      'firstName'    => instance.first, 
-      'lastName'     => instance.last, 
-      'dateOfBirth'  => instance.dob.to_s, 
-      'grammyAwards' => instance.grammys, 
-      'wonAwards'    => instance.awards.map(&:to_payload), 
-      'lastSpouse'   => instance.spouse.to_payload,
-      'weightInKgs'  => instance.weight, 
-      'isDead'       => instance.dead,
-      'createdAt'    => instance.created_at.iso8601 })
+      'firstName'     => instance.first, 
+      'lastName'      => instance.last, 
+      'dateOfBirth'   => instance.dob.to_s, 
+      'grammyAwards'  => instance.grammys, 
+      'wonAwards'     => instance.awards.map(&:to_payload), 
+      'lastSpouse'    => instance.spouse.to_payload,
+      'naturalMother' => instance.mother.to_h,
+      'weightInKgs'   => instance.weight, 
+      'isDead'        => instance.dead,
+      'albumHits'     => instance.hits.map(&:to_h),
+      'createdAt'     => instance.created_at.iso8601 })
   end
 
   it 'must discard nil key-values' do

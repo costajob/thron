@@ -5,7 +5,7 @@ describe Thron::Gateway::UsersGroupManager do
   let(:klass) { Thron::Gateway::UsersGroupManager }
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:instance) { klass::new(token_id: token_id) }
-  let(:response) { OpenStruct::new(code: 200) }
+  let(:response) { OpenStruct::new(code: 200, body: {}) }
   let(:group_id) { '184f842e-8ca2-4c26-9bfd-719a85a2a73f' }
 
   it 'must set the package' do
@@ -50,7 +50,7 @@ describe Thron::Gateway::UsersGroupManager do
     route = instance.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::GroupCriteria::new.to_payload,
+      criteria: Thron::Entity::GroupCriteria::new(active: true).to_payload,
       orderBy: nil,
       fieldsOption: Thron::Entity::FieldsOption::new.to_payload,
       offset: 0,
@@ -78,7 +78,7 @@ describe Thron::Gateway::UsersGroupManager do
   it 'must call post to update group details' do
     group = Thron::Entity::Group::new.tap do |group|
       group.id = group_id
-      group.metadata = 3.times.map { |i| Thron::Entity::Metadata::new(name: "name#{i}", value: "value#{i}") }
+      group.metadata = 3.times.map { |i| Thron::Entity::Plain::new(name: "name#{i}", value: "value#{i}") }
     end
     route = instance.routes.fetch(:update).call([instance.client_id, group.id])
     body = { 
@@ -89,7 +89,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update external id' do
-    external_id = Thron::Entity::ExternalId::new(id: 'ext_01', type: 'type_01')
+    external_id = Thron::Entity::Plain::new(id: 'ext_01', type: 'type_01')
     route = instance.routes.fetch(:update_external_id).call([instance.client_id, group_id])
     body = { 
       externalId: external_id.to_payload
