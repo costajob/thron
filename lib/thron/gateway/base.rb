@@ -20,11 +20,15 @@ module Thron
         self.name.split('::').last.downcase
       end
 
+      def self.client_id
+        @client_id ||= Config.thron.client_id
+      end
+
       attr_reader :client_id
       attr_accessor :token_id
 
-      def initialize(client_id: Config.thron.client_id)
-        @client_id = client_id
+      def client_id
+        self.class.client_id
       end
 
       private def check_session

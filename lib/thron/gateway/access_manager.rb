@@ -45,7 +45,7 @@ module Thron
         route(to: __callee__, token_id: @token_id, dash: false)
       end
 
-      def routes
+      def self.routes
         @routes ||= {
           login: Route::factory(name: 'login', package: PACKAGE, params: [client_id]),
           logout: Route::factory(name: 'logout', package: PACKAGE, params: [client_id], json: false),

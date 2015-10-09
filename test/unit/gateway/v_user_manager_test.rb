@@ -13,7 +13,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to create a new user' do
-    route = instance.routes.fetch(:create)
+    route = klass.routes.fetch(:create)
     data = Thron::Entity::User::new(type: klass::DEFAULT_TYPE)
     body = data.to_payload.tap do |payload|
       payload['newUser'] = payload.delete('credential')
@@ -23,7 +23,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call get to fetch detail' do
-    route = instance.routes.fetch(:detail)
+    route = klass.routes.fetch(:detail)
     query = { 
       clientId: instance.client_id,
       username: username,
@@ -37,7 +37,7 @@ describe Thron::Gateway::VUserManager do
   end
   
   it 'must call post to find users by properties' do
-    route = instance.routes.fetch(:find)
+    route = klass.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
       criteria: Thron::Entity::UserCriteria::new(active: true).to_payload,
@@ -51,7 +51,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to check user validity' do
-    route = instance.routes.fetch(:active?)
+    route = klass.routes.fetch(:active?)
     query = { 
       clientId: instance.client_id,
       username: username,
@@ -62,7 +62,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to get a temporary token' do
-    route = instance.routes.fetch(:temp_token)
+    route = klass.routes.fetch(:temp_token)
     body = { 
       clientId: instance.client_id,
       username: username
@@ -72,7 +72,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to update password' do
-    route = instance.routes.fetch(:update_password)
+    route = klass.routes.fetch(:update_password)
     query = { 
       clientId: instance.client_id,
       username: username,
@@ -83,7 +83,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to update status' do
-    route = instance.routes.fetch(:update_status)
+    route = klass.routes.fetch(:update_status)
     body = { 
       clientId: instance.client_id,
       username: username,
@@ -97,7 +97,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to update capabilities' do
-    route = instance.routes.fetch(:update_capabilities)
+    route = klass.routes.fetch(:update_capabilities)
     capabilities = Thron::Entity::Capabilities::new(capabilities: %w[cap1 cap2], roles: %w[role1 role2], solutions: %w[sol3 sol4])
     body = { 
       clientId: instance.client_id,
@@ -110,7 +110,7 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to update external id' do
     external_id = Thron::Entity::ExternalId::new(id: 'ext_01', type: 'type_01')
-    route = instance.routes.fetch(:update_external_id).call([instance.client_id, username])
+    route = klass.routes.fetch(:update_external_id).call([instance.client_id, username])
     body = { 
       externalId: external_id.to_payload
     }.to_json
@@ -122,7 +122,7 @@ describe Thron::Gateway::VUserManager do
     file = Tempfile::new('profile.jpg') << "This is the profile image"
     file.rewind
     image = Thron::Entity::Image::new(path: file.path)
-    route = instance.routes.fetch(:update_image)
+    route = klass.routes.fetch(:update_image)
     body = { 
       clientId: instance.client_id,
       username: username,
@@ -133,7 +133,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to update settings' do
-    route = instance.routes.fetch(:update_settings)
+    route = klass.routes.fetch(:update_settings)
     body = { 
       clientId: instance.client_id,
       username: username,
@@ -149,7 +149,7 @@ describe Thron::Gateway::VUserManager do
   it 'must call post to update user data' do
     name = Thron::Entity::Name::new(first: 'Elvis', last: 'Presley')
     data = Thron::Entity::User::new(name: name)
-    route = instance.routes.fetch(:update).call([instance.client_id, username])
+    route = klass.routes.fetch(:update).call([instance.client_id, username])
     body = { 
       update: data.to_payload
     }.to_json
@@ -161,7 +161,7 @@ describe Thron::Gateway::VUserManager do
     preferences = Thron::Entity::Preferences::new(locale: 'IT')
     data = Thron::Entity::User::new(preferences: preferences)
     password = 'lovemetender'
-    route = instance.routes.fetch(:upgrade)
+    route = klass.routes.fetch(:upgrade)
     body = data.to_payload.tap do |payload|
       payload['newUserDetail'] = payload.delete('detail')
       preferences = payload.delete('userPreferences') { {} }

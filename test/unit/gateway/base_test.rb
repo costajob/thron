@@ -5,6 +5,10 @@ describe Thron::Gateway::Base do
   let(:klass) { Thron::Gateway::Base }
   let(:instance) { klass::new }
 
+  it 'must initialize client id at class level' do
+    klass.client_id.wont_be_nil
+  end
+
   it 'must set the service name' do
     klass::service_name.must_equal 'base'
   end
@@ -13,7 +17,7 @@ describe Thron::Gateway::Base do
     klass::circuit_breaker.object_id.must_equal klass::circuit_breaker.object_id
   end
 
-  it 'must initialize state' do
-    assert instance.instance_variable_defined?(:@client_id)
+  it 'must set client id at instance level too' do
+    instance.client_id.must_equal klass::client_id
   end
 end

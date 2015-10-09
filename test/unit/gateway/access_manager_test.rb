@@ -21,7 +21,7 @@ describe Thron::Gateway::AccessManager do
 
     describe '#login' do
       it 'must call post to login' do
-        route = instance.routes.fetch(:login)
+        route = klass.routes.fetch(:login)
         username, password = 'username', 'password'
         query = { username: username, password: password }
         mock(klass).post(route.url, { query: query, body: {}, headers: route.headers }) { response }
@@ -45,7 +45,7 @@ describe Thron::Gateway::AccessManager do
 
     { logout: {}, validate_capabilities: { capabilities: '' }, validate_roles: { role: '' }, validate_token: {} }.each do |message, query|
       it "must call post to #{message}" do
-        route = instance.routes.fetch(message)
+        route = klass.routes.fetch(message)
         mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) }) { response }
         instance.token_id = token_id
         instance.send(message)

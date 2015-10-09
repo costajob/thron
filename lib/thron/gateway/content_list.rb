@@ -22,7 +22,7 @@ module Thron
         end
       end
 
-      def routes
+      def self.routes
         @routes ||= {
           find: Route::factory(name: 'showContents', package: PACKAGE, verb: Route::Verbs::GET)
         }

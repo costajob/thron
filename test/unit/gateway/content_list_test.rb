@@ -12,7 +12,7 @@ describe Thron::Gateway::ContentList do
   end
 
   it 'must call get to find contents' do
-    route = instance.routes.fetch(:find)
+    route = klass.routes.fetch(:find)
     criteria = Thron::Entity::ContentCriteria::new(type: 'VIDEO')
     query = criteria.to_payload.merge({ 
       clientId: instance.client_id,

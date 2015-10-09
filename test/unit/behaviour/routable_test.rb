@@ -4,6 +4,7 @@ require Thron::root.join('lib', 'thron', 'behaviour', 'routable')
 module Mock
   class Assets
     include Thron::Routable
+    def self.routes; {}; end
   end
 end
 

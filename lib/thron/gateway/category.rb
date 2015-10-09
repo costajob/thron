@@ -38,7 +38,7 @@ module Thron
         end
       end
 
-      def routes
+      def self.routes
         @routes ||= {
           add_locale: Route::factory(name: 'createCategory4Locale', package: PACKAGE),
           find: Route::factory(name: 'findByProperties2', package: PACKAGE)

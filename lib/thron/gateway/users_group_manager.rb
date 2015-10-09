@@ -85,7 +85,7 @@ module Thron
         route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, id])
       end
 
-      def routes
+      def self.routes
         @routes ||= {
           create: Route::factory(name: 'createGroup', package: PACKAGE),
           remove: Route::factory(name: 'removeGroup', package: PACKAGE),

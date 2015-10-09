@@ -26,12 +26,10 @@ module Thron
       def circuit_breaker
         @circuit_breaker ||= CircuitBreaker::new
       end
-    end
 
-    private
-
-    def routes
-      {}
+      def routes
+        fail NotImplementedError
+      end
     end
 
     def route(to:, query: {}, body: {}, token_id: nil, dash: true, params: [])
@@ -56,7 +54,7 @@ module Thron
     end
 
     def fetch_route(to, params)
-      routes.fetch(to) { fail NoentRouteError }.call(params)
+      self.class.routes.fetch(to) { fail NoentRouteError }.call(params)
     end
 
     def info(query, body, route, token_id, dash, raw)

@@ -13,7 +13,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to create a new group' do
-    route = instance.routes.fetch(:create)
+    route = klass.routes.fetch(:create)
     body = { 
       clientId: instance.client_id, 
       usersGroup: Thron::Entity::Group::new.to_payload
@@ -23,7 +23,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to remove an existing group' do
-    route = instance.routes.fetch(:remove)
+    route = klass.routes.fetch(:remove)
     body = { 
       clientId: instance.client_id,
       groupId: group_id,
@@ -34,7 +34,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to get group detail' do
-    route = instance.routes.fetch(:detail)
+    route = klass.routes.fetch(:detail)
     body = { 
       clientId: instance.client_id,
       groupId: group_id,
@@ -47,7 +47,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to find group by properties' do
-    route = instance.routes.fetch(:find)
+    route = klass.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
       criteria: Thron::Entity::GroupCriteria::new(active: true).to_payload,
@@ -62,7 +62,7 @@ describe Thron::Gateway::UsersGroupManager do
 
   %i[link_users unlink_users].each do |message|
     it "must call post to #{message.to_s.sub('_', ' ')}" do
-      route = instance.routes.fetch(message)
+      route = klass.routes.fetch(message)
       body = { 
         clientId: instance.client_id,
         userList: {
@@ -80,7 +80,7 @@ describe Thron::Gateway::UsersGroupManager do
       group.id = group_id
       group.metadata = 3.times.map { |i| Thron::Entity::Plain::new(name: "name#{i}", value: "value#{i}") }
     end
-    route = instance.routes.fetch(:update).call([instance.client_id, group.id])
+    route = klass.routes.fetch(:update).call([instance.client_id, group.id])
     body = { 
       update: group.to_payload
     }.to_json
@@ -90,7 +90,7 @@ describe Thron::Gateway::UsersGroupManager do
 
   it 'must call post to update external id' do
     external_id = Thron::Entity::Plain::new(id: 'ext_01', type: 'type_01')
-    route = instance.routes.fetch(:update_external_id).call([instance.client_id, group_id])
+    route = klass.routes.fetch(:update_external_id).call([instance.client_id, group_id])
     body = { 
       externalId: external_id.to_payload
     }.to_json

@@ -153,7 +153,7 @@ module Thron
         end
       end
 
-      def routes
+      def self.routes
         @routes ||= {
           create: Route::factory(name: 'create', package: PACKAGE),
           detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
