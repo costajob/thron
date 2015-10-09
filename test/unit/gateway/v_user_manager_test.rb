@@ -14,7 +14,7 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to create a new user' do
     route = klass.routes.fetch(:create)
-    data = Thron::Entity::User::new(type: klass::DEFAULT_TYPE)
+    data = Thron::Entity::new(credential: {})
     body = data.to_payload.tap do |payload|
       payload['newUser'] = payload.delete('credential')
     end.merge({ clientId: instance.client_id }).to_json
@@ -24,6 +24,7 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call get to fetch detail' do
     route = klass.routes.fetch(:detail)
+    options = Thron::Entity::new(return_itags: false, return_imetadata: false)
     query = { 
       clientId: instance.client_id,
       username: username,
@@ -33,16 +34,16 @@ describe Thron::Gateway::VUserManager do
       numberOfResults: 0
     }
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.detail(username: username)
+    instance.detail(username: username, field_options: options)
   end
   
   it 'must call post to find users by properties' do
     route = klass.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::UserCriteria::new(active: true).to_payload,
+      criteria: Thron::Entity::new(active: true).to_payload,
       orderBy: nil,
-      fieldsOption: Thron::Entity::FieldsOption::new.to_payload,
+      fieldsOption: {},
       offset: 0,
       numberOfResult: 0
     }.to_json
@@ -98,24 +99,22 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to update capabilities' do
     route = klass.routes.fetch(:update_capabilities)
-    capabilities = Thron::Entity::Capabilities::new(capabilities: %w[cap1 cap2], roles: %w[role1 role2], solutions: %w[sol3 sol4])
     body = { 
       clientId: instance.client_id,
       username: username,
-      userCapabilities: capabilities.to_payload
+      userCapabilities: []
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_capabilities(username: username, capabilities: capabilities)
+    instance.update_capabilities(username: username, capabilities:)
   end
 
   it 'must call post to update external id' do
-    external_id = Thron::Entity::ExternalId::new(id: 'ext_01', type: 'type_01')
     route = klass.routes.fetch(:update_external_id).call([instance.client_id, username])
     body = { 
-      externalId: external_id.to_payload
+      externalId: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_external_id(username: username, external_id: external_id)
+    instance.update_external_id(username: username, external_id:)
   end
 
   it 'must call post to update imageimageimageimageimageimageimageimageimage' do
@@ -147,23 +146,19 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to update user data' do
-    name = Thron::Entity::Name::new(first: 'Elvis', last: 'Presley')
-    data = Thron::Entity::User::new(name: name)
     route = klass.routes.fetch(:update).call([instance.client_id, username])
     body = { 
-      update: data.to_payload
+      update: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update(username: username, data: data)
+    instance.update(username: username, data:)
   end
 
   it 'must call post to upgrade user' do
-    preferences = Thron::Entity::Preferences::new(locale: 'IT')
-    data = Thron::Entity::User::new(preferences: preferences)
     password = 'lovemetender'
     route = klass.routes.fetch(:upgrade)
     body = data.to_payload.tap do |payload|
-      payload['newUserDetail'] = payload.delete('detail')
+      payload['newUserDetail'] = payload.delete('detail') { {} }
       preferences = payload.delete('userPreferences') { {} }
       payload['newUserParams'] = { 'userPreferences' => preferences } 
     end.merge({ 

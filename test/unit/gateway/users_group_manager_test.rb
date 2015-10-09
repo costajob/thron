@@ -16,7 +16,7 @@ describe Thron::Gateway::UsersGroupManager do
     route = klass.routes.fetch(:create)
     body = { 
       clientId: instance.client_id, 
-      usersGroup: Thron::Entity::Group::new.to_payload
+      usersGroup: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.create
@@ -40,7 +40,7 @@ describe Thron::Gateway::UsersGroupManager do
       groupId: group_id,
       offset: 0,
       numberOfResult: 0,
-      fieldsOption: Thron::Entity::FieldsOption::new.to_payload
+      fieldsOption: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.detail(id: group_id)
@@ -50,9 +50,9 @@ describe Thron::Gateway::UsersGroupManager do
     route = klass.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::GroupCriteria::new(active: true).to_payload,
+      criteria: Thron::Entity::new(active: true).to_payload,
       orderBy: nil,
-      fieldsOption: Thron::Entity::FieldsOption::new.to_payload,
+      fieldsOption: {},
       offset: 0,
       numberOfResult: 0
     }.to_json
@@ -62,24 +62,22 @@ describe Thron::Gateway::UsersGroupManager do
 
   %i[link_users unlink_users].each do |message|
     it "must call post to #{message.to_s.sub('_', ' ')}" do
+      usernames = %w[user1 user2]
       route = klass.routes.fetch(message)
       body = { 
         clientId: instance.client_id,
         userList: {
-          usernames: %w[user1 user2]
+          usernames: usernames
         },
         groupId: group_id
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(message, id: group_id, users: %w[user1 user2])
+      instance.send(message, id: group_id, usernames: usernames)
     end
   end
 
   it 'must call post to update group details' do
-    group = Thron::Entity::Group::new.tap do |group|
-      group.id = group_id
-      group.metadata = 3.times.map { |i| Thron::Entity::Plain::new(name: "name#{i}", value: "value#{i}") }
-    end
+    group = Thron::Entity::new(id: group_id)
     route = klass.routes.fetch(:update).call([instance.client_id, group.id])
     body = { 
       update: group.to_payload
@@ -89,7 +87,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update external id' do
-    external_id = Thron::Entity::Plain::new(id: 'ext_01', type: 'type_01')
+    external_id = Thron::Entity::new(id: 'ext_01', type: 'type_01')
     route = klass.routes.fetch(:update_external_id).call([instance.client_id, group_id])
     body = { 
       externalId: external_id.to_payload

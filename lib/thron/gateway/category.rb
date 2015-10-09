@@ -1,6 +1,4 @@
 require_relative 'session'
-require_relative '../entity/category'
-require_relative '../entity/category_criteria'
 
 module Thron
   module Gateway
@@ -8,7 +6,7 @@ module Thron
 
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
 
-      def add_locale(id:, locale: Entity::Plain::new)
+      def add_locale(id:, locale:)
         body = { 
           client: {
             clientId: self.client_id
@@ -16,10 +14,10 @@ module Thron
           catId: id,
           catLocale: locale.to_payload
         }
-        route(to: __callee__, body: body, token_id: @token_id)
+        route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find(criteria: Entity::CategoryCriteria::new(limit_level: 2), locale: nil, order_by: nil, offset: 0, limit: 0)
+      def find(criteria: Entity::new(exclude_level_higher_than: 2), locale: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
@@ -30,10 +28,10 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: __callee__, body: body, token_id: @token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           response.mapped = response.body.fetch('categories') { [] }.map do |category|
             detail = category.delete('category') { {} }
-            Entity::Category::factory(category.merge!(detail))
+            Entity::new(category.merge!(detail))
           end
         end
       end

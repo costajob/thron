@@ -6,13 +6,13 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create(group: Entity::Group::new)
+      def create(group:)
         body = { 
           clientId: self.client_id,
           usersGroup: group.to_payload
         }
-        route(to: __callee__, body: body, token_id: @token_id) do |response|
-          response.mapped = Entity::Group::factory(response.body.fetch('group') { {} })
+        route(to: __callee__, body: body, token_id: token_id) do |response|
+          response.mapped = Entity::new(response.body.fetch('group') { {} })
         end
       end
 
@@ -22,10 +22,10 @@ module Thron
           groupId: id,
           force: force
         }
-        route(to: __callee__, body: body, token_id: @token_id)
+        route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def detail(id:, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
+      def detail(id:, fields_option: Entity::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -33,13 +33,13 @@ module Thron
           numberOfResult: limit.to_i,
           fieldsOption: fields_option.to_payload
         }
-        route(to: __callee__, body: body, token_id: @token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           detail = response.body.delete('group') { {} }
-          response.mapped = Entity::Group::factory(response.body.merge!(detail))
+          response.mapped = Entity::new(response.body.merge!(detail))
         end
       end
 
-      def find(criteria: Entity::GroupCriteria::new(active: true), order_by: nil, fields_option: Entity::FieldsOption::new, offset: 0, limit: 0)
+      def find(criteria: Entity::new(active: true), order_by: nil, fields_option: Entity::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -48,10 +48,10 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: __callee__, body: body, token_id: @token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           response.mapped = response.body.fetch('groups') { [] }.map do |group|
             detail = group.delete('groupDetail') { {} }
-            Entity::Group::factory(group.merge!(detail))
+            Entity::new(group.merge!(detail))
           end
         end
       end
@@ -59,15 +59,15 @@ module Thron
       %i[link_users unlink_users].each do |name|
         define_method(name) do |*args|
           group_id = args.last.fetch(:id)
-          users    = args.last.fetch(:users) { [] }
+          users    = args.last.fetch(:usernames) { [] }
           body = { 
             clientId: self.client_id,
             userList: {
-              usernames: users
+              usernames: usernames
             },
             groupId: group_id
           }
-          route(to: name, body: body, token_id: @token_id)
+          route(to: name, body: body, token_id: token_id)
         end
       end
 
@@ -75,14 +75,14 @@ module Thron
         body = {
           update: group.to_payload
         }
-        route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, group.id])
+        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, group.id])
       end
 
       def update_external_id(id:, external_id:)
         body = {
           externalId: external_id.to_payload
         }
-        route(to: __callee__, body: body, token_id: @token_id, params: [self.client_id, id])
+        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, id])
       end
 
       def self.routes

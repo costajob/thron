@@ -1,5 +1,5 @@
+require_relative '../entity'
 require_relative 'base'
-Dir[Thron.root.join('lib', 'thron', 'entity', '*.rb')].each { |f| require f }
 
 module Thron
   module Gateway
