@@ -19,12 +19,17 @@ module Thron
       @cache   = {}
     end
 
-    def next
-      move(:next)
-    end
-
-    def prev
-      move(:prev)
+    %i[prev next].each do |name|
+      define_method(name) do
+        offset = send("#{name}_offset")
+        @cache.fetch(offset) do
+          @body.call(@limit, offset).tap do |response|
+            @offset = offset 
+            @total ||= response.total
+            @cache[offset] = response
+          end
+        end
+      end
     end
 
     def preload
@@ -32,17 +37,6 @@ module Thron
     end
 
     private
-
-    def move(mode)
-      offset = send("#{mode}_offset")
-      @cache.fetch(offset) do
-        @body.call(@limit, offset).tap do |response|
-          @offset = offset 
-          @total ||= response.total
-          @cache[offset] = response
-        end
-      end
-    end
 
     def next_offset
       return max_offset if @offset >= max_offset
