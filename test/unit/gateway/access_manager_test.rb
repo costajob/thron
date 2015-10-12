@@ -22,7 +22,7 @@ describe Thron::Gateway::AccessManager do
     describe '#login' do
       it 'must call post to login' do
         route = klass.routes.fetch(:login)
-        username, password = 'username', 'password'
+        username, password = 'elvis', 'presley'
         query = { username: username, password: password }
         mock(klass).post(route.url, { query: query, body: {}, headers: route.headers }) { response }
         instance.login(username: username, password: password) 
@@ -31,7 +31,7 @@ describe Thron::Gateway::AccessManager do
       it 'must set the token_id' do
         stub(klass).post { response }
         instance.token_id.must_be_nil
-        instance.login
+        instance.login(username: 'elvis', password: 'preseley')
         instance.token_id.must_equal token_id
       end
     end

@@ -1,4 +1,4 @@
-require_relative '../entity'
+require_relative '../entity/base'
 require_relative 'base'
 
 module Thron

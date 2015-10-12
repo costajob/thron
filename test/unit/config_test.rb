@@ -17,7 +17,7 @@ describe Thron::Config do
   end
 
   it 'must valorize the Thron configuration' do
-    %i[username password client_id app_id base_url].each do |message|
+    %i[client_id app_id base_url].each do |message|
       Thron::Config::thron.send(message).wont_be_nil
     end
   end

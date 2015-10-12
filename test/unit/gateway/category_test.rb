@@ -14,7 +14,7 @@ describe Thron::Gateway::Category do
 
   it 'must call post to add locale data' do
     route = klass.routes.fetch(:add_locale)
-    locale = Thron::Entity::new(name: 'italiano', locale: 'IT')
+    locale = Thron::Entity::Base::new(name: 'italiano', locale: 'IT')
     body = { 
       client: { clientId: instance.client_id },
       catId: cat_id,
@@ -26,7 +26,7 @@ describe Thron::Gateway::Category do
 
   it 'must call post to find category by properties' do
     route = klass.routes.fetch(:find)
-    criteria = Thron::Entity::new(text_search: 'blue suede shoes')
+    criteria = Thron::Entity::Base::new(text_search: 'blue suede shoes')
     body = { 
       client: { clientId: instance.client_id },
       properties: criteria.to_payload,

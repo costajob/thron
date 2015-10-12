@@ -13,13 +13,13 @@ describe Thron::Gateway::ContentList do
 
   it 'must call get to find contents' do
     route = klass.routes.fetch(:find)
-    criteria = Thron::Entity::ContentCriteria::new(type: 'VIDEO')
-    query = criteria.to_payload.merge({ 
+    criteria = Thron::Entity::Base::new(type: 'VIDEO')
+    query = {
       clientId: instance.client_id,
       orderBy: nil,
       offset: 0,
       numberOfResult: 0
-    })
+    }.merge(criteria.to_payload)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.find(criteria: criteria)
   end

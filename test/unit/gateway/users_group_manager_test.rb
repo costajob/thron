@@ -14,12 +14,13 @@ describe Thron::Gateway::UsersGroupManager do
 
   it 'must call post to create a new group' do
     route = klass.routes.fetch(:create)
+    data = Thron::Entity::Base::new(active: false)
     body = { 
       clientId: instance.client_id, 
-      usersGroup: {}
+      usersGroup: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create
+    instance.create(data: data)
   end
 
   it 'must call post to remove an existing group' do
@@ -50,7 +51,7 @@ describe Thron::Gateway::UsersGroupManager do
     route = klass.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::new(active: true).to_payload,
+      criteria: Thron::Entity::Base::new(active: true).to_payload,
       orderBy: nil,
       fieldsOption: {},
       offset: 0,
@@ -77,17 +78,17 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update group details' do
-    group = Thron::Entity::new(id: group_id)
-    route = klass.routes.fetch(:update).call([instance.client_id, group.id])
+    data = Thron::Entity::Base::new(id: group_id)
+    route = klass.routes.fetch(:update).call([instance.client_id, group_id])
     body = { 
-      update: group.to_payload
+      update: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update(group: group)
+    instance.update(data: data)
   end
 
   it 'must call post to update external id' do
-    external_id = Thron::Entity::new(id: 'ext_01', type: 'type_01')
+    external_id = Thron::Entity::Base::new(id: 'ext_01', type: 'type_01')
     route = klass.routes.fetch(:update_external_id).call([instance.client_id, group_id])
     body = { 
       externalId: external_id.to_payload

@@ -1,4 +1,5 @@
 require_relative 'session'
+require_relative '../entity/image'
 
 module Thron
   module Gateway
@@ -6,31 +7,32 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create(user:)
-        body = user.to_payload.tap do |payload|
-          payload['newUser'] = payload.delete('credential')
-        end.merge({ clientId: self.client_id })
+      def create(username:, password:, data: Entity::Base::new(user_type: 'PLATFORM_USER'))
+        body = { 
+          clientId: self.client_id,
+          newUser: {
+            username: username,
+            password: password
+          }
+        }.merge(data.to_payload)
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.mapped = Entity::new(response.body.fetch('user') { {} })
+          response.body = Entity::Base::new(response.body.fetch('user') { {} })
         end
       end
 
-      def detail(username:, fields_option: Entity::new, offset: 0, limit: 0)
+      def detail(username:, fields_option: Entity::Base::new, offset: 0, limit: 0)
         query = {
           clientId: self.client_id,
           username: username,
-          returnItags: fields_option.return_itags,
-          returnImetadata: fields_option.return_imetadata,
           offset: offset.to_i,
           numberOfResults: limit.to_i
-        }
+        }.merge(fields_option.to_payload)
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
-          detail = response.body.delete('user') { {} }
-          response.mapped = Entity::new(response.body.merge!(detail))
+          response.body = Entity::Base::new(response.body)
         end
       end
 
-      def find(criteria: Entity::new(active: true), order_by: nil, fields_option: Entity::new, offset: 0, limit: 0)
+      def find(criteria: Entity::Base::new(active: true), order_by: nil, fields_option: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -40,9 +42,8 @@ module Thron
           numberOfResult: limit.to_i
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.mapped = response.body.fetch('users') { [] }.map do |user|
-            detail = user.delete('userDetail') { {} }
-            Entity::new(user.merge!(detail))
+          response.body = response.body.fetch('users') { [] }.map do |user|
+            Entity::Base::new(user)
           end
         end
       end
@@ -54,7 +55,7 @@ module Thron
           password: password
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
-          response.mapped = Entity::new(response.body.fetch('user') { {} })
+          response.body = Entity::Base::new(response.body)
         end
       end
 
@@ -64,7 +65,7 @@ module Thron
           username: username,
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.mapped = response.body['tmpToken']
+          response.body = response.body['tmpToken']
         end
       end
 
@@ -77,19 +78,16 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update_status(username:, active: false, expire_at: nil)
+      def update_status(username:, properties: Entity::Base::new)
         body = { 
           clientId: self.client_id,
           username: username,
-          properties: {
-            active: active,
-            expiryDate: expire_at
-          }
+          properties: properties.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_capabilities(username:, capabilities: Entity::new)
+      def update_capabilities(username:, capabilities: Entity::Base::new)
         body = { 
           clientId: self.client_id,
           username: username,
@@ -98,7 +96,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_external_id(username:, external_id:)
+      def update_external_id(username:, external_id: Entity::Base::new)
         body = {
           externalId: external_id.to_payload
         }
@@ -114,37 +112,30 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_settings(username:, quota: 0, lock_template: nil)
+      def update_settings(username:, settings: Entity::Base::new)
         body = {
           clientId: self.client_id,
           username: username,
-          settings: {
-            userQuota: quota,
-            userLockTemplate: lock_template
-          }
+          settings: settings.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update(username:, data: Entity::new)
+      def update(username:, data: Entity::Base::new)
         body = {
           update: data.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, username])
       end
 
-      def upgrade(username:, password:, data: Entity::new)
-        body = data.to_payload.tap do |payload|
-          payload['newUserDetail'] = payload.delete('detail')
-          preferences = payload.delete('userPreferences') { {} }
-          payload['newUserParams'] = { 'userPreferences' => preferences } 
-        end.merge({ 
+      def upgrade(username:, password:, data: Entity::Base::new)
+        body = { 
           clientId: self.client_id,
           username: username,
           newPassword: password
-        })
+        }.merge(data.to_payload)
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.mapped = Entity::new(response.body.fetch('user') { {} })
+          response.body = Entity::Base::new(response.body.fetch('user') { {} })
         end
       end
 

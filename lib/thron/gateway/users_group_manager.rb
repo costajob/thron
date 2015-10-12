@@ -6,13 +6,13 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create(group:)
+      def create(data: Entity::Base::new(active: false))
         body = { 
           clientId: self.client_id,
-          usersGroup: group.to_payload
+          usersGroup: data.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.mapped = Entity::new(response.body.fetch('group') { {} })
+          response.body = Entity::Base::new(response.body.fetch('group') { {} })
         end
       end
 
@@ -25,7 +25,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def detail(id:, fields_option: Entity::new, offset: 0, limit: 0)
+      def detail(id:, fields_option: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -34,12 +34,11 @@ module Thron
           fieldsOption: fields_option.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          detail = response.body.delete('group') { {} }
-          response.mapped = Entity::new(response.body.merge!(detail))
+          response.body = Entity::Base::new(response.body)
         end
       end
 
-      def find(criteria: Entity::new(active: true), order_by: nil, fields_option: Entity::new, offset: 0, limit: 0)
+      def find(criteria: Entity::Base::new(active: true), order_by: nil, fields_option: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -49,9 +48,8 @@ module Thron
           numberOfResult: limit.to_i
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.mapped = response.body.fetch('groups') { [] }.map do |group|
-            detail = group.delete('groupDetail') { {} }
-            Entity::new(group.merge!(detail))
+          response.body = response.body.fetch('groups') { [] }.map do |group|
+            Entity::Base::new(group)
           end
         end
       end
@@ -59,7 +57,7 @@ module Thron
       %i[link_users unlink_users].each do |name|
         define_method(name) do |*args|
           group_id = args.last.fetch(:id)
-          users    = args.last.fetch(:usernames) { [] }
+          usernames = args.last.fetch(:usernames) { [] }
           body = { 
             clientId: self.client_id,
             userList: {
@@ -71,14 +69,14 @@ module Thron
         end
       end
 
-      def update(group:)
+      def update(data:)
         body = {
-          update: group.to_payload
+          update: data.to_payload
         }
-        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, group.id])
+        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, data.id])
       end
 
-      def update_external_id(id:, external_id:)
+      def update_external_id(id:, external_id: Entity::Base::new)
         body = {
           externalId: external_id.to_payload
         }

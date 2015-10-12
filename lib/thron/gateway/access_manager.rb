@@ -6,19 +6,19 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def login(username: Config.thron.username, password: Config.thron.password)
+      def login(username:, password:)
         query = {
           username: username,
           password: password
         }
         route(to: __callee__, query: query, dash: false) do |response|
-          @token_id = response.body.fetch('tokenId') { :no_token }
+          @token_id = response.body['tokenId']
         end
       end
 
       def logout
         check_session
-        route(to: __callee__, token_id: @token_id, dash: false) do |response|
+        route(to: __callee__, token_id: token_id, dash: false) do |response|
           @token_id = nil
         end
       end
@@ -28,7 +28,7 @@ module Thron
         query = {
           capabilities: capabilities.join(',')
         }
-        route(to: __callee__, query: query, token_id: @token_id, dash: false)
+        route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
       def validate_roles(roles: [], xor: false)
@@ -37,12 +37,12 @@ module Thron
         query = {
           role: roles.join(separator)
         }
-        route(to: __callee__, query: query, token_id: @token_id, dash: false)
+        route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
       def validate_token
         check_session
-        route(to: __callee__, token_id: @token_id, dash: false)
+        route(to: __callee__, token_id: token_id, dash: false)
       end
 
       def self.routes

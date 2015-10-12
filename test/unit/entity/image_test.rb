@@ -1,8 +1,8 @@
 require 'test_helper'
-require Thron.root.join('lib', 'thron', 'image')
+require Thron.root.join('lib', 'thron', 'entity', 'image')
 
-describe Thron::Image do
-  let(:klass) { Thron::Image }
+describe Thron::Entity::Image do
+  let(:klass) { Thron::Entity::Image }
 
   describe 'valid path' do
     let(:file) { Tempfile::new('avatar.txt') << 'Avatar image of the user profile' }
@@ -24,11 +24,10 @@ describe Thron::Image do
     end
   end
 
-  it 'must return the instance if path is not existent' do
+  it 'must take the arguments if path is not existent' do
     mime_type = 'application/json'
     buffer = [86,112,-74] 
     instance = klass::new(mime_type: mime_type, buffer: buffer)
-    instance.must_be_instance_of klass
     instance.mime_type.must_equal mime_type
     instance.buffer.must_equal buffer
   end

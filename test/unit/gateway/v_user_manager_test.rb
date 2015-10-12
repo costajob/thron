@@ -5,6 +5,7 @@ describe Thron::Gateway::VUserManager do
   let(:klass) { Thron::Gateway::VUserManager }
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:username) { 'elvis' }
+  let(:password) { 'presley' }
   let(:instance) { klass::new(token_id: token_id) }
   let(:response) { OpenStruct::new(code: 200, body: {}) }
 
@@ -14,34 +15,35 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to create a new user' do
     route = klass.routes.fetch(:create)
-    data = Thron::Entity::new(credential: {})
-    body = data.to_payload.tap do |payload|
-      payload['newUser'] = payload.delete('credential')
-    end.merge({ clientId: instance.client_id }).to_json
+    data = Thron::Entity::Base::new(user_type: 'EXTERNAL_USER')
+    body = { 
+      clientId: instance.client_id,
+      newUser: {
+        username: username,
+        password: password
+      }
+    }.merge(data.to_payload).to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create(user: data)
+    instance.create(username: username, password: password, data: data)
   end
 
   it 'must call get to fetch detail' do
     route = klass.routes.fetch(:detail)
-    options = Thron::Entity::new(return_itags: false, return_imetadata: false)
     query = { 
       clientId: instance.client_id,
       username: username,
-      returnItags: false,
-      returnImetadata: false,
       offset: 0,
       numberOfResults: 0
     }
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.detail(username: username, field_options: options)
+    instance.detail(username: username)
   end
   
   it 'must call post to find users by properties' do
     route = klass.routes.fetch(:find)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::new(active: true).to_payload,
+      criteria: Thron::Entity::Base::new(active: true).to_payload,
       orderBy: nil,
       fieldsOption: {},
       offset: 0,
@@ -56,10 +58,10 @@ describe Thron::Gateway::VUserManager do
     query = { 
       clientId: instance.client_id,
       username: username,
-      password: 'lovemetender'
+      password: password
     }
     mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.active?(username: username, password: 'lovemetender')
+    instance.active?(username: username, password: password)
   end
 
   it 'must call post to get a temporary token' do
@@ -77,10 +79,10 @@ describe Thron::Gateway::VUserManager do
     query = { 
       clientId: instance.client_id,
       username: username,
-      newpassword: 'lovemetender'
+      newpassword: password
     }
     mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.update_password(username: username, password: 'lovemetender')
+    instance.update_password(username: username, password: password)
   end
 
   it 'must call post to update status' do
@@ -88,10 +90,7 @@ describe Thron::Gateway::VUserManager do
     body = { 
       clientId: instance.client_id,
       username: username,
-      properties: {
-        active: false,
-        expiryDate: nil
-      }
+      properties: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.update_status(username: username)
@@ -102,10 +101,10 @@ describe Thron::Gateway::VUserManager do
     body = { 
       clientId: instance.client_id,
       username: username,
-      userCapabilities: []
+      userCapabilities: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_capabilities(username: username, capabilities:)
+    instance.update_capabilities(username: username)
   end
 
   it 'must call post to update external id' do
@@ -114,10 +113,10 @@ describe Thron::Gateway::VUserManager do
       externalId: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_external_id(username: username, external_id:)
+    instance.update_external_id(username: username)
   end
 
-  it 'must call post to update imageimageimageimageimageimageimageimageimage' do
+  it 'must call post to update image' do
     file = Tempfile::new('profile.jpg') << "This is the profile image"
     file.rewind
     image = Thron::Entity::Image::new(path: file.path)
@@ -136,13 +135,10 @@ describe Thron::Gateway::VUserManager do
     body = { 
       clientId: instance.client_id,
       username: username,
-      settings: {
-        userQuota: 1,
-        userLockTemplate: 'lock_01'
-      }
+      settings: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_settings(username: username, quota: 1, lock_template: 'lock_01')
+    instance.update_settings(username: username)
   end
 
   it 'must call post to update user data' do
@@ -151,22 +147,18 @@ describe Thron::Gateway::VUserManager do
       update: {}
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update(username: username, data:)
+    instance.update(username: username)
   end
 
   it 'must call post to upgrade user' do
     password = 'lovemetender'
     route = klass.routes.fetch(:upgrade)
-    body = data.to_payload.tap do |payload|
-      payload['newUserDetail'] = payload.delete('detail') { {} }
-      preferences = payload.delete('userPreferences') { {} }
-      payload['newUserParams'] = { 'userPreferences' => preferences } 
-    end.merge({ 
+    body = { 
       clientId: instance.client_id,
       username: username,
-      newPassword: password
-    }).to_json
+      newPassword: password,
+    }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.upgrade(username: username, password: password, data: data)
+    instance.upgrade(username: username, password: password)
   end
 end

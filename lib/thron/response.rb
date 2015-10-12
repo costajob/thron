@@ -15,12 +15,8 @@ module Thron
       @error       = body.delete(ERROR_KEY)
     end
 
-    def is_200?
-      (@http_code.to_i / 100) == 2
-    end
-
-    def mapped=(data)
-      @mapped = data if is_200?
+    def body=(data)
+      @body = data if is_200?
     end
 
     private
@@ -34,6 +30,10 @@ module Thron
       else
         {}
       end
+    end
+
+    def is_200?
+      (@http_code.to_i / 100) == 2
     end
   end
 end
