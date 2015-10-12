@@ -6,6 +6,8 @@ module Thron
   using StringExtensions
   module Entity
     class Base < OpenStruct
+      TIME_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.+/
+      DATE_REGEX = /\A\d{4}-\d{2}-\d{2}/
 
       def initialize(hash = {})
         @table = {}
@@ -20,12 +22,12 @@ module Thron
                         else
                           v
                         end
+                      when TIME_REGEX
+                        Time::parse(v)
+                      when DATE_REGEX
+                        Date::parse(v)
                       else
-                        if k.to_s.match(/_date/)
-                          Time::parse(v.to_s)
-                        else
-                          v
-                        end
+                        v
                       end
           new_ostruct_member(k)
         end
