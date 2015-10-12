@@ -28,7 +28,8 @@ module Thron
           numberOfResults: limit.to_i
         }.merge(fields_option.to_payload)
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
-          response.body = Entity::Base::new(response.body)
+          user = response.body.delete('user') { {} }
+          response.body = Entity::Base::new(response.body.merge(user))
         end
       end
 
@@ -43,7 +44,8 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('users') { [] }.map do |user|
-            Entity::Base::new(user)
+            detail = user.fetch('userDetail') { {} }
+            Entity::Base::new(user.merge(detail))
           end
         end
       end
@@ -55,7 +57,8 @@ module Thron
           password: password
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
-          response.body = Entity::Base::new(response.body)
+          user = response.body.delete('user') { {} }
+          response.body = Entity::Base::new(response.body.merge(user))
         end
       end
 

@@ -34,7 +34,8 @@ module Thron
           fieldsOption: fields_option.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          group = response.body.delete('group') { {} }
+          response.body = Entity::Base::new(response.body.merge(group))
         end
       end
 
@@ -49,7 +50,8 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('groups') { [] }.map do |group|
-            Entity::Base::new(group)
+            detail = group.delete('groupDetail') { {} }
+            Entity::Base::new(group.merge(detail))
           end
         end
       end
