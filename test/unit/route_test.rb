@@ -2,7 +2,7 @@ require 'test_helper'
 require Thron::root.join('lib', 'thron', 'route')
 
 describe Thron::Route do
-  let(:klass) { Thron::Route}
+  let(:klass) { Thron::Route }
   let(:json) { klass::new(verb: 'post', url: '/json_api', type: 'json') }
   let(:text) { klass::new(verb: 'get', url: '/text_api', type: 'text') }
 
