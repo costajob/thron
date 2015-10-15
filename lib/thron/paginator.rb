@@ -1,12 +1,12 @@
 module Thron
   class Paginator
-    MAX_LIMIT = 50.0
-    PRELOAD_LIMIT = 5
+    MAX_LIMIT = 50
+    PRELOAD_LIMIT = 10
     MAX_PRELOAD = 30
 
     class PreloadTooLargeError < StandardError; end
     
-    attr_reader :total, :pages
+    attr_reader :total, :offset, :pages
 
     def initialize(body:, limit: MAX_LIMIT, offset: 0, preload: PRELOAD_LIMIT)
       fail ArgumentError, 'body must be a proc object' unless body.is_a?(Proc)
@@ -27,8 +27,12 @@ module Thron
       call(next_offset)
     end
 
-    def pag(n)
-      call((n-1) * @limit)
+    def to(n)
+      call(page_to_offset(n))
+    end
+
+    def page
+      (@offset / @limit) + 1
     end
 
     def preload
@@ -44,7 +48,7 @@ module Thron
       @cache.fetch(offset) do
         @body.call(@limit, offset).tap do |response|
           @total ||= response.total
-          @pages ||= (@total / MAX_LIMIT).ceil
+          @pages ||= (@total / @limit.to_f).ceil
           @cache[offset] = response
         end
       end
@@ -58,6 +62,11 @@ module Thron
     def prev_offset
       return 0 if @offset <= @limit
       @offset - @limit
+    end
+
+    def page_to_offset(n)
+      n = @pages && n >= @pages ? @pages : n
+      (n-1) * @limit
     end
   end
 end
