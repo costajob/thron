@@ -13,6 +13,7 @@ module Thron
         }
         route(to: __callee__, query: query, dash: false) do |response|
           @token_id = response.body['tokenId']
+          response.body = Entity::Base::new(response.body)
         end
       end
 

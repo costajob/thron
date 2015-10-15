@@ -41,6 +41,15 @@ module Thron
       end
     end
 
+    def first?
+      @offset.zero?
+    end
+
+    def last?
+      return false unless @total
+      (@offset + @limit) >= @total.to_i
+    end
+
     private
 
     def call(offset = @offset)

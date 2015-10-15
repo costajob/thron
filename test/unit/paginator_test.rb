@@ -43,6 +43,13 @@ describe Thron::Paginator do
       end
     end
 
+    { prev: nil, next: nil, to: 1 }.each do |message, args|
+      it "must detect first page on #{message}" do
+        instance.send(message, *args)
+        assert instance.first?
+      end
+    end
+
     it 'must set the offset' do
       3.times { instance.next }
       instance.prev
@@ -65,12 +72,14 @@ describe Thron::Paginator do
     it 'must limit next offset' do
       100.times { instance.next }
       instance.offset.must_equal 1200
+      assert instance.last?
     end
 
     it 'must limit max page once total is known' do
       instance.next
       instance.to(100)
       instance.offset.must_equal 1200
+      assert instance.last?
     end
 
     it 'must set cache' do
@@ -101,6 +110,7 @@ describe Thron::Paginator do
     it 'must limit preload to available results' do
       150.times { instance.preload }
       instance.instance_variable_get(:@cache).size.must_equal 25
+      assert instance.last?
     end
   end
 end
