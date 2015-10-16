@@ -20,25 +20,25 @@ module Thron
         end
       end
 
-      def detail(username:, fields_option: Entity::Base::new, offset: 0, limit: 0)
+      def detail(username:, options: Entity::Base::new, offset: 0, limit: 0)
         query = {
           clientId: self.client_id,
           username: username,
           offset: offset.to_i,
           numberOfResults: limit.to_i
-        }.merge(fields_option.to_payload)
+        }.merge(options.to_payload)
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
           user = response.body.delete('user') { {} }
           response.body = Entity::Base::new(response.body.merge(user))
         end
       end
 
-      def find(criteria: Entity::Base::new(active: true), order_by: nil, fields_option: Entity::Base::new, offset: 0, limit: 0)
+      def find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
           orderBy: order_by,
-          fieldsOption: fields_option.to_payload,
+          fieldsOption: options.to_payload,
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
@@ -81,11 +81,11 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update_status(username:, properties: Entity::Base::new)
+      def update_status(username:, data: Entity::Base::new)
         body = { 
           clientId: self.client_id,
           username: username,
-          properties: properties.to_payload
+          properties: data.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
       end

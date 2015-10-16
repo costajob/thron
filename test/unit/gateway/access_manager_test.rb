@@ -43,13 +43,40 @@ describe Thron::Gateway::AccessManager do
       instance.token_id.must_be_nil
     end
 
-    { logout: {}, validate_capabilities: { capabilities: '' }, validate_roles: { role: '' }, validate_token: {} }.each do |message, query|
-      it "must call post to #{message}" do
-        route = klass.routes.fetch(message)
-        mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) }) { response }
-        instance.token_id = token_id
-        instance.send(message)
-      end
+    it 'must call post to logout' do
+      route = klass.routes.fetch(:logout)
+      mock(klass).post(route.url, { query: {}, body: {}, headers: route.headers(token_id: token_id) }) { response }
+      instance.token_id = token_id
+      instance.logout
+    end
+
+    it 'must call post to validate capabilities' do
+      route = klass.routes.fetch(:validate_capabilities)
+      capabilities = %w[CS-TURUOI CS-RETYVR CS-OZ704N]
+      query = {
+        capabilities: capabilities.join(',')
+      }
+      mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) }) { response }
+      instance.token_id = token_id
+      instance.validate_capabilities(capabilities: capabilities)
+    end
+
+    it 'must call post to validate roles' do
+      route = klass.routes.fetch(:validate_roles)
+      roles = %w[CS-DEL8GH_MANAGER CS-CRBSR2_APP_EDITOR CS-46XMHE_APP_EDITOR]
+      query = {
+        role: roles.join('|')
+      }
+      mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) }) { response }
+      instance.token_id = token_id
+      instance.validate_roles(roles: roles, xor: true)
+    end
+
+    it 'must call post to validate token' do
+      route = klass.routes.fetch(:validate_token)
+      mock(klass).post(route.url, { query: {}, body: {}, headers: route.headers(token_id: token_id) }) { response }
+      instance.token_id = token_id
+      instance.validate_token
     end
   end
 end

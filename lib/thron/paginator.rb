@@ -5,15 +5,21 @@ module Thron
     MAX_PRELOAD = 30
 
     class PreloadTooLargeError < StandardError; end
-    
-    attr_reader :total, :offset, :pages
 
-    def initialize(body:, limit: MAX_LIMIT, offset: 0, preload: PRELOAD_LIMIT)
+    def self.check_limit(limit)
+      limit.to_i.tap do |limit|
+        return MAX_LIMIT if limit > MAX_LIMIT
+      end
+    end
+    
+    attr_reader :total, :offset, :pages, :limit
+
+    def initialize(body:, limit: MAX_LIMIT, preload: PRELOAD_LIMIT)
       fail ArgumentError, 'body must be a proc object' unless body.is_a?(Proc)
       fail ArgumentError, 'body must accept the limit and offset attributes' unless body.arity == 2
       fail PreloadTooLargeError, "preload must be lower than #{MAX_PRELOAD}" if preload > MAX_PRELOAD 
       @body    = body
-      @limit   = limit.to_i
+      @limit   = self.class.check_limit(limit)
       @offset  = offset.to_i
       @preload = preload.to_i
       @cache   = {}

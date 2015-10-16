@@ -3,6 +3,7 @@ require_relative Thron.root.join('lib', 'thron', 'gateway', 'users_group_manager
 
 describe Thron::Gateway::UsersGroupManager do
   let(:klass) { Thron::Gateway::UsersGroupManager }
+  let(:entity) { Thron::Entity::Base }
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:instance) { klass::new(token_id: token_id) }
   let(:response) { OpenStruct::new(code: 200, body: {}) }
@@ -14,7 +15,7 @@ describe Thron::Gateway::UsersGroupManager do
 
   it 'must call post to create a new group' do
     route = klass.routes.fetch(:create)
-    data = Thron::Entity::Base::new(active: false)
+    data = entity::new(active: false, group_type: 'PLATFORM', group_capabilities: { capabilities: %w[LIST], user_roles: %w[4ME-CONTENT], enabled_solutions: %w[REMOVE ADD] }, description: 'testing group', name: 'test')
     body = { 
       clientId: instance.client_id, 
       usersGroup: data.to_payload
@@ -36,29 +37,32 @@ describe Thron::Gateway::UsersGroupManager do
 
   it 'must call post to get group detail' do
     route = klass.routes.fetch(:detail)
+    options = entity::new(return_own_acl: false, return_itags: true, return_imetadata: true)
     body = { 
       clientId: instance.client_id,
       groupId: group_id,
-      offset: 0,
-      numberOfResult: 0,
-      fieldsOption: {}
+      offset: 3,
+      numberOfResult: 5,
+      fieldsOption: options.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.detail(id: group_id)
+    instance.detail(id: group_id, options: options, offset: 3, limit: 5)
   end
 
   it 'must call post to find group by properties' do
     route = klass.routes.fetch(:find)
+    criteria = entity::new(ids: %w[6746 7777 8765], text_search: 'test', active: true, linked_username: 'redazione', group_roles: %w[READ WRITE], acl: { on_context: 'PLATFORM', rules: %w[RULE1 RULE2] }, group_type: %w[BASIC ADVANCED], external_id: '75857')
+    options = entity::new(return_own_acl: false, return_itags: true, return_imetadata: true)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::Base::new(active: true).to_payload,
-      orderBy: nil,
-      fieldsOption: {},
-      offset: 0,
-      numberOfResult: 0
+      criteria: criteria.to_payload,
+      orderBy: 'id',
+      fieldsOption: options.to_payload,
+      offset: 4,
+      numberOfResult: 40
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find
+    instance.find(criteria: criteria, order_by: 'id', options: options, offset: 4, limit: 40)
   end
 
   %i[link_users unlink_users].each do |message|
@@ -78,8 +82,8 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update group details' do
-    data = Thron::Entity::Base::new(id: group_id)
     route = klass.routes.fetch(:update).call([instance.client_id, group_id])
+    data = entity::new(id: group_id, metadata: [{ name: 'label', value: 'testing' }], name: 'testing data group', description: 'group for testing purposes', active: false, patch: [{ op: 'DESC', field: 'name' }])
     body = { 
       update: data.to_payload
     }.to_json
@@ -88,7 +92,7 @@ describe Thron::Gateway::UsersGroupManager do
   end
 
   it 'must call post to update external id' do
-    external_id = Thron::Entity::Base::new(id: 'ext_01', type: 'type_01')
+    external_id = entity::new(id: 'ext_01', type: 'type_01')
     route = klass.routes.fetch(:update_external_id).call([instance.client_id, group_id])
     body = { 
       externalId: external_id.to_payload

@@ -25,13 +25,13 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def detail(id:, fields_option: Entity::Base::new, offset: 0, limit: 0)
+      def detail(id:, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
-          fieldsOption: fields_option.to_payload
+          fieldsOption: options.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           group = response.body.delete('group') { {} }
@@ -39,12 +39,12 @@ module Thron
         end
       end
 
-      def find(criteria: Entity::Base::new(active: true), order_by: nil, fields_option: Entity::Base::new, offset: 0, limit: 0)
+      def find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
           orderBy: order_by,
-          fieldsOption: fields_option.to_payload,
+          fieldsOption: options.to_payload,
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }

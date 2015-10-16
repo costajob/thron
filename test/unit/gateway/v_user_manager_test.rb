@@ -3,6 +3,7 @@ require_relative Thron.root.join('lib', 'thron', 'gateway', 'v_user_manager')
 
 describe Thron::Gateway::VUserManager do
   let(:klass) { Thron::Gateway::VUserManager }
+  let(:entity) { Thron::Entity::Base }
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:username) { 'elvis' }
   let(:password) { 'presley' }
@@ -15,7 +16,7 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to create a new user' do
     route = klass.routes.fetch(:create)
-    data = Thron::Entity::Base::new(user_type: 'EXTERNAL_USER')
+    data = Thron::Entity::Base::new(user_type: 'EXTERNAL_USER', detail: { dob: Date::new(1935,1,8), gender: 'male', contact_type: 'rocker', icalls: [{ inumber_category: 'external', inumber: '38363' }], addresses: [{ address_category: 'personal', street: '3734 Elvis Presley Blvd', pobox: '38116', local_area: 'TN', city: 'Memphis', area: '6 ha', postcode: '38116', country: 'US', primary: true }], image: { image_url: 'http://images1.mtv.com/uri/mgid:file:docroot:cmt.com:/sitewide/assets/img/artists/presley_elvis/elvispresley07-430x250.jpg?width=361&height=210&enlarge=true&matte=true&matteColor=black&quality=0.85' }, name: { prefix: 'Mr', first_name: 'Elvis', middle_name: 'Aaron', last_name: 'Presley', suffix: 'king' }, user_preferences: { time_zone_id: '1', locale: 'EN', notification_property: { email: 'elvis@gmail.com', notify_by: %w[mail po-box], auto_subscribe_to_categories: true } } }, user_quota: 1000, user_lock_template: 'king', send_first_access_notification: false)
     body = { 
       clientId: instance.client_id,
       newUser: {
@@ -29,28 +30,31 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call get to fetch detail' do
     route = klass.routes.fetch(:detail)
+    options = entity::new(return_itags: false, return_imetadata: true)
     query = { 
       clientId: instance.client_id,
       username: username,
-      offset: 0,
-      numberOfResults: 0
-    }
+      offset: 7,
+      numberOfResults: 5
+    }.merge(options.to_payload)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.detail(username: username)
+    instance.detail(username: username, options: options, offset: 7, limit: 5)
   end
   
   it 'must call post to find users by properties' do
     route = klass.routes.fetch(:find)
+    criteria = entity::new(usernames: %w[george paul], user_types: %w[PLATFORM_USER EXTERNAL_USER], active: true, user_roles: %w[SINGER GUITAR-PLAYER], text_search: 'obladì obladà', lastname: 'George', firstname: 'Harrison', email: 'beatles@gmail.com', created_by: %w[Lennon McCartney], external_id: '6765')
+    options = entity::new(return_own_acl: false, return_itags: true, return_imetadata: true)
     body = { 
       clientId: instance.client_id,
-      criteria: Thron::Entity::Base::new(active: true).to_payload,
-      orderBy: nil,
-      fieldsOption: {},
-      offset: 0,
-      numberOfResult: 0
+      criteria: criteria.to_payload,
+      orderBy: 'name',
+      fieldsOption: options.to_payload, 
+      offset: 2,
+      numberOfResult: 10
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find
+    instance.find(criteria: criteria, order_by: 'name', options: options, offset: 2, limit: 10)
   end
 
   it 'must call post to check user validity' do
@@ -87,33 +91,36 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to update status' do
     route = klass.routes.fetch(:update_status)
+    data = entity::new(active: false, expiry_date: Date::today + 365)
     body = { 
       clientId: instance.client_id,
       username: username,
-      properties: {}
+      properties: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_status(username: username)
+    instance.update_status(username: username, data: data)
   end
 
   it 'must call post to update capabilities' do
     route = klass.routes.fetch(:update_capabilities)
+    capabilities = entity::new(capabilities: %w[SINGER GUITAR-PLAYER BASS-PLAYER DRUMMER], user_roles: %w[PLATFORM-USER EXTERNAL-USER], enabled_solutions: %w[CONTRACT-BY-ALBUM PAY-BY-CONCERT])
     body = { 
       clientId: instance.client_id,
       username: username,
-      userCapabilities: {}
+      userCapabilities: capabilities.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_capabilities(username: username)
+    instance.update_capabilities(username: username, capabilities: capabilities)
   end
 
   it 'must call post to update external id' do
     route = klass.routes.fetch(:update_external_id).call([instance.client_id, username])
+    external_id = entity::new(id: '65757', external_type: 'name')
     body = { 
-      externalId: {}
+      externalId: external_id.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_external_id(username: username)
+    instance.update_external_id(username: username, external_id: external_id)
   end
 
   it 'must call post to update image' do
@@ -132,33 +139,36 @@ describe Thron::Gateway::VUserManager do
 
   it 'must call post to update settings' do
     route = klass.routes.fetch(:update_settings)
+    settings = entity::new(user_quota: 455, user_lock_template: 'STANDARD')
     body = { 
       clientId: instance.client_id,
       username: username,
-      settings: {}
+      settings: settings.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_settings(username: username)
+    instance.update_settings(username: username, settings: settings)
   end
 
   it 'must call post to update user data' do
     route = klass.routes.fetch(:update).call([instance.client_id, username])
+    data = entity::new(metadata: [{ name: 'genere', value: 'rock' }], user_preferences: { time_zone_id: '2', locale: 'EN', default_category_id: '65756' }, detail: { dob: Date::new(1943,2,25), gender: 'male', note: 'here come the sun', icalls: [{ inumber_category: 'test category', inumber: '567' } ], name: { first_name: 'George', last_name: 'Harrison' } })
     body = { 
-      update: {}
+      update: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update(username: username)
+    instance.update(username: username, data: data)
   end
 
   it 'must call post to upgrade user' do
-    password = 'lovemetender'
     route = klass.routes.fetch(:upgrade)
+    password = 'lovemetender'
+    data = entity::new(user_quota: 50, new_user_detail: { gender: 'female', urls: [{ url_category: 'personal', url: 'https://en.wikipedia.org/wiki/Cher_albums_discography' }] }, new_user_params: { user_preferences: { locale: 'IT' } })
     body = { 
       clientId: instance.client_id,
       username: username,
       newPassword: password,
-    }.to_json
+    }.merge(data.to_payload).to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.upgrade(username: username, password: password)
+    instance.upgrade(username: username, password: password, data: data)
   end
 end

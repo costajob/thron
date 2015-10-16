@@ -1,4 +1,5 @@
 require 'httparty'
+require_relative '../entity/base'
 require_relative '../behaviour/routable'
 
 module Thron

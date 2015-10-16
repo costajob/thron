@@ -22,6 +22,11 @@ describe Thron::Paginator do
     end
   end
 
+  it 'must prevent too large limit' do
+    instance = klass::new(body: body, limit: klass::MAX_LIMIT+100)
+    instance.limit.must_equal klass::MAX_LIMIT
+  end
+
   it 'must prevent instantiation for non proc body' do
     -> { klass::new(body: {}) }.must_raise ArgumentError
   end
