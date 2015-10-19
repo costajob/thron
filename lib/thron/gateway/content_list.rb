@@ -6,7 +6,7 @@ module Thron
 
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
 
-      def find(category_id: nil, locale: nil, criteria: Entity::Base::new, recursive: true, order_by: nil, limit: 0, offset: 0)
+      def find(category_id: nil, locale: nil, criteria: Entity::Base::new, recursive: true, order_by: 'contentName_A', limit: 0, offset: 0)
         query = { 
           clientId: self.client_id,
           categoryId: category_id,
