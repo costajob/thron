@@ -79,4 +79,37 @@ describe Thron::Gateway::Content do
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.add_player(id: content_id, embed_code: embed_code)
   end
+
+  it 'must call get to fetch category detail' do
+    route = klass.routes.fetch(:detail)
+    options = entity::new(return_linked_contents: true, return_linked_categories: true, return_thumb_url: false, return_itags: true, return_imetadata: false)
+    query = {
+      clientId: instance.client_id,
+      contentId: content_id,
+      locale: 'de',
+      pkey: token_id
+    }.merge(options.to_payload)
+    mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
+    instance.detail(id: content_id, options: options, locale: 'de', access_key: token_id)
+  end
+
+  it 'must call post to find contents by properties' do
+    route = klass.routes.fetch(:find)
+    criteria = entity::new(content_ids: %w[id1 id2], xpublisher_id: 'publisher', locale: 'en', text_search: { search_key: 'blue suede shoes', search_key_option: 'fulltext', search_on_fields: %w[name imetadata] }, content_yype: %w[AUDIO VIDEO], from_date: Date::today-10, to_date: Date::today, only_published_in_weebo: true, metadatas: [{ name: 'reviewed_by', value: 'Rolling Stone', locale: 'de' }], ugc: false)
+    options = entity::new(return_linked_contents: true, return_embed_codes: true, return_thumbnail_url: true, return_imetadata: true)
+    body = { 
+      client: {
+        clientId: instance.client_id
+      },
+      criteria: criteria.to_payload,
+      contentFieldOption: options.to_payload,
+      locale: 'EN',
+      divArea: '100x125',
+      orderBy: 'name',
+      offset: 4,
+      numberOfresults: 12
+    }.to_json
+    mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
+    instance.find(criteria: criteria, options: options, locale: 'EN', div_area: '100x125', order_by: 'name', offset: 4, limit: 12)
+  end
 end

@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron::root.join('lib', 'thron', 'behaviour', 'routable')
+require Thron::root.join('lib', 'thron', 'routable')
 
 module Mock
   class Assets

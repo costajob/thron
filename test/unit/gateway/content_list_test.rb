@@ -13,15 +13,17 @@ describe Thron::Gateway::ContentList do
 
   it 'must call get to find contents' do
     route = klass.routes.fetch(:find)
-    criteria = Thron::Entity::Base::new(locale: 'EN', category_id: '64746', type: 'VIDEO', search_key: 'test', ugc: false)
+    criteria = Thron::Entity::Base::new(type: 'VIDEO', search_key: 'test', ugc: false)
     query = {
       clientId: instance.client_id,
-      searchOnSubCategories: true,
+      categoryId: '64746',
+      locale: 'EN',
+      searchOnSubCategories: false,
       orderBy: 'name',
       offset: 10,
       numberOfResult: 100
     }.merge(criteria.to_payload)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find(criteria: criteria, order_by: 'name', offset: 10, limit: 100)
+    instance.find(category_id: '64746', locale: 'EN', criteria: criteria, recursive: false, order_by: 'name', offset: 10, limit: 100)
   end
 end

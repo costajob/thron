@@ -77,7 +77,7 @@ describe Thron::Gateway::Category do
 
   it 'must call post to find category by properties' do
     route = klass.routes.fetch(:find)
-    criteria = entity::new(text_search: 'blue suede shoes')
+    criteria = entity::new(category_ids: %w[id1 id4], metadatas: [{ name: 'medley', value: 'Jazz', locale: 'IT' }], text_search: 'blue suede shoes', exclude_level_higher_than: 2, acl: { on_context: 'group', rules: %w[READ WRITE REMOVE] })
     body = { 
       client: { clientId: instance.client_id },
       properties: criteria.to_payload,

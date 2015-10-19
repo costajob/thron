@@ -1,8 +1,8 @@
 require 'httparty'
-require_relative '../config'
-require_relative '../route'
-require_relative '../response'
-require_relative '../circuit_breaker'
+require_relative 'config'
+require_relative 'route'
+require_relative 'response'
+require_relative 'circuit_breaker'
 
 module Thron
   module Routable
@@ -16,6 +16,18 @@ module Thron
         include HTTParty
         base_uri base_url
       end
+    end
+
+    def self.info(query, body, route, token_id, dash, raw)
+      puts "\n",
+        "*" * 50,
+        "#{route.verb.upcase} REQUEST:",
+        "  * url: #{route.url}",
+        "  * query: #{query.inspect}",
+        "  * body: #{body.inspect}",
+        "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
+        "*" * 50,
+        "\n" if Config::debug.routing
     end
 
     module ClassMethods
@@ -43,7 +55,7 @@ module Thron
                             body: body, 
                             headers: route.headers(token_id: token_id, dash: dash) })
         end
-        info(query, body, route, token_id, dash, raw)
+        Routable::info(query, body, route, token_id, dash, raw)
         Response::new(raw.value).tap do |response|
           yield(response) if block_given?
         end
@@ -57,16 +69,5 @@ module Thron
       self.class.routes.fetch(to) { fail NoentRouteError }.call(params)
     end
 
-    def info(query, body, route, token_id, dash, raw)
-      puts "\n",
-        "*" * 50,
-        "#{route.verb.upcase} REQUEST:",
-        "  * url: #{route.url}",
-        "  * query: #{query.inspect}",
-        "  * body: #{body.inspect}",
-        "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
-        "*" * 50,
-        "\n" if Config::debug.routing
-    end
   end
 end

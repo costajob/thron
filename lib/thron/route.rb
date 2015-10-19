@@ -50,7 +50,7 @@ module Thron
     end
 
     def headers(token_id: nil, dash: nil)
-      @headers ||= { 
+      @headers = { 
         'Accept' => content_type, 
         content_type_key(dash) => content_type 
       }.tap do |headers|

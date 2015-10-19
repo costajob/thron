@@ -1,6 +1,6 @@
 require 'httparty'
 require_relative '../entity/base'
-require_relative '../behaviour/routable'
+require_relative '../routable'
 
 module Thron
   module Gateway
