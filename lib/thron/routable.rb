@@ -65,9 +65,8 @@ module Thron
       Response::new(OpenStruct::new(code: 200))
     end
 
-    def fetch_route(to, params)
+    private def fetch_route(to, params)
       self.class.routes.fetch(to) { fail NoentRouteError }.call(params)
     end
-
   end
 end
