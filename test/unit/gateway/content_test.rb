@@ -203,4 +203,19 @@ describe Thron::Gateway::Content do
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.update_players(id: content_id, players: players, category_id: category_id)
   end
+
+  it 'must call post to update user data' do
+    route = klass.routes.fetch(:update_user)
+    username = 'elvis'
+    data = entity::new(content_read_value: 'bane', content_starred: true)
+    body = { 
+      clientId: instance.client_id,
+      username: username,
+      contentId: content_id,
+      contentParams: data.to_payload,
+      categoryIdForAcl: category_id
+    }.to_json
+    mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
+    instance.update_user(id: content_id, username: username, data: data, category_id: category_id)
+  end
 end
