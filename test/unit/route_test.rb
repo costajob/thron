@@ -3,8 +3,8 @@ require Thron::root.join('lib', 'thron', 'route')
 
 describe Thron::Route do
   let(:klass) { Thron::Route }
-  let(:json) { klass::new(verb: 'post', url: '/json_api', type: 'json') }
-  let(:text) { klass::new(verb: 'get', url: '/text_api', type: 'text') }
+  let(:json) { klass::new(verb: 'post', url: '/json_api', type: 'json', format: 'json') }
+  let(:text) { klass::new(verb: 'get', url: '/text_api', type: 'text', format: 'plain') }
 
   it 'must define type constants' do
     %w[json plain].each do |type|
@@ -32,6 +32,7 @@ describe Thron::Route do
       route = klass::factory(name: :test_me, package: package, params: %w[clientid groupid], verb: klass::Verbs::GET, json: false) 
       route.url.must_equal '/xsso/resources/accessmanager/test_me/clientid/groupid'
       route.verb.must_equal klass::Verbs::GET
+      route.format.must_be_empty
       refute route.json?
     end
 
@@ -45,7 +46,7 @@ describe Thron::Route do
   end
 
   it 'must initialize state' do
-    %w[verb url type].each do |attr|
+    %w[verb url type format].each do |attr|
       assert json.instance_variable_defined?(:"@#{attr}")
     end
   end
@@ -60,6 +61,10 @@ describe Thron::Route do
 
   it 'must detect JSON type' do
     assert json.json?
+  end
+
+  it 'must return appropriate format' do
+    json.format.must_equal({ format: 'json' })
   end
 
   it 'must return appropriate headers' do

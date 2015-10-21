@@ -5,6 +5,7 @@ module Thron
     attr_reader :http_code, :body, :result_code, :sso_code, :total, :error, :mapped
 
     ERROR_KEY = 'errorDescription'
+    ID_REGEX  = /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\Z/
 
     def initialize(raw)
       @http_code   = raw.code
@@ -25,6 +26,8 @@ module Thron
       case(parsed = raw.parsed_response)
       when Hash
         parsed
+      when ID_REGEX
+        { id: parsed }
       when String
         { ERROR_KEY => parsed }
       else

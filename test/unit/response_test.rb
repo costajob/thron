@@ -5,6 +5,7 @@ describe Thron::Response do
   let(:klass) { Thron::Response }
   let(:ok) { OpenStruct::new(code: 200, parsed_response: { "ssoCode" => "657", "field1" => "Elvis", "field2" => "Presley", "resultCode" => "OK", "totalResults" => 66 }) }
   let(:ko) { OpenStruct::new(code: 400, parsed_response: 'Forbidden') }
+  let(:id) { OpenStruct::new(code: 200, parsed_response: '08fce2d6-d4d8-4906-a8a1-5dcf4bd3f671') }
   let(:unparsed) { OpenStruct::new(code: 200) }
 
   describe '200' do
@@ -22,8 +23,13 @@ describe Thron::Response do
       end
     end
 
-    it 'must remove response keys and leave data' do
+    it 'must remove response keys and leave body data' do
       instance.body.must_equal({ "field1" => "Elvis", "field2" => "Presley" })
+    end
+
+    it 'must valorize body data for matching ID data' do
+      instance = klass::new(id)
+      instance.body.must_equal({ id: id.parsed_response })
     end
 
     it 'must set body attribute only for 200 responses' do

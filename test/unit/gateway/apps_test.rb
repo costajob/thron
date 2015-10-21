@@ -54,4 +54,26 @@ describe Thron::Gateway::Apps do
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
     instance.login(id: app_id)
   end
+
+  it 'must call get to login snippet' do
+    route = klass.routes.fetch(:login_snippet)
+    query = {
+      clientId: instance.client_id, 
+      appId: app_id,
+      snippetId: '666'
+    }
+    mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
+    instance.login_snippet(id: app_id, snippet_id: '666')
+  end
+
+  it 'must call post to impersonate user (su)' do
+    route = klass.routes.fetch(:su)
+    body = { 
+      clientId: instance.client_id,
+      appId: app_id,
+      username: 'elvis'
+    }.to_json
+    mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true), format: 'plain' }) { response }
+    instance.su(id: app_id, username: 'elvis')
+  end
 end

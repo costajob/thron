@@ -53,7 +53,7 @@ module Thron
                           route.url, 
                           { query: query, 
                             body: body, 
-                            headers: route.headers(token_id: token_id, dash: dash) })
+                            headers: route.headers(token_id: token_id, dash: dash) }.merge!(route.format))
         end
         Routable::info(query, body, route, token_id, dash, raw)
         Response::new(raw.value).tap do |response|

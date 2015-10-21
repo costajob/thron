@@ -14,11 +14,11 @@ module Thron
       end
     end
 
-    def self.factory(name:, package:, params: [], verb: Verbs::POST, json: true)
+    def self.factory(name:, package:, params: [], verb: Verbs::POST, json: true, format: nil)
       url = "/#{package}/#{name}"
       url << "/#{params.join('/')}" unless params.empty?
       type = json ? Types::JSON : Types::PLAIN
-      Route::new(verb: verb, url: url, type: type)
+      Route::new(verb: verb, url: url, type: type, format: format)
     end
 
     def self.lazy_factory(args)
@@ -26,10 +26,11 @@ module Thron
       ->(params) { factory(args.merge({ params: params })) }
     end
 
-    def initialize(verb:, url:, type:)
-      @verb = verb
-      @url  = url
-      @type = type
+    def initialize(verb:, url:, type:, format:)
+      @verb   = verb
+      @url    = url
+      @type   = type
+      @format = format
     end
 
     def call(*args)
@@ -47,6 +48,11 @@ module Thron
 
     def json?
       @type == Types::JSON
+    end
+
+    def format
+      return {} unless @format
+      { format: @format }
     end
 
     def headers(token_id: nil, dash: nil)
