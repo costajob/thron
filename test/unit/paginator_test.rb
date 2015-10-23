@@ -103,21 +103,21 @@ describe Thron::Paginator do
 
     describe 'preloading' do
       let(:instance) { klass::new(body: body, preload: 5) }
-      let(:keys_proc) { ->(max) { (0..max*instance.limit).step(instance.limit).to_a } }
 
       it 'must preload results on start' do
         instance.next
-        instance.instance_variable_get(:@cache).keys.must_equal keys_proc[4]
+        instance.instance_variable_get(:@cache).keys.must_equal (0..200).step(instance.limit).to_a
       end
 
       it 'must prevent preloading when behind threshold' do
         4.times { instance.next }
-        instance.instance_variable_get(:@cache).keys.must_equal keys_proc[4]
+        instance.instance_variable_get(:@cache).keys.must_equal (0..200).step(instance.limit).to_a
       end
 
       it 'must preload next set when over threshold' do
-        5.times { instance.next }
-        instance.instance_variable_get(:@cache).keys.must_equal keys_proc[9]
+        instance.to 3
+        6.times { instance.next }
+        instance.instance_variable_get(:@cache).keys.must_equal (100..600).step(instance.limit).to_a
       end
     end
   end

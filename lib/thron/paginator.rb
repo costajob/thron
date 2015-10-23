@@ -30,8 +30,8 @@ module Thron
     end
 
     def next
-      @offset = next_offset
       preload!
+      @offset = next_offset
       call
     end
 
