@@ -6,7 +6,18 @@ module Thron
 
       PACKAGE = Package.new(:xadmin, :resources, self.service_name)
 
-
+      %i[audio content_in_channels document image live_event pagelet playlist program video].each do |message|
+        define_method(message) do |args|
+          data = args.fetch(:data) { Entity::Base::new }
+          body = { 
+            clientId: self.client_id,
+            param: data.to_payload
+          }
+          route(to: message, body: body, token_id: token_id) do |response|
+            response.body = Entity::Base::new(response.body.fetch('content') { {} })
+          end
+        end
+      end
 
       def self.routes
         @routes ||= {
