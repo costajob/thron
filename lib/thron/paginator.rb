@@ -1,7 +1,7 @@
 module Thron
   class Paginator
     MAX_LIMIT = 50
-    PRELOAD_LIMIT = 10
+    PRELOAD_LIMIT = 5
     MAX_PRELOAD = 30
 
     class PreloadTooLargeError < StandardError; end
@@ -14,7 +14,7 @@ module Thron
     
     attr_reader :total, :offset, :pages, :limit
 
-    def initialize(body:, limit: MAX_LIMIT, preload: PRELOAD_LIMIT)
+    def initialize(body:, limit: MAX_LIMIT, preload: 0)
       fail ArgumentError, 'body must be a proc object' unless body.is_a?(Proc)
       fail ArgumentError, 'body must accept the limit and offset attributes' unless body.arity == 2
       fail PreloadTooLargeError, "preload must be lower than #{MAX_PRELOAD}" if preload > MAX_PRELOAD 
@@ -26,25 +26,23 @@ module Thron
     end
 
     def prev
-      call(prev_offset)
+      @offset = prev_offset
+      call
     end
 
     def next
-      call(next_offset)
+      @offset = next_offset
+      preload!
+      call
     end
 
     def to(n)
-      call(page_to_offset(n))
+      @offset = page_to_offset(n)
+      call
     end
 
     def page
       (@offset / @limit) + 1
-    end
-
-    def preload
-      self.tap do |instance|
-        @preload.times { instance.next }
-      end
     end
 
     def first?
@@ -59,7 +57,6 @@ module Thron
     private
 
     def call(offset = @offset)
-      @offset = offset
       @cache.fetch(offset) do
         @body.call(@limit, offset).tap do |response|
           @total ||= response.total
@@ -67,6 +64,22 @@ module Thron
           @cache[offset] = response
         end
       end
+    end
+
+    def preload?
+      @offset == last_cached 
+    end
+
+    def preload!
+      @preload.times do |i|
+        index  = @offset.zero? ? i : i+1
+        offset = @offset + index * @limit
+        call(offset)
+      end if preload?
+    end
+
+    def last_cached
+      @cache.keys.max.to_i
     end
 
     def next_offset

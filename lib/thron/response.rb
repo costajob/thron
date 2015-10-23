@@ -13,7 +13,7 @@ module Thron
       @result_code = body.delete('resultCode')
       @sso_code    = body.delete('ssoCode')
       @total       = body.delete('totalResults')
-      @error       = body.delete(ERROR_KEY)
+      @error       = body.delete(ERROR_KEY) { body.delete('actionsInError') }
     end
 
     def body=(data)

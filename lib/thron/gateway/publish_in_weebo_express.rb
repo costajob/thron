@@ -6,9 +6,10 @@ module Thron
 
       PACKAGE = Package.new(:xadmin, :resources, self.service_name)
 
+
+
       def self.routes
         @routes ||= {
-          thron_document: Route::factory(name: 'publish4MEDocument', package: PACKAGE),
           audio: Route::factory(name: 'publishAudio', package: PACKAGE),
           content_in_channels: Route::factory(name: 'publishContentInChannels', package: PACKAGE),
           document: Route::factory(name: 'publishDocument', package: PACKAGE),

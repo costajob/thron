@@ -5,7 +5,7 @@ module Mock
   class Gateway
     def find(total: 1225, limit: 0, offset: 0)
       max = (offset+limit) >= total ? total : (offset+limit)
-      OpenStruct::new(total: total,  res: (offset..max).to_a)
+      OpenStruct::new(total: total,  res: (offset...max).to_a)
     end
   end
 end
@@ -64,9 +64,9 @@ describe Thron::Paginator do
 
     it 'must fetch results' do
       instance.next
-      instance.next.res.must_equal (50..100).to_a
-      instance.prev.res.must_equal (0..50).to_a
-      instance.to(7).res.must_equal (300..350).to_a
+      instance.next.res.must_equal (50..99).to_a
+      instance.prev.res.must_equal (0..49).to_a
+      instance.to(7).res.must_equal (300..349).to_a
     end
 
     it 'must limit previous offset' do
@@ -78,6 +78,11 @@ describe Thron::Paginator do
       100.times { instance.next }
       instance.offset.must_equal 1200
       assert instance.last?
+    end
+
+    it 'must set get the page' do
+      instance.to(2)
+      instance.page.must_equal 2
     end
 
     it 'must limit max page once total is known' do
@@ -96,26 +101,24 @@ describe Thron::Paginator do
       instance.next.equal? instance.prev
     end
 
-    it 'must set get the page' do
-      instance.to(2)
-      instance.page.must_equal 2
-    end
-  end
+    describe 'preloading' do
+      let(:instance) { klass::new(body: body, preload: 5) }
+      let(:keys_proc) { ->(max) { (0..max*instance.limit).step(instance.limit).to_a } }
 
-  describe '#preload' do
-    it 'must return itself after preload' do
-      instance.preload.must_equal instance
-    end
+      it 'must preload results on start' do
+        instance.next
+        instance.instance_variable_get(:@cache).keys.must_equal keys_proc[4]
+      end
 
-    it 'must limit preloading' do
-      instance.preload
-      instance.instance_variable_get(:@cache).size.must_equal klass::PRELOAD_LIMIT
-    end 
+      it 'must prevent preloading when behind threshold' do
+        4.times { instance.next }
+        instance.instance_variable_get(:@cache).keys.must_equal keys_proc[4]
+      end
 
-    it 'must limit preload to available results' do
-      150.times { instance.preload }
-      instance.instance_variable_get(:@cache).size.must_equal 25
-      assert instance.last?
+      it 'must preload next set when over threshold' do
+        5.times { instance.next }
+        instance.instance_variable_get(:@cache).keys.must_equal keys_proc[9]
+      end
     end
   end
 end
