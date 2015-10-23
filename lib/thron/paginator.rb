@@ -1,7 +1,6 @@
 module Thron
   class Paginator
     MAX_LIMIT = 50
-    PRELOAD_LIMIT = 5
     MAX_PRELOAD = 30
 
     class PreloadTooLargeError < StandardError; end

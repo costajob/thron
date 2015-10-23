@@ -44,7 +44,7 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('users') { [] }.map do |user|
-            detail = user.fetch('userDetail') { {} }
+            detail = user.delete('userDetail') { {} }
             Entity::Base::new(user.merge(detail))
           end
         end
