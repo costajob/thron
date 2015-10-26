@@ -70,9 +70,9 @@ Vagrant.configure(2) do |config|
   #   sudo apt-get install -y apache2
   # SHELL 
   $script = [
+    "sudo apt-add-repository ppa:brightbox/ruby-ng",
     "sudo apt-get update",
     "sudo apt-get -y -q install build-essential libssl-dev git",
-    "sudo apt-add-repository ppa:brightbox/ruby-ng",
     "sudo apt-get -y -q install ruby2.2 ruby2.2-dev",
     "sudo gem install bundler"]
 
