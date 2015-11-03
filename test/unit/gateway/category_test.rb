@@ -8,7 +8,7 @@ describe Thron::Gateway::Category do
   let(:category_id) { '32636c5f-b5d7-4800-8653-f4abff63f67b' }
   let(:parent_id) { 'd8e0e4cf-4e3d-4d79-8fba-972ee6b67822' }
   let(:instance) { klass::new(token_id: token_id) }
-  let(:response) { OpenStruct::new(code: 200) }
+  let(:response) { OpenStruct::new(code: 200, total: 10) }
 
   it 'must set the package' do
     klass::PACKAGE.to_s.must_equal "xcontents/resources/category"
@@ -83,11 +83,12 @@ describe Thron::Gateway::Category do
       properties: criteria.to_payload,
       locale: 'EN',
       orderBy: 'id',
-      offset: 3,
-      numberOfResult: 10
+      offset: 0,
+      numberOfResult: 50
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find(criteria: criteria, locale: 'EN', order_by: 'id', offset: 3, limit: 10)
+    paginator = instance.find(criteria: criteria, locale: 'EN', order_by: 'id')
+    paginator.next
   end
 
   it 'must call get to fetch category detail' do

@@ -5,26 +5,24 @@ module Thron
   class User
     extend Forwardable
 
-    attr_accessor :access_gateway
-    def_delegators :access_gateway, :logout, :validate_token, :validate_roles, :validate_capabilities
+    def_delegators :@access_gateway, :logout, :validate_token, :validate_roles, :validate_capabilities
 
-    def initialize(username:, password:)
-      @username, @password = username, password
+    def initialize
       @access_gateway = Gateway::AccessManager::new
     end 
 
-    def login
-      access_gateway.login(username: @username, password: @password)
-      @token_id = access_gateway.token_id
+    def login(args)
+      @access_gateway.login(args)
+      @gateways = gateways
     end
 
     private
 
     def gateways
-      return [] unless @token_id
-      @gateways ||= Gateway::constants.reduce({}) do |acc, name|
-        continue unless (klass = Gateway.const_get(name)) < Gateway::Session
-        acc[name] = klass::new(token_id: @token_id); acc
+      Gateway::constants.select do |name|
+        Gateway.const_get(name) < Gateway::Session
+      end.reduce({}) do |acc, name|
+        acc[name] = Gateway.const_get(name)::new(token_id: @access_gateway.token_id); acc
       end
     end
   end

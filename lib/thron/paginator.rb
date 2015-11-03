@@ -58,7 +58,7 @@ module Thron
     def call(offset = @offset)
       @cache.fetch(offset) do
         @body.call(@limit, offset).tap do |response|
-          @total ||= response.total
+          @total ||= response.total.to_i
           @pages ||= (@total / @limit.to_f).ceil
           @cache[offset] = response
         end
@@ -72,6 +72,7 @@ module Thron
     def preload!
       @preload.times do |i|
         index  = @offset.zero? ? i : i+1
+        break if total && total <= index * @limit
         offset = @offset + index * @limit
         call(offset)
       end if preload?

@@ -54,23 +54,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find(criteria: Entity::Base::new, locale: nil, order_by: nil, offset: 0, limit: 0)
-        body = { 
-          client: {
-            clientId: self.client_id
-          },
-          properties: criteria.to_payload,
-          locale: locale,
-          orderBy: order_by,
-          offset: offset.to_i,
-          numberOfResult: limit.to_i
-        }
-        route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('categories') { [] }.map do |category|
-            detail = category.delete('category') { {} }
-            Entity::Base::new(category.merge!(detail))
-          end
-        end
+      def find(args = {})
+        preload = args.delete(:preload) { 0 }
+        body = ->(limit, offset) { _find(args.merge!({ offset: offset, limit: limit })) }
+        Paginator::new(body: body, preload: preload)
       end
 
       def detail(id:, recursive: false, locale: nil)
@@ -153,6 +140,26 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
+
+      private def _find(criteria: Entity::Base::new, locale: nil, order_by: nil, offset: 0, limit: 0)
+        body = { 
+          client: {
+            clientId: self.client_id
+          },
+          properties: criteria.to_payload,
+          locale: locale,
+          orderBy: order_by,
+          offset: offset.to_i,
+          numberOfResult: limit.to_i
+        }
+        route(to: :find, body: body, token_id: token_id) do |response|
+          response.body = response.body.fetch('categories') { [] }.map do |category|
+            detail = category.delete('category') { {} }
+            Entity::Base::new(category.merge!(detail))
+          end
+        end
+      end
+
 
       def self.routes
         @routes ||= {
