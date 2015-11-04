@@ -7,7 +7,25 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create(username:, password:, data: Entity::Base::new(user_type: 'PLATFORM_USER'))
+      def self.routes
+        @routes ||= {
+          create_user: Route::factory(name: 'create', package: PACKAGE),
+          user_detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
+          find_users: Route::factory(name: 'findByProperties', package: PACKAGE),
+          check_user: Route::factory(name: 'login', package: PACKAGE),
+          temporary_token: Route::factory(name: 'resetPassword', package: PACKAGE),
+          update_password: Route::factory(name: 'changePassword', package: PACKAGE),
+          update_status: Route::factory(name: 'changeUserStatus', package: PACKAGE),
+          update_capabilities: Route::factory(name: 'updateCapabilitiesAndRoles', package: PACKAGE),
+          update_external_id: Route::lazy_factory(name: 'updateExternalId', package: PACKAGE),
+          update_image: Route::factory(name: 'updateImage', package: PACKAGE),
+          update_settings: Route::factory(name: 'updateSettings', package: PACKAGE),
+          update_user: Route::lazy_factory(name: 'updateUser', package: PACKAGE),
+          upgrade_user: Route::factory(name: 'upgradeUser', package: PACKAGE)
+        }
+      end
+
+      def create_user(username:, password:, data: Entity::Base::new(user_type: 'PLATFORM_USER'))
         body = { 
           clientId: self.client_id,
           newUser: {
@@ -20,7 +38,7 @@ module Thron
         end
       end
 
-      def detail(username:, options: Entity::Base::new, offset: 0, limit: 0)
+      def user_detail(username:, options: Entity::Base::new, offset: 0, limit: 0)
         query = {
           clientId: self.client_id,
           username: username,
@@ -33,24 +51,13 @@ module Thron
         end
       end
 
-      def find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
-        body = { 
-          clientId: self.client_id,
-          criteria: criteria.to_payload,
-          orderBy: order_by,
-          fieldsOption: options.to_payload,
-          offset: offset.to_i,
-          numberOfResult: limit.to_i
-        }
-        route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('users') { [] }.map do |user|
-            detail = user.delete('userDetail') { {} }
-            Entity::Base::new(user.merge(detail))
-          end
-        end
+      def find_users(args = {})
+        preload = args.delete(:preload) { 0 }
+        body = ->(limit, offset) { _find(args.merge!({ offset: offset, limit: limit })) }
+        Paginator::new(body: body, preload: preload)
       end
 
-      def active?(username:, password:)
+      def check_user(username:, password:)
         query = { 
           clientId: self.client_id,
           username: username,
@@ -62,7 +69,7 @@ module Thron
         end
       end
 
-      def temp_token(username:)
+      def temporary_token(username:)
         body = { 
           clientId: self.client_id,
           username: username,
@@ -124,14 +131,14 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update(username:, data: Entity::Base::new)
+      def update_user(username:, data: Entity::Base::new)
         body = {
           update: data.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, username])
       end
 
-      def upgrade(username:, password:, data: Entity::Base::new)
+      def upgrade_user(username:, password:, data: Entity::Base::new)
         body = { 
           clientId: self.client_id,
           username: username,
@@ -142,22 +149,21 @@ module Thron
         end
       end
 
-      def self.routes
-        @routes ||= {
-          create: Route::factory(name: 'create', package: PACKAGE),
-          detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
-          find: Route::factory(name: 'findByProperties', package: PACKAGE),
-          active?: Route::factory(name: 'login', package: PACKAGE),
-          temp_token: Route::factory(name: 'resetPassword', package: PACKAGE),
-          update_password: Route::factory(name: 'changePassword', package: PACKAGE),
-          update_status: Route::factory(name: 'changeUserStatus', package: PACKAGE),
-          update_capabilities: Route::factory(name: 'updateCapabilitiesAndRoles', package: PACKAGE),
-          update_external_id: Route::lazy_factory(name: 'updateExternalId', package: PACKAGE),
-          update_image: Route::factory(name: 'updateImage', package: PACKAGE),
-          update_settings: Route::factory(name: 'updateSettings', package: PACKAGE),
-          update: Route::lazy_factory(name: 'updateUser', package: PACKAGE),
-          upgrade: Route::factory(name: 'upgradeUser', package: PACKAGE)
+      private def _find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+        body = { 
+          clientId: self.client_id,
+          criteria: criteria.to_payload,
+          orderBy: order_by,
+          fieldsOption: options.to_payload,
+          offset: offset.to_i,
+          numberOfResult: limit.to_i
         }
+        route(to: :find_users, body: body, token_id: token_id) do |response|
+          response.body = response.body.fetch('users') { [] }.map do |user|
+            detail = user.delete('userDetail') { {} }
+            Entity::Base::new(user.merge(detail))
+          end
+        end
       end
     end
   end

@@ -6,7 +6,25 @@ module Thron
 
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
 
-      def create(parent_id:, locale: Entity::Base::new, is_private: false, solution: nil, data: Entity::Base::new)
+      def self.routes
+        @routes ||= {
+          create_category: Route::factory(name: 'createCategory', package: PACKAGE),
+          create_system_category: Route::factory(name: 'createSystemCategory', package: PACKAGE),
+          create_category_locale: Route::factory(name: 'addCategory4Locale', package: PACKAGE),
+          create_category_pretty_id: Route::factory(name: 'addCategoryPrettyId', package: PACKAGE),
+          find_categories: Route::factory(name: 'findByProperties2', package: PACKAGE),
+          category_detail: Route::factory(name: 'getCategory', package: PACKAGE, verb: Route::Verbs::GET),
+          remove_category: Route::factory(name: 'removeCategory', package: PACKAGE),
+          remove_category_locale: Route::factory(name: 'removeCategory4Locale', package: PACKAGE),
+          remove_category_pretty_id: Route::factory(name: 'removeCategoryPrettyId', package: PACKAGE),
+          set_parent_category: Route::factory(name: 'setParentId', package: PACKAGE),
+          update_category: Route::factory(name: 'updateCategory', package: PACKAGE),
+          update_category_locale: Route::factory(name: 'updateCategory4Locale', package: PACKAGE),
+          update_category_pretty_id: Route::factory(name: 'updateCategoryPrettyId', package: PACKAGE)
+        }
+      end
+
+      def create_category(parent_id:, locale: Entity::Base::new, is_private: false, solution: nil, data: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
@@ -21,7 +39,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_system(id:, parent_id:, locale: Entity::Base::new, data: Entity::Base::new)
+      def create_system_category(id:, parent_id:, locale: Entity::Base::new, data: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
@@ -34,7 +52,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_locale(id:, locale: Entity::Base::new)
+      def create_category_locale(id:, locale: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
@@ -45,7 +63,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_pretty_id(id:, pretty_id:)
+      def create_category_pretty_id(id:, pretty_id:)
         body = { 
           clientId: self.client_id,
           categoryId: id,
@@ -54,13 +72,13 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find(args = {})
+      def find_categories(args = {})
         preload = args.delete(:preload) { 0 }
         body = ->(limit, offset) { _find(args.merge!({ offset: offset, limit: limit })) }
         Paginator::new(body: body, preload: preload)
       end
 
-      def detail(id:, recursive: false, locale: nil)
+      def category_detail(id:, recursive: false, locale: nil)
         query = { 
           clientId: self.client_id,
           categoryId: id,
@@ -72,7 +90,7 @@ module Thron
         end
       end
 
-      def remove(id:, recursive: false)
+      def remove_category(id:, recursive: false)
         query = { 
           clientId: self.client_id,
           catId: id,
@@ -81,7 +99,7 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def remove_locale(id:, locale:)
+      def remove_category_locale(id:, locale:)
         body = { 
           client: {
             clientId: self.client_id
@@ -92,7 +110,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_pretty_id(id:, locale:)
+      def remove_category_pretty_id(id:, locale:)
         body = { 
           clientId: self.client_id,
           categoryId: id,
@@ -101,7 +119,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def set_parent(id:, parent_id:)
+      def set_parent_category(id:, parent_id:)
         query = { 
           clientId: self.client_id,
           categoryId: id,
@@ -110,7 +128,7 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update(id:, data: Entity::Base::new)
+      def update_category(id:, data: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
@@ -121,7 +139,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_locale(id:, locale: Entity::Base::new)
+      def update_category_locale(id:, locale: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
@@ -132,7 +150,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_pretty_id(id:, pretty_id: Entity::Base::new)
+      def update_category_pretty_id(id:, pretty_id: Entity::Base::new)
         body = { 
           clientId: self.client_id,
           categoryId: id,
@@ -152,31 +170,12 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: :find, body: body, token_id: token_id) do |response|
+        route(to: :find_categories, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('categories') { [] }.map do |category|
             detail = category.delete('category') { {} }
             Entity::Base::new(category.merge!(detail))
           end
         end
-      end
-
-
-      def self.routes
-        @routes ||= {
-          create: Route::factory(name: 'createCategory', package: PACKAGE),
-          create_system: Route::factory(name: 'createSystemCategory', package: PACKAGE),
-          create_locale: Route::factory(name: 'addCategory4Locale', package: PACKAGE),
-          create_pretty_id: Route::factory(name: 'addCategoryPrettyId', package: PACKAGE),
-          find: Route::factory(name: 'findByProperties2', package: PACKAGE),
-          detail: Route::factory(name: 'getCategory', package: PACKAGE, verb: Route::Verbs::GET),
-          remove: Route::factory(name: 'removeCategory', package: PACKAGE),
-          remove_locale: Route::factory(name: 'removeCategory4Locale', package: PACKAGE),
-          remove_pretty_id: Route::factory(name: 'removeCategoryPrettyId', package: PACKAGE),
-          set_parent: Route::factory(name: 'setParentId', package: PACKAGE),
-          update: Route::factory(name: 'updateCategory', package: PACKAGE),
-          update_locale: Route::factory(name: 'updateCategory4Locale', package: PACKAGE),
-          update_pretty_id: Route::factory(name: 'updateCategoryPrettyId', package: PACKAGE)
-        }
       end
     end
   end
