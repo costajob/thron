@@ -93,6 +93,7 @@ module Thron
     end
 
     def page_to_offset(n)
+      return 0 if @pages && @pages.zero?
       n = @pages && n >= @pages ? @pages : n
       (n-1) * @limit
     end
