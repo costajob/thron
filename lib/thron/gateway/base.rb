@@ -32,8 +32,17 @@ module Thron
         self.class.client_id
       end
 
-      private def check_session
+      private 
+      
+      def check_session
         fail NoActiveSessionError, NO_ACTIVE_SESSION unless token_id
+      end
+
+      def fetch_paginator(name, args = {})
+        preload = args.delete(:preload) { 0 }
+        limit = args.delete(:limit) { Paginator::MAX_LIMIT }
+        body = ->(limit, offset) { send(name, args.merge!({ offset: offset, limit: limit })) }
+        Paginator::new(body: body, preload: preload, limit: limit)
       end
     end
   end

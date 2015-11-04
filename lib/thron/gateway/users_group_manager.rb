@@ -6,7 +6,20 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
-      def create(data: Entity::Base::new(active: false))
+      def self.routes
+        @routes ||= {
+          create_group: Route::factory(name: 'createGroup', package: PACKAGE),
+          remove_group: Route::factory(name: 'removeGroup', package: PACKAGE),
+          group_detail: Route::factory(name: 'detailGroup', package: PACKAGE),
+          find_groups: Route::factory(name: 'findGroupsByProperties', package: PACKAGE),
+          link_users_to_group: Route::factory(name: 'linkUserToGroup', package: PACKAGE),
+          unlink_users_from_group: Route::factory(name: 'unlinkUserToGroup', package: PACKAGE),
+          update_group: Route::lazy_factory(name: 'update', package: PACKAGE),
+          update_group_external_id: Route::lazy_factory(name: 'updateExternalId', package: PACKAGE)
+        }
+      end
+
+      def create_group(data: Entity::Base::new(active: false))
         body = { 
           clientId: self.client_id,
           usersGroup: data.to_payload
@@ -16,7 +29,7 @@ module Thron
         end
       end
 
-      def remove(id:, force: false)
+      def remove_group(id:, force: false)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -25,7 +38,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def detail(id:, options: Entity::Base::new, offset: 0, limit: 0)
+      def group_detail(id:, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: id,
@@ -39,7 +52,11 @@ module Thron
         end
       end
 
-      def find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+      def find_groups(args = {})
+        fetch_paginator(:_find, args)
+      end
+
+      private def _find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -48,7 +65,7 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: __callee__, body: body, token_id: token_id) do |response|
+        route(to: :find_groups, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('groups') { [] }.map do |group|
             detail = group.delete('groupDetail') { {} }
             Entity::Base::new(group.merge(detail))
@@ -56,7 +73,7 @@ module Thron
         end
       end
 
-      %i[link_users unlink_users].each do |name|
+      %i[link_users_to_group unlink_users_from_group].each do |name|
         define_method(name) do |*args|
           group_id = args.last.fetch(:id)
           usernames = args.last.fetch(:usernames) { [] }
@@ -71,31 +88,18 @@ module Thron
         end
       end
 
-      def update(data:)
+      def update_group(data:)
         body = {
           update: data.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, data.id])
       end
 
-      def update_external_id(id:, external_id: Entity::Base::new)
+      def update_group_external_id(id:, external_id: Entity::Base::new)
         body = {
           externalId: external_id.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, id])
-      end
-
-      def self.routes
-        @routes ||= {
-          create: Route::factory(name: 'createGroup', package: PACKAGE),
-          remove: Route::factory(name: 'removeGroup', package: PACKAGE),
-          detail: Route::factory(name: 'detailGroup', package: PACKAGE),
-          find: Route::factory(name: 'findGroupsByProperties', package: PACKAGE),
-          link_users: Route::factory(name: 'linkUserToGroup', package: PACKAGE),
-          unlink_users: Route::factory(name: 'unlinkUserToGroup', package: PACKAGE),
-          update: Route::lazy_factory(name: 'update', package: PACKAGE),
-          update_external_id: Route::lazy_factory(name: 'updateExternalId', package: PACKAGE)
-        }
       end
     end
   end

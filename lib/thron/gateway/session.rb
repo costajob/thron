@@ -1,4 +1,3 @@
-require_relative '../paginator'
 require_relative 'base'
 
 module Thron

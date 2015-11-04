@@ -33,7 +33,7 @@ describe Thron::User do
     end
   end
 
-  %i[AccessManager VUserManager Category].each do |name|
+  (Thron::User::session_gateways + %i[AccessManager]).each do |name|
     it "must delegate methods to the #{name} gateway" do
       Thron::Gateway.const_get(name).routes.keys.each do |message|
         instance.must_respond_to message

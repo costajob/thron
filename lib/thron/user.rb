@@ -5,8 +5,14 @@ module Thron
   class User
     extend Forwardable
 
+    def self.session_gateways
+      @session_gateways ||= Gateway::constants.select do |name|
+        Gateway.const_get(name) < Gateway::Session
+      end
+    end
+
     def_delegators :@access_gateway, *Gateway::AccessManager::routes.keys
-    %i[VUserManager Category].each do |name|
+    self.session_gateways.each do |name|
       def_delegators "@gateways[:#{name}]", *Gateway.const_get(name).routes::keys
     end
 
@@ -24,13 +30,9 @@ module Thron
       !!@access_gateway.token_id
     end
 
-    private
-
-    def initialize_gateways
+    private def initialize_gateways
       return {} unless logged?
-      Gateway::constants.select do |name|
-        Gateway.const_get(name) < Gateway::Session
-      end.reduce({}) do |acc, name|
+      self.class.session_gateways.reduce({}) do |acc, name|
         acc[name] = Gateway.const_get(name)::new(token_id: @access_gateway.token_id); acc
       end
     end

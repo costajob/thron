@@ -66,7 +66,7 @@ module Thron
     end
 
     private def fetch_route(to, params)
-      self.class.routes.fetch(to) { fail NoentRouteError }.call(params)
+      self.class.routes.fetch(to) { fail NoentRouteError, "#{to} route does not exist!" }.call(params)
     end
   end
 end

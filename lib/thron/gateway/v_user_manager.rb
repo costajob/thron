@@ -12,7 +12,7 @@ module Thron
           create_user: Route::factory(name: 'create', package: PACKAGE),
           user_detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
           find_users: Route::factory(name: 'findByProperties', package: PACKAGE),
-          check_user: Route::factory(name: 'login', package: PACKAGE),
+          check_credentials: Route::factory(name: 'login', package: PACKAGE),
           temporary_token: Route::factory(name: 'resetPassword', package: PACKAGE),
           update_password: Route::factory(name: 'changePassword', package: PACKAGE),
           update_status: Route::factory(name: 'changeUserStatus', package: PACKAGE),
@@ -52,12 +52,27 @@ module Thron
       end
 
       def find_users(args = {})
-        preload = args.delete(:preload) { 0 }
-        body = ->(limit, offset) { _find(args.merge!({ offset: offset, limit: limit })) }
-        Paginator::new(body: body, preload: preload)
+        fetch_paginator(:_find, args)
       end
 
-      def check_user(username:, password:)
+      private def _find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+        body = { 
+          clientId: self.client_id,
+          criteria: criteria.to_payload,
+          orderBy: order_by,
+          fieldsOption: options.to_payload,
+          offset: offset.to_i,
+          numberOfResult: limit.to_i
+        }
+        route(to: :find_users, body: body, token_id: token_id) do |response|
+          response.body = response.body.fetch('users') { [] }.map do |user|
+            detail = user.delete('userDetail') { {} }
+            Entity::Base::new(user.merge(detail))
+          end
+        end
+      end
+
+      def check_credentials(username:, password:)
         query = { 
           clientId: self.client_id,
           username: username,
@@ -146,23 +161,6 @@ module Thron
         }.merge(data.to_payload)
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('user') { {} })
-        end
-      end
-
-      private def _find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
-        body = { 
-          clientId: self.client_id,
-          criteria: criteria.to_payload,
-          orderBy: order_by,
-          fieldsOption: options.to_payload,
-          offset: offset.to_i,
-          numberOfResult: limit.to_i
-        }
-        route(to: :find_users, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('users') { [] }.map do |user|
-            detail = user.delete('userDetail') { {} }
-            Entity::Base::new(user.merge(detail))
-          end
         end
       end
     end

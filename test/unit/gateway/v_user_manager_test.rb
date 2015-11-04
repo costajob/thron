@@ -51,22 +51,22 @@ describe Thron::Gateway::VUserManager do
       orderBy: 'name',
       fieldsOption: options.to_payload, 
       offset: 0,
-      numberOfResult: 50
+      numberOfResult: 30
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    paginator = instance.find_users(criteria: criteria, order_by: 'name', options: options, offset: 2, limit: 10)
+    paginator = instance.find_users(criteria: criteria, order_by: 'name', options: options, limit: 30)
     paginator.next 
   end
 
   it 'must call post to check user validity' do
-    route = klass.routes.fetch(:check_user)
+    route = klass.routes.fetch(:check_credentials)
     query = { 
       clientId: instance.client_id,
       username: username,
       password: password
     }
     mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.check_user(username: username, password: password)
+    instance.check_credentials(username: username, password: password)
   end
 
   it 'must call post to get a temporary token' do

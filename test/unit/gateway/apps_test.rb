@@ -13,46 +13,46 @@ describe Thron::Gateway::Apps do
     klass::PACKAGE.to_s.must_equal "xadmin/resources/apps"
   end
 
-  it 'must call post to get detail' do
-    route = klass.routes.fetch(:detail)
+  it 'must call post to get app detail' do
+    route = klass.routes.fetch(:app_detail)
     body = { 
       clientId: instance.client_id, 
       appId: app_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.detail(id: app_id)
+    instance.app_detail(id: app_id)
   end
 
-  it 'must call post to list applications' do
-    route = klass.routes.fetch(:list)
+  it 'must call post to list apps' do
+    route = klass.routes.fetch(:list_apps)
     criteria = entity::new(app_type: %w[PLATFORM], app_sub_type: 'INTERNAL', app_ids: %w[id1 id3 id7], app_pretty_ids: %w[34 45 67], app_active: false, app_display_name: 'blue sueder', app_owner_username: 'elvis')
     body = { 
       clientId: instance.client_id,
       criteria: criteria.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.list(criteria: criteria)
+    instance.list_apps(criteria: criteria)
   end
 
-  it 'must call post to find applications' do
-    route = klass.routes.fetch(:find)
+  it 'must call post to find apps' do
+    route = klass.routes.fetch(:find_apps)
     criteria = entity::new(snippet_ids: %w[id1 id7 id8], snippet_status: %w[CREATED DELETED], snippet_display_name: 'ghetto gun', snippet_type: %w[PLATFORM INTERNAL], snippet_owner_username: 'elvis', app_type: %w[PLATFORM], app_active: false, app_display_name: 'ghetto gun')
     body = { 
       clientId: instance.client_id,
       criteria: criteria.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find(criteria: criteria)
+    instance.find_apps(criteria: criteria)
   end
 
-  it 'must call get to login' do
-    route = klass.routes.fetch(:login)
+  it 'must call get to login app' do
+    route = klass.routes.fetch(:login_app)
     query = {
       clientId: instance.client_id, 
       appId: app_id
     }
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.login(id: app_id)
+    instance.login_app(id: app_id)
   end
 
   it 'must call get to login snippet' do

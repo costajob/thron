@@ -11,8 +11,8 @@ describe Thron::Gateway::ContentList do
     klass::PACKAGE.to_s.must_equal "xcontents/resources/contentlist"
   end
 
-  it 'must call get to find contents' do
-    route = klass.routes.fetch(:find)
+  it 'must call get to show contents' do
+    route = klass.routes.fetch(:show_contents)
     criteria = Thron::Entity::Base::new(type: 'VIDEO', search_key: 'test', ugc: false)
     query = {
       clientId: instance.client_id,
@@ -20,10 +20,11 @@ describe Thron::Gateway::ContentList do
       locale: 'EN',
       searchOnSubCategories: false,
       orderBy: 'name',
-      offset: 10,
-      numberOfResult: 100
+      offset: 150,
+      numberOfResult: 50
     }.merge(criteria.to_payload)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.find(category_id: '64746', locale: 'EN', criteria: criteria, recursive: false, order_by: 'name', offset: 10, limit: 100)
+    paginator = instance.show_contents(category_id: '64746', locale: 'EN', criteria: criteria, recursive: false, order_by: 'name')
+    paginator.to(4)
   end
 end

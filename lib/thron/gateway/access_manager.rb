@@ -6,6 +6,16 @@ module Thron
 
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
+      def self.routes
+        @routes ||= {
+          login: Route::factory(name: 'login', package: PACKAGE, params: [client_id]),
+          logout: Route::factory(name: 'logout', package: PACKAGE, params: [client_id], json: false),
+          validate_capabilities: Route::factory(name: 'validateCapability', package: PACKAGE, params: [client_id], json: false),
+          validate_roles: Route::factory(name: 'validateRole', package: PACKAGE, params: [client_id], json: false),
+          validate_token: Route::factory(name: 'validateToken', package: PACKAGE, params: [client_id], json: true)
+        }
+      end
+
       def login(username:, password:)
         query = {
           username: username,
@@ -46,16 +56,6 @@ module Thron
         route(to: __callee__, token_id: token_id, dash: false) do |response|
           response.body = Entity::Base::new(response.body)
         end
-      end
-
-      def self.routes
-        @routes ||= {
-          login: Route::factory(name: 'login', package: PACKAGE, params: [client_id]),
-          logout: Route::factory(name: 'logout', package: PACKAGE, params: [client_id], json: false),
-          validate_capabilities: Route::factory(name: 'validateCapability', package: PACKAGE, params: [client_id], json: false),
-          validate_roles: Route::factory(name: 'validateRole', package: PACKAGE, params: [client_id], json: false),
-          validate_token: Route::factory(name: 'validateToken', package: PACKAGE, params: [client_id], json: true)
-        }
       end
     end
   end

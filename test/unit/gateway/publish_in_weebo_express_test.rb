@@ -11,15 +11,15 @@ describe Thron::Gateway::PublishInWeeboExpress do
     klass::PACKAGE.to_s.must_equal "xadmin/resources/publishinweeboexpress"
   end
   
-  %w[audio content_in_channels document image live_event pagelet playlist program video].each do |message|
+  Thron::Gateway::PublishInWeeboExpress.routes.keys.each do |message|
     it "must call post to publish #{message}" do
-      route = klass.routes.fetch(message.to_sym)
+      route = klass.routes.fetch(message)
       body = { 
         clientId: instance.client_id,
         param: Thron::Entity::Base::new.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(message.to_sym, {})
+      instance.send(message, {})
     end
   end
 end

@@ -6,8 +6,32 @@ module Thron
 
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
 
+      def self.routes
+        @routes ||= {
+          create_content_locale: Route::factory(name: 'addContent4Locale', package: PACKAGE),
+          create_content_pretty_id: Route::factory(name: 'addContentPrettyId', package: PACKAGE),
+          create_content_player: Route::factory(name: 'addPlayerEmbedCode', package: PACKAGE),
+          link_content: Route::factory(name: 'addLinkedContent', package: PACKAGE),
+          link_contents: Route::factory(name: 'addLinkedContents', package: PACKAGE),
+          content_detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
+          find_contents: Route::factory(name: 'findByProperties', package: PACKAGE),
+          move_linked_content: Route::factory(name: 'moveLinkedContent', package: PACKAGE),
+          remove_content_locale: Route::factory(name: 'removeContent4Locale', package: PACKAGE),
+          remove_content_pretty_id: Route::factory(name: 'removeContentPrettyId', package: PACKAGE),
+          unlink_contents: Route::factory(name: 'removeLinkedContents', package: PACKAGE),
+          remove_content_player: Route::factory(name: 'removePlayerEmbedCode', package: PACKAGE),
+          update_content_solutions: Route::factory(name: 'updateAvailableSolutions', package: PACKAGE),
+          update_content: Route::factory(name: 'updateContent', package: PACKAGE),
+          update_content_locale: Route::factory(name: 'updateContent4Locale', package: PACKAGE),
+          update_content_pretty_id: Route::factory(name: 'updateContentPrettyId', package: PACKAGE),
+          update_content_player: Route::factory(name: 'updatePlayerEmbedCode', package: PACKAGE),
+          update_content_players: Route::factory(name: 'updatePlayerEmbedCodes', package: PACKAGE),
+          update_content_access_data: Route::factory(name: 'updateUserSpecificValues', package: PACKAGE)
+        }
+      end
+
       %w[create update].each do |action|
-        define_method("#{action}_locale") do |args|
+        define_method("#{action}_content_locale") do |args|
           id          = args.fetch(:id)
           locale      = args.fetch(:locale) { Entity::Base::new }
           category_id = args.fetch(:category_id) { nil }
@@ -22,7 +46,7 @@ module Thron
           route(to: __callee__, body: body, token_id: token_id)
         end
 
-        define_method("#{action}_pretty_id") do |args|
+        define_method("#{action}_content_pretty_id") do |args|
           id          = args.fetch(:id)
           pretty_id   = args.fetch(:pretty_id) { Entity::Base::new }
           category_id = args.fetch(:category_id) { nil }
@@ -35,7 +59,7 @@ module Thron
           route(to: __callee__, body: body, token_id: token_id)
         end
 
-        define_method("#{action}_player") do |args|
+        define_method("#{action}_content_player") do |args|
           id   = args.fetch(:id)
           data = args.fetch(:data) { Entity::Base::new }
           body = { 
@@ -69,7 +93,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def detail(id:, options: Entity::Base::new, locale: nil, access_key: nil)
+      def content_detail(id:, options: Entity::Base::new, locale: nil, access_key: nil)
         query = { 
           clientId: self.client_id,
           contentId: id,
@@ -82,7 +106,11 @@ module Thron
         end
       end
 
-      def find(criteria: Entity::Base::new, options: Entity::Base::new, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
+      def find_contents(args = {})
+        fetch_paginator(:_find, args)
+      end
+
+      private def _find(criteria: Entity::Base::new, options: Entity::Base::new, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
@@ -95,7 +123,7 @@ module Thron
           offset: offset.to_i,
           numberOfresults: limit.to_i
         }
-        route(to: __callee__, body: body, token_id: token_id) do |response|
+        route(to: :find_contents, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('contents') { [] }.map do |content|
             detail = content.delete('content') { {} }
             Entity::Base::new(content.merge!(detail))
@@ -103,7 +131,7 @@ module Thron
         end
       end
       
-      def move(id:, from: 0, to: 0, link_type: nil)
+      def move_linked_content(id:, from: 0, to: 0, link_type: nil)
         body = { 
           clientId: self.client_id,
           xcontentId: id,
@@ -114,7 +142,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_locale(id:, locale:)
+      def remove_content_locale(id:, locale:)
         query = { 
           clientId: self.client_id,
           contentId: id,
@@ -123,7 +151,7 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id)
       end
 
-      def remove_pretty_id(id:, locale:, category_id: nil)
+      def remove_content_pretty_id(id:, locale:, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: id,
@@ -143,7 +171,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_player(id:, player_id:)
+      def remove_content_player(id:, player_id:)
         body = { 
           clientId: self.client_id,
           contentId: id,
@@ -152,7 +180,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_solutions(id:, solutions: [], category_id: nil)
+      def update_content_solutions(id:, solutions: [], category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: id,
@@ -164,7 +192,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update(id:, data: Entity::Base::new, category_id: nil)
+      def update_content(id:, data: Entity::Base::new, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: id,
@@ -174,7 +202,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_players(id:, players: [], category_id: nil)
+      def update_content_players(id:, players: [], category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: id,
@@ -186,7 +214,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_user(username:, id:, data: Entity::Base::new, category_id: nil)
+      def update_content_access_data(username:, id:, data: Entity::Base::new, category_id: nil)
         body = { 
           clientId: self.client_id,
           username: username,
@@ -195,30 +223,6 @@ module Thron
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)
-      end
-
-      def self.routes
-        @routes ||= {
-          create_locale: Route::factory(name: 'addContent4Locale', package: PACKAGE),
-          create_pretty_id: Route::factory(name: 'addContentPrettyId', package: PACKAGE),
-          link_content: Route::factory(name: 'addLinkedContent', package: PACKAGE),
-          link_contents: Route::factory(name: 'addLinkedContents', package: PACKAGE),
-          create_player: Route::factory(name: 'addPlayerEmbedCode', package: PACKAGE),
-          detail: Route::factory(name: 'detail', package: PACKAGE, verb: Route::Verbs::GET),
-          find: Route::factory(name: 'findByProperties', package: PACKAGE),
-          move: Route::factory(name: 'moveLinkedContent', package: PACKAGE),
-          remove_locale: Route::factory(name: 'removeContent4Locale', package: PACKAGE),
-          remove_pretty_id: Route::factory(name: 'removeContentPrettyId', package: PACKAGE),
-          unlink_contents: Route::factory(name: 'removeLinkedContents', package: PACKAGE),
-          remove_player: Route::factory(name: 'removePlayerEmbedCode', package: PACKAGE),
-          update_solutions: Route::factory(name: 'updateAvailableSolutions', package: PACKAGE),
-          update: Route::factory(name: 'updateContent', package: PACKAGE),
-          update_locale: Route::factory(name: 'updateContent4Locale', package: PACKAGE),
-          update_pretty_id: Route::factory(name: 'updateContentPrettyId', package: PACKAGE),
-          update_player: Route::factory(name: 'updatePlayerEmbedCode', package: PACKAGE),
-          update_players: Route::factory(name: 'updatePlayerEmbedCodes', package: PACKAGE),
-          update_user: Route::factory(name: 'updateUserSpecificValues', package: PACKAGE)
-        }
       end
     end
   end

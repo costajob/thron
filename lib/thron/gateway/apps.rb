@@ -6,7 +6,18 @@ module Thron
 
       PACKAGE = Package.new(:xadmin, :resources, self.service_name)
 
-      def detail(id:)
+      def self.routes
+        @routes ||= {
+          app_detail: Route::factory(name: 'appDetail', package: PACKAGE),
+          list_apps: Route::factory(name: 'appsList', package: PACKAGE),
+          find_apps: Route::factory(name: 'findByProperties', package: PACKAGE),
+          login_app: Route::factory(name: 'loginApp', package: PACKAGE, verb: Route::Verbs::GET),
+          login_snippet: Route::factory(name: 'loginSnippet', package: PACKAGE, verb: Route::Verbs::GET),
+          su: Route::factory(name: 'su', package: PACKAGE, format: Route::Types::PLAIN)
+        }
+      end
+
+      def app_detail(id:)
         body = { 
           clientId: self.client_id,
           appId: id
@@ -16,7 +27,7 @@ module Thron
         end
       end
 
-      def list(criteria: Entity::Base::new(app_active: true))
+      def list_apps(criteria: Entity::Base::new(app_active: true))
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload
@@ -28,7 +39,7 @@ module Thron
         end
       end
 
-      def find(criteria: Entity::Base::new(app_active: true))
+      def find_apps(criteria: Entity::Base::new(app_active: true))
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload
@@ -40,7 +51,7 @@ module Thron
         end
       end
 
-      def login(id:)
+      def login_app(id:)
         query = {
           clientId: self.client_id,
           appId: id
@@ -68,17 +79,6 @@ module Thron
           username: username
         }
         route(to: __callee__, body: body, token_id: token_id)
-      end
-
-      def self.routes
-        @routes ||= {
-          detail: Route::factory(name: 'appDetail', package: PACKAGE),
-          list: Route::factory(name: 'appsList', package: PACKAGE),
-          find: Route::factory(name: 'findByProperties', package: PACKAGE),
-          login: Route::factory(name: 'loginApp', package: PACKAGE, verb: Route::Verbs::GET),
-          login_snippet: Route::factory(name: 'loginSnippet', package: PACKAGE, verb: Route::Verbs::GET),
-          su: Route::factory(name: 'su', package: PACKAGE, format: Route::Types::PLAIN)
-        }
       end
     end
   end
