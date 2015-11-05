@@ -18,7 +18,7 @@ module Thron
       def_delegators "@gateways[:#{name}]", *Gateway.const_get(name).routes::keys
     end
     
-    attr_reader :token_id
+    attr_reader :token_id, :gateways
 
     def initialize
       @access_gateway = Gateway::AccessManager::new
@@ -29,6 +29,12 @@ module Thron
         @token_id = @access_gateway.token_id
         refresh_gateways
       end
+    end
+
+    def logout
+      return unless logged?
+      @token_id = nil
+      @gateways = nil
     end
 
     def disguise(args)
