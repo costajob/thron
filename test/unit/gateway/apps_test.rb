@@ -63,7 +63,7 @@ describe Thron::Gateway::Apps do
       snippetId: '666'
     }
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.login_snippet(id: app_id, snippet_id: '666')
+    instance.login_snippet(app_id: app_id, snippet_id: '666')
   end
 
   it 'must call post to impersonate user (su)' do
@@ -74,6 +74,6 @@ describe Thron::Gateway::Apps do
       username: 'elvis'
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true), format: 'plain' }) { response }
-    instance.su(id: app_id, username: 'elvis')
+    instance.su(app_id: app_id, username: 'elvis')
   end
 end

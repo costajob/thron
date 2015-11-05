@@ -61,10 +61,10 @@ module Thron
         end
       end
 
-      def login_snippet(id:, snippet_id:)
+      def login_snippet(app_id:, snippet_id:)
         query = {
           clientId: self.client_id,
-          appId: id,
+          appId: app_id,
           snippetId: snippet_id,
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
@@ -72,13 +72,15 @@ module Thron
         end
       end
 
-      def su(id:, username:)
+      def su(app_id:, username:)
         body = { 
           clientId: self.client_id,
-          appId: id,
+          appId: app_id,
           username: username
         }
-        route(to: __callee__, body: body, token_id: token_id)
+        route(to: __callee__, body: body, token_id: token_id) do |response|
+          response.body = Entity::Base::new(response.body)
+        end
       end
     end
   end

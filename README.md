@@ -15,6 +15,7 @@
   * [Contents](#contents)
   * [Groups](#groups)
   * [Categories](#categories)
+  * [Disguise](#disguise)
 
 ## Summary
 This gem provides a simpe Ruby client for the [Thron](https://developer.4me.it/index.php) (ex 4me) APIs.
@@ -165,4 +166,15 @@ Create a new locale for a cetagory:
 ```ruby
 locale = Thron::Entity::Base::new(name: 'photos', description: 'JPG and PNG images', locale: 'EN')
 user.create_category_locale(id: '<a_category_id>', locale: locale)
+```
+
+### Disguise
+Thron APIs allow to disguise another user via its apps sub-system.
+
+Disguisng only works inside the block:
+```ruby
+user.disguise(app_id: '<app_id_that_can_disguise>', username: '<username_to_disguise>') do
+  # do something as the disguised user
+end
+# finished disguising, it returns disguised token id
 ```

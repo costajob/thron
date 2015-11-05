@@ -1,4 +1,3 @@
-require_relative '../paginator'
 require_relative 'session'
 
 module Thron
