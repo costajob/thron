@@ -18,11 +18,11 @@
   * [Disguise](#disguise)
 
 ## Summary
-This gem provides a simpe Ruby client for the [Thron](https://developer.4me.it/index.php) (ex 4me) APIs.
+This gem provides a simple Ruby client for the [Thron](https://developer.4me.it/index.php) (ex 4me) APIs.
 The aim of this gem is to provide a simple interface for your ruby application
 that need to communicate with Thron services. 
-I've also managed to keep the gem's dependencies footpring as small as possible (i
-hate bulky Gemfiles...).
+I've also managed to keep the gem's dependencies footprint as small as possible (i
+hate bulky Gemfile...).
 
 ## Setup
 This gem use at least a **Ruby 2.1** compatible parser.  
@@ -63,9 +63,9 @@ Is possible to navigate the paginator by using the following methods:
 * **prev**: move backwards
 * **to**: move directly to the specified page  
 
-The paginator keeps an internal cache, so rememner to set it to nil to avoid stale
-values.  
-To speed up loading of resuilts, the paginator accepts a *preload* parameter (an integer): it calls the APIs the specified number of times by automatically augmenting the offset and caching the results.
+The paginator keeps an internal cache, so remember to set it to nil to avoid stale
+values. 
+To speed up loading of results, the paginator accepts a *preload* parameter (an integer): it calls the APIs the specified number of times by automatically augmenting the offset and caching the results.
 
 ### Response
 The HTTParty response has been wrapped in order to return a logical object that wraps the APIs return values.  
@@ -76,11 +76,11 @@ The main attributes are:
 * error: the error message, if any, returned by the API
 
 ### Dynamic Entities
-Some of the Thron APIs retun a JSON representation of an entity. I have initially
+Some of the Thron APIs return a JSON representation of an entity. I have initially
 considered wrapping each entity into its own PORO object, but gave up after few
 days since the quality of the returned entities is very large.  
-I opted instead to return a sub-class of the OpenStruct object: it has the same
-dynamic behaviour of the OpenStruct and add some sugar features:
+I opted instead to wrap returned data into a sub-class of the OpenStruct object, having the same
+dynamic behaviour while adding some sugar features:
 * it converts the lower-camel-case parameters into (more rubesque) snake-case
 * it does recursive mapping of nested attributes
 * it converts time and date values to appropriate Ruby objects  
@@ -89,7 +89,7 @@ The same object is used when passing complex parameters to some of the APIs (see
 ### User Aggregate
 To avoid accessing the multitude of Thron APIs via several objects, an aggregate has been created (DDD anyone?).  
 The **User** aggregate delegates most of its methods directly to the gateway objects (it uses the *Forwardable* module).
-It keeps a regisry of the gateway objects in order to refresh them on login: this
+It keeps a registry of the gateway objects in order to refresh them on login: this
 is requested to update the token id that identifies the current session and that is
 stored internally by the gateway objects.
 
@@ -99,7 +99,7 @@ user = Thron::User::new
 ```
 
 ## Interface
-The following exaples illustrates how to use this library.
+The following examples illustrates how to use this library.
 Thron APIs include a broad range of methods, for a complete list of them please  consult the [official APIs documentation](https://developer.thron.com/index.php).  
 For the APIs that accepts composed arguments simply use the dynamic entity described
 above: just be aware to name its attributes by snake-case and not as the 
@@ -126,9 +126,11 @@ methods at your disposal:
 Find the paginated contents with preload of 10:
 ```ruby
 paginator = user.find_contents(preload: 10)
-paginator.next  # loads first offset
+paginator.next  # preload first 10 offsets and move to the first
 paginator.to(3) # loads page 3
 paginator.prev  # return to second offset
+paginator.to(10)
+paginator.next  # preloads next 10 offsets (till it finds data anyway) 
 ```
 Show the contents (slightly more efficient):
 ```ruby
@@ -162,7 +164,7 @@ List existing categories:
 paginator = user.find_categories(preload: 5, limit: 10) # limit the offset to 10
 paginator.to(2)
 ```
-Create a new locale for a cetagory:
+Create a new locale for a category:
 ```ruby
 locale = Thron::Entity::Base::new(name: 'photos', description: 'JPG and PNG images', locale: 'EN')
 user.create_category_locale(id: '<a_category_id>', locale: locale)
@@ -171,10 +173,11 @@ user.create_category_locale(id: '<a_category_id>', locale: locale)
 ### Disguise
 Thron APIs allow to disguise another user via its apps sub-system.
 
-Disguisng only works inside the block:
+Disguising only works inside the block:
 ```ruby
 user.disguise(app_id: '<app_id_that_can_disguise>', username: '<username_to_disguise>') do
   # do something as the disguised user
+  # each gateways is refreshed to use the new token id
 end
 # finished disguising, it returns disguised token id
 ```
