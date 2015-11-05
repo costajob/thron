@@ -134,7 +134,7 @@ paginator.next  # preloads next 10 offsets (till it finds data anyway)
 ```
 Show the contents (slightly more efficient):
 ```ruby
-paginator = user.show_contents
+paginator = user.show_contents(category_id: '<a_category_id>') # filter by category is mandatory to avoid timeout issues
 paginator.next
 ```
 Load specific content detail:

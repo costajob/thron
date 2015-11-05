@@ -33,7 +33,7 @@ module Thron
 
     def logout
       return unless logged?
-      @token_id = nil
+      @token_id = @access_gateway.token_id = nil
       @gateways = nil
     end
 

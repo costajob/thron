@@ -16,7 +16,7 @@ module Thron
         fetch_paginator(:_show, args)
       end
 
-      private def _show(category_id: nil, locale: nil, criteria: Entity::Base::new, recursive: true, order_by: 'contentName_A', limit: 0, offset: 0)
+      private def _show(category_id:, locale: nil, criteria: Entity::Base::new, recursive: true, order_by: 'contentName_A', limit: 0, offset: 0)
         query = { 
           clientId: self.client_id,
           categoryId: category_id,
