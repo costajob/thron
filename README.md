@@ -27,8 +27,8 @@ hate bulky Gemfile...).
 ## Setup
 This gem use at least a **Ruby 2.1** compatible parser.  
 Thron is a payment service, is assumed you have a valid account in order to use this gem.  
-Once you have valid credentials to access the Thron APIs, you have to declare
-the provided *client name* inside an environment variable called **THRON_CLIENT_ID**, thus the gem can reads from it and configure itself properly.
+Once you have valid credentials to access the Thron APIs, you have to enter the **THRON_CLIENT_ID** value
+inside of your *.env* file, this way the gem can reads from it and configure itself properly.
 
 ## HTTParty
 This gem uses the [HTTParty](https://github.com/jnunemaker/httparty) library to communicate with the Thron APIs.
@@ -134,11 +134,11 @@ methods at your disposal:
 Find the contents by using the paginator object with a preload of 10:
 ```ruby
 user.find_contents_paginator(preload: 10)
-user.find_contents_paginator.next   # call the APIs 10 times to fetch results (utill it finds data)
+user.find_contents_paginator.next   # call the APIs 10 times to fetch results (until it finds data)
 user.find_contents_paginator.to(3)  # loads page 3
 user.find_contents_paginator.prev   # return to page 2
 user.find_contents_paginator.to(10)
-user.find_contents_paginator.next   # preloads next 10 offsets (utill it finds data) 
+user.find_contents_paginator.next   # preloads next 10 offsets (until it finds data) 
 ```
 Show the contents by category (slightly more efficient):
 ```ruby
