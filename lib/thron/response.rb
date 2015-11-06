@@ -1,5 +1,3 @@
-require_relative 'logger'
-
 module Thron
   class Response
     attr_reader :http_code, :body, :result_code, :sso_code, :total, :error, :mapped

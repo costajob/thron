@@ -3,6 +3,7 @@ require_relative 'config'
 require_relative 'route'
 require_relative 'response'
 require_relative 'circuit_breaker'
+require_relative 'logger'
 
 module Thron
   module Routable
@@ -19,7 +20,8 @@ module Thron
     end
 
     def self.info(query, body, route, token_id, dash, raw)
-      puts "\n",
+      info = [
+        "\n",
         "*" * 50,
         "#{route.verb.upcase} REQUEST:",
         "  * url: #{route.url}",
@@ -27,7 +29,9 @@ module Thron
         "  * body: #{body.inspect}",
         "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
         "*" * 50,
-        "\n" if Config::debug.routing
+        "\n"
+      ]
+      Thron::logger.debug(info.join("\n"))
     end
 
     module ClassMethods
@@ -61,7 +65,7 @@ module Thron
         end
       end
     rescue CircuitBreaker::OpenError
-      warn "Circuit breaker is open for process #{$$}"
+      Thron::logger.error "Circuit breaker is open for process #{$$}"
       Response::new(OpenStruct::new(code: 200))
     end
 
