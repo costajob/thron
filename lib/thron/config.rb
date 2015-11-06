@@ -16,9 +16,12 @@ module Thron
       @yaml ||= YAML.load(ERB.new(File.read(CONFIG_YML)).result)
     end
 
-    def logger_level
-      level = dump_yaml.fetch('logger').fetch('level')
-      Logger::const_get(level.upcase)
+    def logger
+      @logger ||= begin
+                    level   = dump_yaml.fetch('logger').fetch('level')
+                    enabled = dump_yaml.fetch('logger').fetch('enabled')
+                    OpenStruct.new(enabled: enabled, level: Logger::const_get(level.upcase))
+                  end
     end
 
     def thron

@@ -11,7 +11,7 @@ module Thron
     LOGGER_LEVELS.fetch(logger.level)
   end
 
-  def logger(file: LOGGER_FILE, level: Config::logger_level)
+  def logger(file: LOGGER_FILE, level: Config::logger::level)
     @logger ||= Logger.new(file).tap do |logger|
       logger.level = level
     end
