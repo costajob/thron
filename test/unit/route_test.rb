@@ -4,7 +4,7 @@ require Thron::root.join('lib', 'thron', 'route')
 describe Thron::Route do
   let(:klass) { Thron::Route }
   let(:json) { klass::new(verb: 'post', url: '/json_api', type: 'json', format: 'json') }
-  let(:text) { klass::new(verb: 'get', url: '/text_api', type: 'text', format: 'plain') }
+  let(:text) { klass::new(verb: 'get', url: '/text_api', type: 'plain', format: 'plain') }
 
   it 'must define type constants' do
     %w[json plain].each do |type|
@@ -16,6 +16,14 @@ describe Thron::Route do
     %w[post get].each do |type|
       klass::Verbs.const_get(type.upcase).wont_be_nil
     end
+  end
+
+  it 'must raise an error for unsupported verb' do
+    -> { klass::new(verb: 'options', url: '/json_api', type: 'json', format: 'plain') }.must_raise klass::UnsupportedVerbError
+  end
+
+  it 'must raise an error for unsupported type' do
+    -> { klass::new(verb: 'get', url: '/text_api', type: 'text', format: 'plain') }.must_raise klass::UnsupportedTypeError
   end
 
   describe '::factory' do

@@ -1,18 +1,21 @@
 module Thron
   class Route
-    attr_reader :verb, :url
-
     module Types
-      %w[json plain].each do |type|
+      ALL = %w[json plain]
+      ALL.each do |type|
         const_set(type.upcase, type)
       end
     end
 
     module Verbs
-      %w[post get].each do |type|
+      ALL = %w[post get put delete]
+      ALL.each do |type|
         const_set(type.upcase, type)
       end
     end
+
+    class UnsupportedVerbError < StandardError; end
+    class UnsupportedTypeError < StandardError; end
 
     def self.factory(name:, package:, params: [], verb: Verbs::POST, json: true, format: nil)
       url = "/#{package}/#{name}"
@@ -26,10 +29,12 @@ module Thron
       ->(params) { factory(args.merge({ params: params })) }
     end
 
-    def initialize(verb:, url:, type:, format:)
-      @verb   = verb
+    attr_reader :verb, :url
+
+    def initialize(verb:, url:, type:, format: nil)
+      @verb   = check_verb(verb)
       @url    = url
-      @type   = type
+      @type   = check_type(type)
       @format = format
     end
 
@@ -64,9 +69,23 @@ module Thron
       end
     end
 
-    private def content_type_key(dash = nil)
+    private
+    
+    def content_type_key(dash = nil)
       "Content_Type".tap do |key|
         key.sub!('_', '-') if dash
+      end
+    end
+
+    def check_verb(verb)
+      verb.tap do |verb|
+        fail UnsupportedVerbError, "#{verb} is not supported" unless Verbs::ALL.include?(verb)
+      end
+    end
+
+    def check_type(type)
+      type.tap do |type|
+        fail UnsupportedTypeError, "#{type} is not supported" unless Types::ALL.include?(type)
       end
     end
   end
