@@ -12,7 +12,7 @@ module Thron
           logout: Route::factory(name: 'logout', package: PACKAGE, params: [client_id], json: false),
           validate_capabilities: Route::factory(name: 'validateCapability', package: PACKAGE, params: [client_id], json: false),
           validate_roles: Route::factory(name: 'validateRole', package: PACKAGE, params: [client_id], json: false),
-          validate_token: Route::factory(name: 'validateToken', package: PACKAGE, params: [client_id], json: true)
+          validate_token: Route::factory(name: 'validateToken', package: PACKAGE, params: [client_id])
         }
       end
 
@@ -39,7 +39,7 @@ module Thron
         query = {
           capabilities: capabilities.join(',')
         }
-        route(to: __callee__, query: query, token_id: token_id, dash: false)
+        route(to: __callee__, query: query, token_id: @token_id, dash: false)
       end
 
       def validate_roles(roles: [], xor: false)
@@ -48,12 +48,12 @@ module Thron
         query = {
           role: roles.join(separator)
         }
-        route(to: __callee__, query: query, token_id: token_id, dash: false)
+        route(to: __callee__, query: query, token_id: @token_id, dash: false)
       end
 
       def validate_token
         check_session
-        route(to: __callee__, token_id: token_id, dash: false) do |response|
+        route(to: __callee__, token_id: @token_id, dash: false) do |response|
           response.body = Entity::Base::new(response.body)
         end
       end

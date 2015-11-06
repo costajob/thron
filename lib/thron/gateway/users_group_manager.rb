@@ -4,6 +4,8 @@ module Thron
   module Gateway
     class UsersGroupManager < Session
 
+      paginate :find_groups
+
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
       def self.routes
@@ -52,11 +54,7 @@ module Thron
         end
       end
 
-      def find_groups(args = {})
-        fetch_paginator(:_find, args)
-      end
-
-      private def _find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+      def find_groups(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -65,7 +63,7 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: :find_groups, body: body, token_id: token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('groups') { [] }.map do |group|
             detail = group.delete('groupDetail') { {} }
             Entity::Base::new(group.merge(detail))

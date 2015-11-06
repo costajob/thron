@@ -54,8 +54,7 @@ describe Thron::Gateway::VUserManager do
       numberOfResult: 30
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    paginator = instance.find_users(criteria: criteria, order_by: 'name', options: options, limit: 30)
-    paginator.next 
+    instance.find_users(criteria: criteria, order_by: 'name', options: options, limit: 30)
   end
 
   it 'must call post to check user validity' do

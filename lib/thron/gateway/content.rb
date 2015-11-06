@@ -4,6 +4,8 @@ module Thron
   module Gateway
     class Content < Session
 
+      paginate :find_contents
+
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
 
       def self.routes
@@ -106,11 +108,7 @@ module Thron
         end
       end
 
-      def find_contents(args = {})
-        fetch_paginator(:_find, args)
-      end
-
-      private def _find(criteria: Entity::Base::new, options: Entity::Base::new, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
+      def find_contents(criteria: Entity::Base::new, options: Entity::Base::new, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
@@ -123,7 +121,7 @@ module Thron
           offset: offset.to_i,
           numberOfresults: limit.to_i
         }
-        route(to: :find_contents, body: body, token_id: token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('contents') { [] }.map do |content|
             detail = content.delete('content') { {} }
             Entity::Base::new(content.merge!(detail))

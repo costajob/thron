@@ -59,11 +59,10 @@ describe Thron::Gateway::UsersGroupManager do
       orderBy: 'id',
       fieldsOption: options.to_payload,
       offset: 0,
-      numberOfResult: 50
+      numberOfResult: 0
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    paginator = instance.find_groups(criteria: criteria, order_by: 'id', options: options)
-    paginator.next
+    instance.find_groups(criteria: criteria, order_by: 'id', options: options)
   end
 
   %i[link_users_to_group unlink_users_from_group].each do |message|

@@ -40,7 +40,7 @@ describe Thron::Paginator do
   end
 
   describe '#prev, #next and #to' do
-    { prev: nil, next: nil, to: 4 }.each do |message, args|
+    { prev: nil, next: nil }.each do |message, args|
       it "must set total and pages properly on #{message}" do
         instance.send(message, *args)
         instance.total.must_equal 1225
@@ -48,18 +48,22 @@ describe Thron::Paginator do
       end
     end
 
-    { prev: nil, next: nil, to: 1 }.each do |message, args|
+    { prev: nil, next: nil }.each do |message, args|
       it "must detect first page on #{message}" do
         instance.send(message, *args)
         assert instance.first?
       end
     end
 
+    it 'must prevent to if initial load is missing' do
+      instance.to(3).must_equal klass::INITIAL_LOAD_MISSING
+    end
+
     it 'must set the offset' do
       3.times { instance.next }
       instance.prev
-      instance.to(1)
-      instance.offset.must_equal 0
+      instance.to(2)
+      instance.offset.must_equal 50
     end
 
     it 'must fetch results' do
@@ -81,8 +85,8 @@ describe Thron::Paginator do
     end
 
     it 'must set get the page' do
-      instance.to(2)
-      instance.page.must_equal 2
+      3.times { instance.next }
+      instance.page.must_equal 3
     end
 
     it 'must limit max page once total is known' do
@@ -115,9 +119,10 @@ describe Thron::Paginator do
       end
 
       it 'must preload next set when over threshold' do
+        instance.next
         instance.to 3
         6.times { instance.next }
-        instance.instance_variable_get(:@cache).keys.must_equal (100..600).step(instance.limit).to_a
+        instance.instance_variable_get(:@cache).keys.must_equal (0..450).step(instance.limit).to_a
       end
     end
   end

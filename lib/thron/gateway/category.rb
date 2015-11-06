@@ -4,6 +4,8 @@ module Thron
   module Gateway
     class Category < Session
 
+      paginate :find_categories
+
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
 
       def self.routes
@@ -72,11 +74,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find_categories(args = {})
-        fetch_paginator(:_find, args)
-      end
-
-      private def _find(criteria: Entity::Base::new, locale: nil, order_by: nil, offset: 0, limit: 0)
+      def find_categories(criteria: Entity::Base::new, locale: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
@@ -87,7 +85,7 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: :find_categories, body: body, token_id: token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('categories') { [] }.map do |category|
             detail = category.delete('category') { {} }
             Entity::Base::new(category.merge!(detail))

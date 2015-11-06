@@ -57,15 +57,18 @@ Some extra parameters are used to factory the route URL, in some cases lazily (b
 
 #### Paginator
 Thron APIs that return a list of results are limited to a maximum of **50**.  
-To avoid repeating the same call many times a paginator object is returned in such cases.
-Is possible to navigate the paginator by using the following methods:
+To avoid repeating the same call many times by passing an augmented offset, 
+is possible to call a wrapper method on the gateway objects that returns a paginator object.
+Once the paginator is loaded, it allows to navigate the results by using the following interface:
 * **next**: loads the first offset and move forward
 * **prev**: move backwards
-* **to**: move directly to the specified page  
+* **to**: move directly to the specified page (only if a first load happened)
 
-The paginator keeps an internal cache, so remember to set it to nil to avoid stale
-values. 
-To speed up loading of results, the paginator accepts a *preload* parameter (an integer): it calls the APIs the specified number of times by automatically augmenting the offset and caching the results.
+Each paginator object is stored as an instance variable of the gateway objects and keeps an internal cache to avoid hitting the remote service uselessly.
+That said, remember to reset the instance variables to avoid stale results by using
+the *::reset_paginators* method available on gateway objects. 
+To speed up loading of results, the paginator accepts a *preload* parameter (an integer).
+If the parameter is specified, the APIs are called the specified number of times by automatically augmenting the offset and caching the results (preloading is limited to 30 threads).
 
 ### Response
 The HTTParty response has been wrapped in order to return a logical object that wraps the APIs return values.  
@@ -116,26 +119,30 @@ user.validate_token
 ```
 Or you can query the APIs to return other details:
 ```ruby
-user.user_detail(username: '<your_username>')
+user.user_detail(username: '<a_username>')
+```
+Uploads the avatar image for a user (it relies on Linux *file* system call):
+```ruby
+avatar = File.new('/images/avatar.png')
+user.update_image(username: '<a_username>', image: avatar)
 ```
 
 ### Contents
 Thron is all about managing users contents, so no surprise there is a plethora of
 methods at your disposal:
 
-Find the paginated contents with preload of 10:
+Find the contents by using the paginator object with a preload of 10:
 ```ruby
-paginator = user.find_contents(preload: 10)
-paginator.next  # preload first 10 offsets and move to the first
-paginator.to(3) # loads page 3
-paginator.prev  # return to second offset
-paginator.to(10)
-paginator.next  # preloads next 10 offsets (till it finds data anyway) 
+user.find_contents_paginator(preload: 10)
+user.find_contents_paginator.next   # call the APIs 10 times to fetch results (utill it finds data)
+user.find_contents_paginator.to(3)  # loads page 3
+user.find_contents_paginator.prev   # return to page 2
+user.find_contents_paginator.to(10)
+user.find_contents_paginator.next   # preloads next 10 offsets (utill it finds data) 
 ```
-Show the contents (slightly more efficient):
+Show the contents by category (slightly more efficient):
 ```ruby
-paginator = user.show_contents(category_id: '<a_category_id>') # filter by category is mandatory to avoid timeout issues
-paginator.next
+user.show_contents(category_id: '<a_category_id>')
 ```
 Load specific content detail:
 ```ruby
@@ -159,10 +166,10 @@ paginator.next
 ### Categories
 Thron contents are organized by categories.
 
-List existing categories:
+List existing categories with and without paginator object:
 ```ruby
-paginator = user.find_categories(preload: 5, limit: 10) # limit the offset to 10
-paginator.to(2)
+user.find_categories_paginator.next # with paginator
+user.find_categories # without paginator
 ```
 Create a new locale for a category:
 ```ruby
@@ -176,7 +183,9 @@ Thron APIs allow to disguise another user via its apps sub-system.
 Disguising only works inside the block:
 ```ruby
 user.disguise(app_id: '<app_id_that_can_disguise>', username: '<username_to_disguise>') do
-  # do something as the disguised user
+  # load the disguised user contents
+  contents = user.find_contents
+  # do something with contents
   # each gateways is refreshed to use the new token id
 end
 # finished disguising, it returns disguised token id

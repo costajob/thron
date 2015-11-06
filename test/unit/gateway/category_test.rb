@@ -83,12 +83,11 @@ describe Thron::Gateway::Category do
       properties: criteria.to_payload,
       locale: 'EN',
       orderBy: 'id',
-      offset: 0,
-      numberOfResult: 50
+      offset: 60,
+      numberOfResult: 30
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    paginator = instance.find_categories(criteria: criteria, locale: 'EN', order_by: 'id')
-    paginator.next
+    instance.find_categories(criteria: criteria, locale: 'EN', order_by: 'id', offset: 60, limit: 30)
   end
 
   it 'must call get to fetch category detail' do

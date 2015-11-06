@@ -109,11 +109,10 @@ describe Thron::Gateway::Content do
       divArea: '100x125',
       orderBy: 'name',
       offset: 0,
-      numberOfresults: 50
+      numberOfresults: 0
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    paginator = instance.find_contents(criteria: criteria, options: options, locale: 'EN', div_area: '100x125', order_by: 'name')
-    paginator.next
+    instance.find_contents(criteria: criteria, options: options, locale: 'EN', div_area: '100x125', order_by: 'name')
   end
 
   it 'must call post to move linked contents' do

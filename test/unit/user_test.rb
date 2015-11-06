@@ -67,14 +67,22 @@ describe Thron::User do
   end
 
   it 'must return a benign value if cannot disguise' do
-    stub(instance).su { OpenStruct::new(body: {}) }
+    error = 'Beatles does not perform live anymore!'
+    stub(instance).su { OpenStruct::new(body: {}, error: error) }
     instance.login({})
-    instance.disguise(app_id: 'here_come_the_sun', username: 'george').must_equal klass::CANNOT_DISGUISE
+    instance.disguise(app_id: 'here_come_the_sun', username: 'george').must_equal error
   end
 
-  (Thron::User::session_gateways + %i[AccessManager]).each do |name|
+  it 'must delegate methods to the access gateway instance' do
+    access_gateway.class.routes.keys.each do |message|
+      instance.must_respond_to message
+    end
+  end
+
+  Thron::User::session_gateways.each do |name|
     it "must delegate methods to the #{name} gateway" do
-      Thron::Gateway.const_get(name).routes.keys.each do |message|
+      gateway = Thron::Gateway.const_get(name)
+      (gateway.routes.keys + gateway.paginator_methods).each do |message|
         instance.must_respond_to message
       end
     end

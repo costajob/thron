@@ -20,11 +20,10 @@ describe Thron::Gateway::ContentList do
       locale: 'EN',
       searchOnSubCategories: false,
       orderBy: 'name',
-      offset: 150,
-      numberOfResult: 50
+      offset: 0,
+      numberOfResult: 0
     }.merge(criteria.to_payload)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    paginator = instance.show_contents(category_id: '64746', locale: 'EN', criteria: criteria, recursive: false, order_by: 'name')
-    paginator.to(4)
+    instance.show_contents(category_id: '64746', locale: 'EN', criteria: criteria, recursive: false, order_by: 'name')
   end
 end

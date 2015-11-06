@@ -2,6 +2,7 @@ module Thron
   class Paginator
     MAX_LIMIT = 50
     MAX_PRELOAD = 30
+    INITIAL_LOAD_MISSING = :initial_load_missing
 
     class PreloadTooLargeError < StandardError; end
 
@@ -36,6 +37,7 @@ module Thron
     end
 
     def to(n)
+      return INITIAL_LOAD_MISSING unless @pages
       @offset = page_to_offset(n)
       call
     end
@@ -59,10 +61,15 @@ module Thron
       @cache.fetch(offset) do
         @body.call(@limit, offset).tap do |response|
           @total ||= response.total.to_i
-          @pages ||= (@total / @limit.to_f).ceil
+          @pages ||= fetch_pages
           @cache[offset] = response
         end
       end
+    end
+
+    def fetch_pages
+      return 1 if @total.zero?
+      (@total / @limit.to_f).ceil
     end
 
     def preload?
@@ -72,7 +79,7 @@ module Thron
     def preload!
       @preload.times do |i|
         index  = @offset.zero? ? i : i+1
-        break if total && total <= index * @limit
+        break if @total && @total <= index * @limit
         offset = @offset + index * @limit
         call(offset)
       end if preload?
@@ -93,8 +100,7 @@ module Thron
     end
 
     def page_to_offset(n)
-      return 0 if @pages && @pages.zero?
-      n = @pages && n >= @pages ? @pages : n
+      n = n >= @pages ? @pages : n
       (n-1) * @limit
     end
   end

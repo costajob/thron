@@ -5,6 +5,8 @@ module Thron
   module Gateway
     class VUserManager < Session
 
+      paginate :find_users
+
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
 
       def self.routes
@@ -51,11 +53,7 @@ module Thron
         end
       end
 
-      def find_users(args = {})
-        fetch_paginator(:_find, args)
-      end
-
-      private def _find(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+      def find_users(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria.to_payload,
@@ -64,7 +62,7 @@ module Thron
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
-        route(to: :find_users, body: body, token_id: token_id) do |response|
+        route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('users') { [] }.map do |user|
             detail = user.delete('userDetail') { {} }
             Entity::Base::new(user.merge(detail))
