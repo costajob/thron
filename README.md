@@ -123,7 +123,7 @@ user.user_detail(username: '<a_username>')
 ```
 Uploads the avatar image for a user (it relies on Linux *file* system call):
 ```ruby
-avatar = File.new('/images/avatar.png')
+avatar = Thron::Entity::Image::new(path: '<path_to_an_image>')
 user.update_image(username: '<a_username>', image: avatar)
 ```
 
@@ -183,10 +183,9 @@ Thron APIs allow to disguise another user via its apps sub-system.
 Disguising only works inside the block:
 ```ruby
 user.disguise(app_id: '<app_id_that_can_disguise>', username: '<username_to_disguise>') do
-  # load the disguised user contents
+  # load the disguised user contents, each gateway will now use the disguised token id
   contents = user.find_contents
   # do something with contents
-  # each gateways is refreshed to use the new token id
 end
 # finished disguising, it returns disguised token id
 ```
