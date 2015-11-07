@@ -31,7 +31,7 @@ module Thron
         "*" * 50,
         "\n"
       ]
-      Thron::logger.debug(info.join("\n")) if Config::logger::enabled
+      Thron::logger.debug(info.join("\n"))
     end
 
     module ClassMethods
