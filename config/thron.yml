@@ -1,5 +1,4 @@
 logger:
-  enabled: false
   level: <%= ENV.fetch('LOGGER_LEVEL') { 'warn' } %>
 
 thron:
