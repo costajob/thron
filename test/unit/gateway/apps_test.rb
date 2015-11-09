@@ -20,7 +20,7 @@ describe Thron::Gateway::Apps do
       appId: app_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.app_detail(id: app_id)
+    instance.app_detail(app_id: app_id)
   end
 
   it 'must call post to list apps' do
@@ -52,7 +52,7 @@ describe Thron::Gateway::Apps do
       appId: app_id
     }
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.login_app(id: app_id)
+    instance.login_app(app_id: app_id)
   end
 
   it 'must call get to login snippet' do

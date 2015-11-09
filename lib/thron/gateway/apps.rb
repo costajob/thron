@@ -17,10 +17,10 @@ module Thron
         }
       end
 
-      def app_detail(id:)
+      def app_detail(app_id:)
         body = { 
           clientId: self.client_id,
-          appId: id
+          appId: app_id
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('app') { {} })
@@ -51,10 +51,10 @@ module Thron
         end
       end
 
-      def login_app(id:)
+      def login_app(app_id:)
         query = {
           clientId: self.client_id,
-          appId: id
+          appId: app_id
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
           response.body = Entity::Base::new(response.body.fetch('app') { {} })
