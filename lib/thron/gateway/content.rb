@@ -34,8 +34,8 @@ module Thron
 
       %w[add update].each do |action|
         define_method("#{action}_content_for_locale") do |args|
-          content_id  = args.fetch(:content_id)
-          locale      = args.fetch(:locale) { Entity::Base::new }
+          content_id = args.fetch(:content_id)
+          locale = args.fetch(:locale) { Entity::Base::new }
           category_id = args.fetch(:category_id) { nil }
           body = { 
             client: {
@@ -49,8 +49,8 @@ module Thron
         end
 
         define_method("#{action}_content_pretty_id") do |args|
-          content_id  = args.fetch(:content_id)
-          pretty_id   = args.fetch(:pretty_id) { Entity::Base::new }
+          content_id = args.fetch(:content_id)
+          pretty_id = args.fetch(:pretty_id) { Entity::Base::new }
           category_id = args.fetch(:category_id) { nil }
           body = { 
             clientId: self.client_id,
@@ -63,7 +63,7 @@ module Thron
 
         define_method("#{action}_player_embed_code") do |args|
           content_id = args.fetch(:content_id)
-          data       = args.fetch(:data) { Entity::Base::new }
+          data = args.fetch(:data) { Entity::Base::new }
           body = { 
             clientId: self.client_id,
             contentId: content_id,
