@@ -18,7 +18,7 @@ module Thron
           temporary_token: Route::factory(name: 'resetPassword', package: PACKAGE),
           update_password: Route::factory(name: 'changePassword', package: PACKAGE),
           update_status: Route::factory(name: 'changeUserStatus', package: PACKAGE),
-          update_capabilities: Route::factory(name: 'updateCapabilitiesAndRoles', package: PACKAGE),
+          update_capabilities_and_roles: Route::factory(name: 'updateCapabilitiesAndRoles', package: PACKAGE),
           update_external_id: Route::lazy_factory(name: 'updateExternalId', package: PACKAGE),
           update_image: Route::factory(name: 'updateImage', package: PACKAGE),
           update_settings: Route::factory(name: 'updateSettings', package: PACKAGE),
@@ -110,7 +110,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_capabilities(username:, capabilities: Entity::Base::new)
+      def update_capabilities_and_roles(username:, capabilities: Entity::Base::new)
         body = { 
           clientId: self.client_id,
           username: username,

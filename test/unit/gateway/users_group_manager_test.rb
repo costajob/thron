@@ -32,7 +32,7 @@ describe Thron::Gateway::UsersGroupManager do
       force: true
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_group(id: group_id, force: true)
+    instance.remove_group(group_id: group_id, force: true)
   end
 
   it 'must call post to get group detail' do
@@ -46,7 +46,7 @@ describe Thron::Gateway::UsersGroupManager do
       fieldsOption: options.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.group_detail(id: group_id, options: options, offset: 3, limit: 5)
+    instance.group_detail(group_id: group_id, options: options, offset: 3, limit: 5)
   end
 
   it 'must call post to find group by properties' do
@@ -65,7 +65,7 @@ describe Thron::Gateway::UsersGroupManager do
     instance.find_groups(criteria: criteria, order_by: 'id', options: options)
   end
 
-  %i[link_users_to_group unlink_users_from_group].each do |message|
+  %i[link_users_to_group unlink_users_to_group].each do |message|
     it "must call post to #{message.to_s.sub('_', ' ')}" do
       usernames = %w[user1 user2]
       route = klass.routes.fetch(message)
@@ -77,18 +77,18 @@ describe Thron::Gateway::UsersGroupManager do
         groupId: group_id
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(message, id: group_id, usernames: usernames)
+      instance.send(message, group_id: group_id, usernames: usernames)
     end
   end
 
   it 'must call post to update group details' do
     route = klass.routes.fetch(:update_group).call([instance.client_id, group_id])
-    data = entity::new(id: group_id, metadata: [{ name: 'label', value: 'testing' }], name: 'testing data group', description: 'group for testing purposes', active: false, patch: [{ op: 'DESC', field: 'name' }])
+    data = entity::new(metadata: [{ name: 'label', value: 'testing' }], name: 'testing data group', description: 'group for testing purposes', active: false, patch: [{ op: 'DESC', field: 'name' }])
     body = { 
       update: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_group(data: data)
+    instance.update_group(group_id: group_id, data: data)
   end
 
   it 'must call post to update external id' do
@@ -98,6 +98,6 @@ describe Thron::Gateway::UsersGroupManager do
       externalId: external_id.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_group_external_id(id: group_id, external_id: external_id)
+    instance.update_group_external_id(group_id: group_id, external_id: external_id)
   end
 end

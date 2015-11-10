@@ -48,11 +48,11 @@ describe Thron::Gateway::Category do
       options: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create_system_category(id: category_id, parent_id: parent_id, locale: locale, data: data)
+    instance.create_system_category(category_id: category_id, parent_id: parent_id, locale: locale, data: data)
   end
 
   it 'must call post to create category locale' do
-    route = klass.routes.fetch(:create_category_locale)
+    route = klass.routes.fetch(:add_category_for_locale)
     locale = entity::new(name: 'categoria di test', locale: 'IT')
     body = { 
       client: { clientId: instance.client_id },
@@ -60,19 +60,19 @@ describe Thron::Gateway::Category do
       catLocale: locale.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create_category_locale(id: category_id, locale: locale)
+    instance.add_category_for_locale(category_id: category_id, locale: locale)
   end
 
   it 'must call post to create category pretty id' do
-    route = klass.routes.fetch(:create_category_pretty_id)
-    pretty_id = entity::new(id: '678', locale: 'IT')
+    route = klass.routes.fetch(:add_category_pretty_id)
+    pretty_id = entity::new(category_id: '678', locale: 'IT')
     body = { 
       clientId: instance.client_id,
       categoryId: category_id,
       prettyId: pretty_id.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.create_category_pretty_id(id: category_id, pretty_id: pretty_id)
+    instance.add_category_pretty_id(category_id: category_id, pretty_id: pretty_id)
   end
 
   it 'must call post to find category by properties' do
@@ -99,7 +99,7 @@ describe Thron::Gateway::Category do
       locale: 'it'
     }
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.category_detail(id: category_id, recursive: true, locale: 'it')
+    instance.category_detail(category_id: category_id, recursive: true, locale: 'it')
   end
 
   it 'must call post to remove category' do
@@ -110,18 +110,18 @@ describe Thron::Gateway::Category do
       cascade: true
     }
     mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.remove_category(id: category_id, recursive: true)
+    instance.remove_category(category_id: category_id, recursive: true)
   end
 
   it 'must call post to remove category locale' do
-    route = klass.routes.fetch(:remove_category_locale)
+    route = klass.routes.fetch(:remove_category_for_locale)
     body = { 
       client: { clientId: instance.client_id },
       catId: category_id,
       locale: 'en'
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_category_locale(id: category_id, locale: 'en')
+    instance.remove_category_for_locale(category_id: category_id, locale: 'en')
   end
 
   it 'must call post to remove pretty id' do
@@ -132,7 +132,7 @@ describe Thron::Gateway::Category do
       locale: 'en'
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_category_pretty_id(id: category_id, locale: 'en')
+    instance.remove_category_pretty_id(category_id: category_id, locale: 'en')
   end
 
   it 'must call post to set parent category' do
@@ -143,7 +143,7 @@ describe Thron::Gateway::Category do
       categoryParentId: parent_id
     }
     mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: false) }) { response }
-    instance.set_parent_category(id: category_id, parent_id: parent_id)
+    instance.set_parent_category(category_id: category_id, parent_id: parent_id)
   end
 
   it 'must call post to update category data' do
@@ -155,11 +155,11 @@ describe Thron::Gateway::Category do
       update: data.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_category(id: category_id, data: data)
+    instance.update_category(category_id: category_id, data: data)
   end
 
   it 'must call post to update category locale' do
-    route = klass.routes.fetch(:update_category_locale)
+    route = klass.routes.fetch(:update_category_for_locale)
     locale = entity::new(name: 'prima categoria', locale: 'IT')
     body = { 
       client: { clientId: instance.client_id },
@@ -167,7 +167,7 @@ describe Thron::Gateway::Category do
       property: locale.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_category_locale(id: category_id, locale: locale)
+    instance.update_category_for_locale(category_id: category_id, locale: locale)
   end
 
   it 'must call post to update category pretty id' do
@@ -179,6 +179,6 @@ describe Thron::Gateway::Category do
       prettyId: pretty_id.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_category_pretty_id(id: category_id, pretty_id: pretty_id)
+    instance.update_category_pretty_id(category_id: category_id, pretty_id: pretty_id)
   end
 end

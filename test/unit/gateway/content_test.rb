@@ -14,9 +14,9 @@ describe Thron::Gateway::Content do
     klass::PACKAGE.to_s.must_equal "xcontents/resources/content"
   end
 
-  %w[create update].each do |action|
-    it "must call post to #{action} content locale" do
-      route = klass.routes.fetch(:"#{action}_content_locale")
+  %w[add update].each do |action|
+    it "must call post to #{action} content for locale" do
+      route = klass.routes.fetch(:"#{action}_content_for_locale")
       locale = entity::new(name: 'italiano', locale: 'IT')
       body = { 
         client: { clientId: instance.client_id },
@@ -25,12 +25,12 @@ describe Thron::Gateway::Content do
         categoryIdForAcl: category_id
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(:"#{action}_content_locale", id: content_id, locale: locale, category_id: category_id)
+      instance.send(:"#{action}_content_for_locale", content_id: content_id, locale: locale, category_id: category_id)
     end
 
     it "must call post to #{action} content pretty id" do
       route = klass.routes.fetch(:"#{action}_content_pretty_id")
-      pretty_id = entity::new(id: '678', locale: 'IT')
+      pretty_id = entity::new(content_id: '678', locale: 'IT')
       body = { 
         clientId: instance.client_id,
         contentId: content_id,
@@ -38,24 +38,24 @@ describe Thron::Gateway::Content do
         categoryIdForAcl: category_id
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(:"#{action}_content_pretty_id", id: content_id, pretty_id: pretty_id, category_id: category_id)
+      instance.send(:"#{action}_content_pretty_id", content_id: content_id, pretty_id: pretty_id, category_id: category_id)
     end
 
-    it 'must call post to #{action} content player' do
-      route = klass.routes.fetch(:"#{action}_content_player")
-      data = entity::new(id: '7363', name: 'SWF Flash player', use_template_id: 'object', embed_target: 'head', enabled: false, values: [ { name: 'extension', value: 'swf', locale: 'EN' } ])
+    it 'must call post to #{action} player embed code' do
+      route = klass.routes.fetch(:"#{action}_player_embed_code")
+      data = entity::new(content_id: '7363', name: 'SWF Flash player', use_template_id: 'object', embed_target: 'head', enabled: false, values: [ { name: 'extension', value: 'swf', locale: 'EN' } ])
       body = { 
         clientId: instance.client_id,
         contentId: content_id,
         embedCode: data.to_payload
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(:"#{action}_content_player", id: content_id, data: data)
+      instance.send(:"#{action}_player_embed_code", content_id: content_id, data: data)
     end
   end
 
-  it 'must call post to link a content' do
-    route = klass.routes.fetch(:link_content)
+  it 'must call post to add a linked content' do
+    route = klass.routes.fetch(:add_linked_content)
     data = entity::new(xcontent_id: '52425', link_type: 'hyper', selected_channel: 'AUDIO', position: 2)
     body = { 
       clientId: instance.client_id,
@@ -64,11 +64,11 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.link_content(id: content_id, data: data, category_id: category_id)
+    instance.add_linked_content(content_id: content_id, data: data, category_id: category_id)
   end
 
-  it 'must call post to link contents' do
-    route = klass.routes.fetch(:link_contents)
+  it 'must call post to add linked contents' do
+    route = klass.routes.fetch(:add_linked_contents)
     contents = 3.times.map { |i| entity::new(xcontent_id: "7847#{i}", link_type: 'plain', selected_channel: 'VIDEO', position: i) }
     body = { 
       clientId: instance.client_id,
@@ -79,7 +79,7 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.link_contents(id: content_id, contents: contents, category_id: category_id)
+    instance.add_linked_contents(content_id: content_id, contents: contents, category_id: category_id)
   end
 
   it 'must call get to fetch content detail' do
@@ -92,7 +92,7 @@ describe Thron::Gateway::Content do
       pkey: token_id
     }.merge(options.to_payload)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.content_detail(id: content_id, options: options, locale: 'de', access_key: token_id)
+    instance.content_detail(content_id: content_id, options: options, locale: 'de', access_key: token_id)
   end
 
   it 'must call post to find contents by properties' do
@@ -125,18 +125,18 @@ describe Thron::Gateway::Content do
       linkType: 'symbolic'
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.move_linked_content(id: content_id, from: "1", to: 4.0, link_type: 'symbolic')
+    instance.move_linked_content(content_id: content_id, from: "1", to: 4.0, link_type: 'symbolic')
   end
 
-  it 'must call post to remove locale' do
-    route = klass.routes.fetch(:remove_content_locale)
+  it 'must call post to remove content for locale' do
+    route = klass.routes.fetch(:remove_content_for_locale)
     query = {
       clientId: instance.client_id,
       contentId: content_id,
       locale: 'de',
     }
     mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_content_locale(id: content_id, locale: 'de')
+    instance.remove_content_for_locale(content_id: content_id, locale: 'de')
   end
 
   it 'must call post to remove pretty id' do
@@ -148,11 +148,11 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id 
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_content_pretty_id(id: content_id, locale: 'IT', category_id: category_id)
+    instance.remove_content_pretty_id(content_id: content_id, locale: 'IT', category_id: category_id)
   end
 
   it 'must call post to unlink contents' do
-    route = klass.routes.fetch(:unlink_contents)
+    route = klass.routes.fetch(:remove_linked_contents)
     ids = 3.times.map { |i| "7847#{i}" }
     criteria = entity::new(linked_contents_id: ids, link_type: 'plain')
     body = { 
@@ -162,22 +162,22 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.unlink_contents(id: content_id, criteria: criteria, category_id: category_id)
+    instance.remove_linked_contents(content_id: content_id, criteria: criteria, category_id: category_id)
   end
 
-  it 'must call post to remove content player' do
-    route = klass.routes.fetch(:remove_content_player)
+  it 'must call post to remove player embed code' do
+    route = klass.routes.fetch(:remove_player_embed_code)
     body = { 
       clientId: instance.client_id,
       contentId: content_id,
       embedCodeId: 7363
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.remove_content_player(id: content_id, player_id: 7363)
+    instance.remove_player_embed_code(content_id: content_id, player_id: 7363)
   end
 
-  it 'must call post to update content solutions' do
-    route = klass.routes.fetch(:update_content_solutions)
+  it 'must call post to update available solutions' do
+    route = klass.routes.fetch(:update_available_solutions)
     solutions = %w[solution1 solution2 solution3] 
     body = { 
       clientId: instance.client_id,
@@ -188,7 +188,7 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_content_solutions(id: content_id, solutions: solutions, category_id: category_id)
+    instance.update_available_solutions(content_id: content_id, solutions: solutions, category_id: category_id)
   end
 
   it 'must call post to update content' do
@@ -201,11 +201,11 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_content(id: content_id, data: data, category_id: category_id)
+    instance.update_content(content_id: content_id, data: data, category_id: category_id)
   end
 
-  it 'must call post to update players' do
-    route = klass.routes.fetch(:update_content_players)
+  it 'must call post to player embed codes' do
+    route = klass.routes.fetch(:update_player_embed_codes)
     players = 3.times.map { |i| entity::new(id: "7363#{i}", name: 'SWF Flash player', use_template_id: 'object', embed_target: 'head', enabled: false, values: [ { name: 'extension', value: 'swf', locale: 'EN' } ]) }
     body = { 
       clientId: instance.client_id,
@@ -216,11 +216,11 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_content_players(id: content_id, players: players, category_id: category_id)
+    instance.update_player_embed_codes(content_id: content_id, players: players, category_id: category_id)
   end
 
-  it 'must call post to update user data' do
-    route = klass.routes.fetch(:update_content_access_data)
+  it 'must call post to update user specific values' do
+    route = klass.routes.fetch(:update_user_specific_values)
     username = 'elvis'
     data = entity::new(content_read_value: 'bane', content_starred: true)
     body = { 
@@ -231,6 +231,6 @@ describe Thron::Gateway::Content do
       categoryIdForAcl: category_id
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_content_access_data(id: content_id, username: username, data: data, category_id: category_id)
+    instance.update_user_specific_values(content_id: content_id, username: username, data: data, category_id: category_id)
   end
 end

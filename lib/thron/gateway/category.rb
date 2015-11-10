@@ -12,16 +12,16 @@ module Thron
         @routes ||= {
           create_category: Route::factory(name: 'createCategory', package: PACKAGE),
           create_system_category: Route::factory(name: 'createSystemCategory', package: PACKAGE),
-          create_category_locale: Route::factory(name: 'addCategory4Locale', package: PACKAGE),
-          create_category_pretty_id: Route::factory(name: 'addCategoryPrettyId', package: PACKAGE),
+          add_category_for_locale: Route::factory(name: 'addCategory4Locale', package: PACKAGE),
+          add_category_pretty_id: Route::factory(name: 'addCategoryPrettyId', package: PACKAGE),
           find_categories: Route::factory(name: 'findByProperties2', package: PACKAGE),
           category_detail: Route::factory(name: 'getCategory', package: PACKAGE, verb: Route::Verbs::GET),
           remove_category: Route::factory(name: 'removeCategory', package: PACKAGE),
-          remove_category_locale: Route::factory(name: 'removeCategory4Locale', package: PACKAGE),
+          remove_category_for_locale: Route::factory(name: 'removeCategory4Locale', package: PACKAGE),
           remove_category_pretty_id: Route::factory(name: 'removeCategoryPrettyId', package: PACKAGE),
           set_parent_category: Route::factory(name: 'setParentId', package: PACKAGE),
           update_category: Route::factory(name: 'updateCategory', package: PACKAGE),
-          update_category_locale: Route::factory(name: 'updateCategory4Locale', package: PACKAGE),
+          update_category_for_locale: Route::factory(name: 'updateCategory4Locale', package: PACKAGE),
           update_category_pretty_id: Route::factory(name: 'updateCategoryPrettyId', package: PACKAGE)
         }
       end
@@ -41,12 +41,12 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_system_category(id:, parent_id:, locale: Entity::Base::new, data: Entity::Base::new)
+      def create_system_category(category_id:, parent_id:, locale: Entity::Base::new, data: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
           },
-          newCategoryId: id,
+          newCategoryId: category_id,
           upCatId: parent_id,
           catLocales: locale.to_payload,
           options: data.to_payload
@@ -54,21 +54,21 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_category_locale(id:, locale: Entity::Base::new)
+      def add_category_for_locale(category_id:, locale: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
           },
-          catId: id,
+          catId: category_id,
           catLocale: locale.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_category_pretty_id(id:, pretty_id:)
+      def add_category_pretty_id(category_id:, pretty_id:)
         body = { 
           clientId: self.client_id,
-          categoryId: id,
+          categoryId: category_id,
           prettyId: pretty_id.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -93,10 +93,10 @@ module Thron
         end
       end
 
-      def category_detail(id:, recursive: false, locale: nil)
+      def category_detail(category_id:, recursive: false, locale: nil)
         query = { 
           clientId: self.client_id,
-          categoryId: id,
+          categoryId: category_id,
           cascade: recursive,
           locale: locale
         }
@@ -105,70 +105,70 @@ module Thron
         end
       end
 
-      def remove_category(id:, recursive: false)
+      def remove_category(category_id:, recursive: false)
         query = { 
           clientId: self.client_id,
-          catId: id,
+          catId: category_id,
           cascade: recursive
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def remove_category_locale(id:, locale:)
+      def remove_category_for_locale(category_id:, locale:)
         body = { 
           client: {
             clientId: self.client_id
           },
-          catId: id,
+          catId: category_id,
           locale: locale
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_category_pretty_id(id:, locale:)
+      def remove_category_pretty_id(category_id:, locale:)
         body = { 
           clientId: self.client_id,
-          categoryId: id,
+          categoryId: category_id,
           locale: locale
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def set_parent_category(id:, parent_id:)
+      def set_parent_category(category_id:, parent_id:)
         query = { 
           clientId: self.client_id,
-          categoryId: id,
+          categoryId: category_id,
           categoryParentId: parent_id
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update_category(id:, data: Entity::Base::new)
+      def update_category(category_id:, data: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
           },
-          categoryId: id,
+          categoryId: category_id,
           update: data.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_category_locale(id:, locale: Entity::Base::new)
+      def update_category_for_locale(category_id:, locale: Entity::Base::new)
         body = { 
           client: {
             clientId: self.client_id
           },
-          catId: id,
+          catId: category_id,
           property: locale.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_category_pretty_id(id:, pretty_id: Entity::Base::new)
+      def update_category_pretty_id(category_id:, pretty_id: Entity::Base::new)
         body = { 
           clientId: self.client_id,
-          categoryId: id,
+          categoryId: category_id,
           prettyId: pretty_id.to_payload
         }
         route(to: __callee__, body: body, token_id: token_id)

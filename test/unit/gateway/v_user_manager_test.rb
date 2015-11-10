@@ -102,7 +102,7 @@ describe Thron::Gateway::VUserManager do
   end
 
   it 'must call post to update capabilities' do
-    route = klass.routes.fetch(:update_capabilities)
+    route = klass.routes.fetch(:update_capabilities_and_roles)
     capabilities = entity::new(capabilities: %w[SINGER GUITAR-PLAYER BASS-PLAYER DRUMMER], user_roles: %w[PLATFORM-USER EXTERNAL-USER], enabled_solutions: %w[CONTRACT-BY-ALBUM PAY-BY-CONCERT])
     body = { 
       clientId: instance.client_id,
@@ -110,7 +110,7 @@ describe Thron::Gateway::VUserManager do
       userCapabilities: capabilities.to_payload
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.update_capabilities(username: username, capabilities: capabilities)
+    instance.update_capabilities_and_roles(username: username, capabilities: capabilities)
   end
 
   it 'must call post to update external id' do

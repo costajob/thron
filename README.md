@@ -146,7 +146,7 @@ user.show_contents(category_id: '<a_category_id>')
 ```
 Load specific content detail:
 ```ruby
-user.content_detail(id: '<a_content_id>')
+user.content_detail(content_id: '<a_content_id>')
 ```
 
 ### Groups
@@ -174,7 +174,7 @@ user.find_categories # without paginator
 Create a new locale for a category:
 ```ruby
 locale = Thron::Entity::Base::new(name: 'photos', description: 'JPG and PNG images', locale: 'EN')
-user.create_category_locale(id: '<a_category_id>', locale: locale)
+user.create_category_locale(category_id: '<a_category_id>', locale: locale)
 ```
 
 ### Disguise
