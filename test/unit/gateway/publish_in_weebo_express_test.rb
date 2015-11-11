@@ -16,7 +16,7 @@ describe Thron::Gateway::PublishInWeeboExpress do
       route = klass.routes.fetch(message)
       body = { 
         clientId: instance.client_id,
-        param: Thron::Entity::Base::new.to_payload
+        param: {}
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
       instance.send(message, {})

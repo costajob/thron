@@ -4,15 +4,12 @@ module Thron
   module Gateway
     class Dashboard < Session
 
-      paginate :get_usage_quota_by_users
-
       PACKAGE = Package.new(:xadmin, :resources, self.service_name)
 
       def self.routes
         @routes ||= {
           change_contents_owner: Route::factory(name: 'changeContentsOwner', package: PACKAGE),
           download_source_file: Route::factory(name: 'downloadSourceFile', package: PACKAGE, verb: Route::Verbs::GET),
-          get_usage_quota_by_users: Route::factory(name: 'getQuotaUsageByUsers', package: PACKAGE),
           migrate_user_stuff: Route::factory(name: 'migrateUserStuff', package: PACKAGE),
           propagate_acl_to_sub_categories: Route::factory(name: 'propagateAclToSubCategories', package: PACKAGE),
           replace_source_files: Route::factory(name: 'replaceSourceFiles', package: PACKAGE),
@@ -38,18 +35,6 @@ module Thron
           saveAs: save_as
         }
         route(to: __callee__, query: query, token_id: token_id)
-      end
-
-      def get_usage_quota_by_users(user_ids:, offset: 0, limit: 0)
-        body = { 
-          clientId: self.client_id,
-          criteria: { userIds: user_ids },
-          offset: offset,
-          numberOfResult: limit
-        }
-        route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('users') { {} })
-        end
       end
 
       def migrate_user_stuff(user_id1:, user_id2:, remove_user_id1: false)
@@ -97,7 +82,7 @@ module Thron
           contentList: { contentsToTrash: contents.map(&:payload) }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.extra(attribute: 'contentsInIssue')
         end
       end
       
@@ -110,7 +95,7 @@ module Thron
           }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.extra(attribute: 'contentsInIssue')
         end
       end
     end

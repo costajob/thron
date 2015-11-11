@@ -5,7 +5,7 @@ describe Thron::Response do
   let(:klass) { Thron::Response }
   let(:ok) { OpenStruct::new(code: 200, parsed_response: { 'ssoCode' => '657', 'field1' => 'Elvis', 'field2' => 'Presley', 'resultCode' => 'OK', 'totalResults' => 66 }) }
   let(:ko_key) { OpenStruct::new(code: 404, parsed_response: { 'errorDescription' => 'Not found' }) }
-  let(:ko_keys) { OpenStruct::new(code: 400, parsed_response: { 'actionsInError' => %w[action1 action2 action5]}) }
+  let(:extra) { OpenStruct::new(code: 400, parsed_response: { 'actionsInError' => %w[action1 action2 action5]}) }
   let(:ko_str) { OpenStruct::new(code: 400, parsed_response: 'Forbidden') }
   let(:id) { OpenStruct::new(code: 200, parsed_response: '08fce2d6-d4d8-4906-a8a1-5dcf4bd3f671') }
   let(:unparsed) { OpenStruct::new(code: 200) }
@@ -60,9 +60,10 @@ describe Thron::Response do
       instance.error.must_equal 'Not found'
     end
 
-    it 'must valorize multiple keys error' do
-      instance = klass::new(ko_keys)
-      instance.error.must_equal %w[action1 action2 action5]
+    it 'must valorize the extra attribute' do
+      instance = klass::new(extra)
+      instance.extra(attribute: 'actionsInError')
+      instance.actions_in_error.must_equal %w[action1 action2 action5]
     end
 
     it 'must valorize string error' do

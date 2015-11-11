@@ -36,19 +36,6 @@ describe Thron::Gateway::Dashboard do
     instance.download_source_file(content_id: '666', save_as: filename)
   end
 
-  it 'must call post to get user quota of specified users' do
-    route = klass.routes.fetch(:get_usage_quota_by_users)
-    user_ids = 5.times.map { |i| "USER_ID_#{i}"}
-    body = { 
-      clientId: instance.client_id, 
-      criteria: { userIds: user_ids },
-      offset: 2,
-      numberOfResult: 30
-    }.to_json
-    mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.get_usage_quota_by_users(user_ids: user_ids, offset: 2, limit: 30)
-  end
-
   it 'must call post to migrate user stuff at once' do
     route = klass.routes.fetch(:migrate_user_stuff)
     user_id1, user_id2 = 'USER_01', 'USER_02'

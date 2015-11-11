@@ -1,6 +1,9 @@
+require_relative 'string_extensions'
+
 module Thron
+  using StringExtensions
   class Response
-    attr_reader :http_code, :body, :result_code, :sso_code, :total, :error, :mapped
+    attr_reader :http_code, :body, :result_code, :sso_code, :total, :error
 
     ERROR_KEY = 'errorDescription'
     ID_REGEX  = /\A\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\Z/
@@ -11,11 +14,17 @@ module Thron
       @result_code = body.delete('resultCode')
       @sso_code    = body.delete('ssoCode')
       @total       = body.delete('totalResults')
-      @error       = body.delete(ERROR_KEY) { body.delete('actionsInError') }
+      @error       = body.delete(ERROR_KEY)
     end
 
     def body=(data)
       @body = data if is_200?
+    end
+
+    def extra(attribute:)
+      name = attribute.snakecase 
+      self.class.send(:attr_reader, name)
+      instance_variable_set(:"@#{name}", body.delete(attribute))
     end
 
     private

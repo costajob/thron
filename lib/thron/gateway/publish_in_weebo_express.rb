@@ -29,6 +29,7 @@ module Thron
             param: data.to_payload
           }
           route(to: message, body: body, token_id: token_id) do |response|
+            response.extra(attribute: 'actionsInError')
             response.body = Entity::Base::new(response.body.fetch('content') { {} })
           end
         end
