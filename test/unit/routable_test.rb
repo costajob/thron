@@ -12,10 +12,6 @@ describe Thron::Routable do
   let(:klass) { Thron::Routable }
   let(:instance) { Mock::Assets::new }
 
-  it 'must define base_url' do
-    Mock::Assets::base_url.wont_be_nil
-  end
-
   it 'should fail when no route exist' do
     -> { instance.send(:route, {to: :noent }) }.must_raise Thron::Routable::NoentRouteError
   end

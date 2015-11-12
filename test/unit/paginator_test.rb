@@ -3,9 +3,9 @@ require Thron::root.join('lib', 'thron', 'paginator')
 
 module Mock
   class Gateway
-    def find(total: 1225, limit: 0, offset: 0)
+    def find(total: 1225, other_results: false, limit: 0, offset: 0)
       max = (offset+limit) >= total ? total : (offset+limit)
-      OpenStruct::new(total: total,  res: (offset...max).to_a)
+      OpenStruct::new(total: total,  other_results: other_results, res: (offset...max).to_a)
     end
   end
 end
@@ -41,10 +41,11 @@ describe Thron::Paginator do
 
   describe '#prev, #next and #to' do
     { prev: nil, next: nil }.each do |message, args|
-      it "must set total and pages properly on #{message}" do
+      it "must set total, pages and other_results properly on #{message}" do
         instance.send(message, *args)
         instance.total.must_equal 1225
         instance.pages.must_equal 25
+        refute instance.instance_variable_get(:@other_results)
       end
     end
 
@@ -103,6 +104,13 @@ describe Thron::Paginator do
 
     it 'must read the cache first' do
       instance.next.equal? instance.prev
+    end
+
+    it 'must load next data if there are other results also if total is unknown' do
+      body= ->(limit, offset) { gateway.find(total: 0, other_results: true, limit: limit, offset: offset) }
+      instance = klass::new(body: body) 
+      3.times { instance.next }
+      instance.offset.must_equal 100
     end
 
     describe 'preloading' do

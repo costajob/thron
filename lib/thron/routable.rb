@@ -15,7 +15,6 @@ module Thron
       klass.extend ClassMethods
       klass.class_eval do
         include HTTParty
-        base_uri base_url
       end
     end
 
@@ -23,7 +22,8 @@ module Thron
       info = [
         "\n",
         "*" * 50,
-        "#{route.verb.upcase} REQUEST:",
+        'HTTP REQUEST:',
+        "  * verb: #{route.verb.upcase}",
         "  * url: #{route.url}",
         "  * query: #{query.inspect}",
         "  * body: #{body.inspect}",
@@ -31,14 +31,11 @@ module Thron
         "*" * 50,
         "\n"
       ]
+      puts info if Config::logger::verbose
       Thron::logger.debug(info.join("\n"))
     end
 
     module ClassMethods
-      def base_url
-        "http://#{Config::thron.client_id}#{Config::thron.base_url}"
-      end 
-
       def circuit_breaker
         @circuit_breaker ||= CircuitBreaker::new
       end

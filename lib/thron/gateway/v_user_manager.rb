@@ -5,9 +5,9 @@ module Thron
   module Gateway
     class VUserManager < Session
 
-      paginate :find_users
-
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
+
+      paginate :find_users
 
       def self.routes
         @routes ||= {

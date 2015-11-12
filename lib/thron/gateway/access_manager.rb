@@ -51,9 +51,12 @@ module Thron
         route(to: __callee__, query: query, token_id: @token_id, dash: false)
       end
 
-      def validate_token
+      def validate_token(username: nil)
         check_session
-        route(to: __callee__, token_id: @token_id, dash: false) do |response|
+        query = {
+          username: username
+        }
+        route(to: __callee__, query: query, token_id: @token_id, dash: false) do |response|
           response.body = Entity::Base::new(response.body)
         end
       end

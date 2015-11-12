@@ -4,9 +4,9 @@ module Thron
   module Gateway
     class UsersGroupManager < Session
 
-      paginate :find_groups
-
       PACKAGE = Package.new(:xsso, :resources, self.service_name)
+
+      paginate :find_groups
 
       def self.routes
         @routes ||= {

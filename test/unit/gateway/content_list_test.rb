@@ -3,6 +3,7 @@ require_relative Thron.root.join('lib', 'thron', 'gateway', 'content_list')
 
 describe Thron::Gateway::ContentList do
   let(:klass) { Thron::Gateway::ContentList }
+  let(:entity) { Thron::Entity::Base }
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:instance) { klass::new(token_id: token_id) }
   let(:response) { OpenStruct::new(code: 200) }
@@ -13,7 +14,7 @@ describe Thron::Gateway::ContentList do
 
   it 'must call get to show contents' do
     route = klass.routes.fetch(:show_contents)
-    criteria = Thron::Entity::Base::new(type: 'VIDEO', search_key: 'test', ugc: false)
+    criteria = entity::new(type: 'VIDEO', search_key: 'test', ugc: false)
     query = {
       clientId: instance.client_id,
       categoryId: '64746',

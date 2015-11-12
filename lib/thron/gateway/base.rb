@@ -15,6 +15,8 @@ module Thron
     class Base
       include Routable
 
+      base_uri "#{Config::thron::protocol}://#{Config::thron.client_id}-view.4me.it/api"
+
       NO_ACTIVE_SESSION = "Please provide a valid token ID"
 
       def self.service_name

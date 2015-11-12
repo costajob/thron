@@ -3,7 +3,7 @@ require Thron.root.join('lib', 'thron', 'response')
 
 describe Thron::Response do
   let(:klass) { Thron::Response }
-  let(:ok) { OpenStruct::new(code: 200, parsed_response: { 'ssoCode' => '657', 'field1' => 'Elvis', 'field2' => 'Presley', 'resultCode' => 'OK', 'totalResults' => 66 }) }
+  let(:ok) { OpenStruct::new(code: 200, parsed_response: { 'ssoCode' => '657', 'field1' => 'Elvis', 'field2' => 'Presley', 'resultCode' => 'OK', 'totalResults' => 66, 'otherResults' => true }) }
   let(:ko_key) { OpenStruct::new(code: 404, parsed_response: { 'errorDescription' => 'Not found' }) }
   let(:extra) { OpenStruct::new(code: 400, parsed_response: { 'actionsInError' => %w[action1 action2 action5]}) }
   let(:ko_str) { OpenStruct::new(code: 400, parsed_response: 'Forbidden') }
@@ -14,13 +14,13 @@ describe Thron::Response do
     let(:instance) { klass::new(ok) }
 
     it 'must initialize state' do
-      %i[http_code body result_code sso_code total error].each do |attr|
+      %i[http_code body result_code sso_code total other_results error].each do |attr|
         assert instance.instance_variable_defined?(:"@#{attr}")
       end
     end
 
     it 'must respond to accessors' do
-      %i[http_code body result_code sso_code total error].each do |message|
+      %i[http_code body result_code sso_code total other_results error].each do |message|
         instance.must_respond_to message
       end
     end
@@ -33,6 +33,7 @@ describe Thron::Response do
       instance.result_code.must_equal 'OK'
       instance.sso_code.must_equal '657'
       instance.total.must_equal 66
+      assert instance.other_results
     end
 
     it 'must valorize body data for matching ID data' do

@@ -4,9 +4,9 @@ module Thron
   module Gateway
     class Content < Session
 
-      paginate :find_contents
-
       PACKAGE = Package.new(:xcontents, :resources, self.service_name)
+
+      paginate :find_contents
 
       def self.routes
         @routes ||= {

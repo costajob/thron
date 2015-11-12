@@ -61,6 +61,7 @@ module Thron
       @cache.fetch(offset) do
         @body.call(@limit, offset).tap do |response|
           @total ||= response.total.to_i
+          @other_results = response.other_results
           @pages ||= fetch_pages
           @cache[offset] = response
         end
@@ -68,6 +69,7 @@ module Thron
     end
 
     def fetch_pages
+      return if @other_results
       return 1 if @total.zero?
       (@total / @limit.to_f).ceil
     end
@@ -79,10 +81,14 @@ module Thron
     def preload!
       @preload.times do |i|
         index  = @offset.zero? ? i : i+1
-        break if @total && @total <= index * @limit
+        break if stop_preloading?(index)
         offset = @offset + index * @limit
         call(offset)
       end if preload?
+    end
+
+    def stop_preloading?(index)
+      !@other_results && @total && @total <= index * @limit
     end
 
     def last_cached
@@ -90,8 +96,10 @@ module Thron
     end
 
     def next_offset
-      return @offset if (@offset + @limit) >= @total.to_i
-      @offset + @limit
+      (@offset + @limit).tap do |offset|
+        return offset if @other_results
+        return @offset if (@offset + @limit) >= @total.to_i
+      end
     end
 
     def prev_offset

@@ -74,9 +74,12 @@ describe Thron::Gateway::AccessManager do
 
     it 'must call post to validate token' do
       route = klass.routes.fetch(:validate_token)
-      mock(klass).post(route.url, { query: {}, body: {}, headers: route.headers(token_id: token_id) }) { response }
+      query = {
+        username: 'elvis'
+      }
+      mock(klass).post(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id) }) { response }
       instance.token_id = token_id
-      instance.validate_token
+      instance.validate_token(username: 'elvis')
     end
   end
 end
