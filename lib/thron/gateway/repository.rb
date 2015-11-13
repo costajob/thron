@@ -113,7 +113,7 @@ module Thron
           fileName: File.basename(path)
         }
         body = {
-          fileSource: File.new(path)
+          fileSource: File.read(path)
         }
         route(to: __callee__, query: query, body: body) do |response|
           response.body = Entity::Base::new(response.body.fetch('file') { {} })

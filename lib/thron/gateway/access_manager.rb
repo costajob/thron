@@ -10,8 +10,8 @@ module Thron
         @routes ||= {
           login: Route::factory(name: 'login', package: PACKAGE, params: [client_id]),
           logout: Route::factory(name: 'logout', package: PACKAGE, params: [client_id], type: Route::Types::PLAIN),
-          validate_capabilities: Route::factory(name: 'validateCapability', package: PACKAGE, params: [client_id]), type: Route::Types::PLAIN,
-          validate_roles: Route::factory(name: 'validateRole', package: PACKAGE, params: [client_id]), type: Route::Types::PLAIN,
+          validate_capabilities: Route::factory(name: 'validateCapability', package: PACKAGE, params: [client_id], type: Route::Types::PLAIN),
+          validate_roles: Route::factory(name: 'validateRole', package: PACKAGE, params: [client_id], type: Route::Types::PLAIN),
           validate_token: Route::factory(name: 'validateToken', package: PACKAGE, params: [client_id])
         }
       end

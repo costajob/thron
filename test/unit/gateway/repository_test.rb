@@ -89,6 +89,7 @@ describe Thron::Gateway::Repository do
   it 'must call post to upload a new file to the platform' do
     route = klass.routes.fetch(:upload_file)
     file = Tempfile::new('blue_suede_shoes.png') << "These shoes shine man"
+    file.rewind
     path = file.path
     query = {
       clientId: instance.client_id,
@@ -96,7 +97,7 @@ describe Thron::Gateway::Repository do
       fileName: File.basename(path)
     }
     body = {
-      fileSource: File.new(path)
+      fileSource: File.read(path)
     }
     mock(klass).post(route.url, { query: query, body: body, headers: route.headers(dash: true) }) { response }
     instance.upload_file(path: path)
