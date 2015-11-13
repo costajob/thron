@@ -15,7 +15,7 @@ describe Thron::Gateway::AppsAdmin do
 
   it 'must call post to add group to the app' do
     route = klass.routes.fetch(:add_group_app)
-    capabilities = entity::new(add_capabilities: [], add_user_roles: 3.times.map { |i| "APP#{i}_MANAGER" })
+    capabilities = entity::new(add_capabilities: [], add_user_roles: Array::new(3) { |i| "APP#{i}_MANAGER" })
     body = { 
       clientId: instance.client_id, 
       appId: app_id,
@@ -29,7 +29,7 @@ describe Thron::Gateway::AppsAdmin do
   it 'must call post to add snippet to the app' do
     route = klass.routes.fetch(:add_snippet)
     data = entity::new(vesrion: 1.3, status: 'active', snippet_type: 'STANDARD', display_name: 'snippet_1', description: 'standard snippet 1')
-    capabilities = entity::new(add_capabilities: [], add_user_roles: 3.times.map { |i| "APP#{i}_MANAGER" })
+    capabilities = entity::new(add_capabilities: [], add_user_roles: Array::new(3) { |i| "APP#{i}_MANAGER" })
     body = { 
       clientId: instance.client_id, 
       appId: app_id,
@@ -42,7 +42,7 @@ describe Thron::Gateway::AppsAdmin do
 
   it 'must call post to add user to the app' do
     route = klass.routes.fetch(:add_user_app)
-    capabilities = entity::new(add_capabilities: [], add_user_roles: 3.times.map { |i| "APP#{i}_MANAGER" })
+    capabilities = entity::new(add_capabilities: [], add_user_roles: Array::new(3) { |i| "APP#{i}_MANAGER" })
     body = { 
       clientId: instance.client_id, 
       appId: app_id,
@@ -56,7 +56,7 @@ describe Thron::Gateway::AppsAdmin do
   it 'must call post to create a new app' do
     route = klass.routes.fetch(:create_app)
     data = entity::new(pretty_id: 'BLUE-SUEDE-666', app_type: 'GRAMMY_WINNER', active: true, display_name: 'blue suede shoes', description: 'dont you step on my blue suede shoes', can_disguise: true)
-    options = entity::new(root_category_id: '666', caps: { add_capabilities: [], add_user_roles: 3.times.map { |i| "APP#{i}_MANAGER" } })
+    options = entity::new(root_category_id: '666', caps: { add_capabilities: [], add_user_roles: Array::new(3) { |i| "APP#{i}_MANAGER" } })
     body = { 
       clientId: instance.client_id, 
       app: data.to_payload,
@@ -112,7 +112,7 @@ describe Thron::Gateway::AppsAdmin do
   it 'must call post to update an existing app' do
     route = klass.routes.fetch(:update_app)
     data = entity::new(pretty_id: 'BLUE-SUEDE-666', app_type: 'GRAMMY_WINNER', active: true, display_name: 'blue suede shoes', description: 'dont you step on my blue suede shoes', can_disguise: true)
-    capabilities = entity::new(capabilities: [], roles: 3.times.map { |i| "APP#{i}_MANAGER" })
+    capabilities = entity::new(capabilities: [], roles: Array::new(3) { |i| "APP#{i}_MANAGER" })
     body = { 
       clientId: instance.client_id, 
       appId: app_id,
@@ -126,7 +126,7 @@ describe Thron::Gateway::AppsAdmin do
   it 'must call post to update an existing snippet' do
     route = klass.routes.fetch(:update_snippet)
     data = entity::new(vesrion: 1.3, status: 'active', snippet_type: 'STANDARD', display_name: 'snippet_1', description: 'standard snippet 1')
-    capabilities = entity::new(add_capabilities: [], add_user_roles: 3.times.map { |i| "APP#{i}_MANAGER" })
+    capabilities = entity::new(add_capabilities: [], add_user_roles: Array::new(3) { |i| "APP#{i}_MANAGER" })
     body = { 
       clientId: instance.client_id, 
       appId: app_id,

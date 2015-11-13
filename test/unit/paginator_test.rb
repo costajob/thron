@@ -57,7 +57,7 @@ describe Thron::Paginator do
     end
 
     it 'must prevent to if initial load is missing' do
-      instance.to(3).must_equal klass::INITIAL_LOAD_MISSING
+      instance.to(3).must_equal klass::PREVENT_PAGE_ACCESS
     end
 
     it 'must set the offset' do
@@ -106,11 +106,19 @@ describe Thron::Paginator do
       instance.next.equal? instance.prev
     end
 
-    it 'must load next data if there are other results also if total is unknown' do
-      body= ->(limit, offset) { gateway.find(total: 0, other_results: true, limit: limit, offset: offset) }
-      instance = klass::new(body: body) 
-      3.times { instance.next }
-      instance.offset.must_equal 100
+    describe 'other results is true' do
+      let(:body) { ->(limit, offset) { gateway.find(total: 0, other_results: true, limit: limit, offset: offset) } }
+      let(:instance) { klass::new(body: body) }
+
+      it 'must load next data if total is unknown' do
+        3.times { instance.next }
+        instance.offset.must_equal 100
+      end
+
+      it 'must prevent use of #to method' do
+        instance.next
+        instance.to(3).must_equal klass::PREVENT_PAGE_ACCESS
+      end
     end
 
     describe 'preloading' do

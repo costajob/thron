@@ -1,7 +1,7 @@
 module Thron
   class Route
     module Types
-      ALL = %w[json plain]
+      ALL = %w[json plain multipart]
       ALL.each do |type|
         const_set(type.upcase, type)
       end
@@ -17,10 +17,9 @@ module Thron
     class UnsupportedVerbError < StandardError; end
     class UnsupportedTypeError < StandardError; end
 
-    def self.factory(name:, package:, params: [], verb: Verbs::POST, json: true, format: nil)
+    def self.factory(name:, package:, params: [], verb: Verbs::POST, type: Types::JSON, format: nil)
       url = "/#{package}/#{name}"
       url << "/#{params.join('/')}" unless params.empty?
-      type = json ? Types::JSON : Types::PLAIN
       Route::new(verb: verb, url: url, type: type, format: format)
     end
 
@@ -46,6 +45,8 @@ module Thron
       @content_type ||= case @type.to_s
                         when Types::JSON
                           'application/json'
+                        when Types::MULTIPART
+                          'multipart/form-data'
                         else
                           'text/plain'
                         end

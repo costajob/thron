@@ -2,7 +2,7 @@ module Thron
   class Paginator
     MAX_LIMIT = 50
     MAX_PRELOAD = 30
-    INITIAL_LOAD_MISSING = :initial_load_missing
+    PREVENT_PAGE_ACCESS = :direct_page_access_is_impossible
 
     class PreloadTooLargeError < StandardError; end
 
@@ -37,7 +37,7 @@ module Thron
     end
 
     def to(n)
-      return INITIAL_LOAD_MISSING unless @pages
+      return PREVENT_PAGE_ACCESS unless @pages
       @offset = page_to_offset(n)
       call
     end

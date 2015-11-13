@@ -14,7 +14,7 @@ describe Thron::Gateway::Dashboard do
 
   it 'must call post to change contents owner' do
     route = klass.routes.fetch(:change_contents_owner)
-    contents = entity::new(new_user_id: '666', xcontent_ids: 4.times.map { |i| "XCONTENT_#{i}"})
+    contents = entity::new(new_user_id: '666', xcontent_ids: Array::new(4) { |i| "XCONTENT_#{i}"})
     body = { 
       clientId: instance.client_id, 
       contents: contents.to_payload

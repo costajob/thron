@@ -69,7 +69,7 @@ describe Thron::Gateway::Content do
 
   it 'must call post to add linked contents' do
     route = klass.routes.fetch(:add_linked_contents)
-    contents = 3.times.map { |i| entity::new(xcontent_id: "7847#{i}", link_type: 'plain', selected_channel: 'VIDEO', position: i) }
+    contents = Array::new(3) { |i| entity::new(xcontent_id: "7847#{i}", link_type: 'plain', selected_channel: 'VIDEO', position: i) }
     body = { 
       clientId: instance.client_id,
       contentId: content_id,
@@ -153,7 +153,7 @@ describe Thron::Gateway::Content do
 
   it 'must call post to unlink contents' do
     route = klass.routes.fetch(:remove_linked_contents)
-    ids = 3.times.map { |i| "7847#{i}" }
+    ids = Array::new(3) { |i| "7847#{i}" }
     criteria = entity::new(linked_contents_id: ids, link_type: 'plain')
     body = { 
       clientId: instance.client_id,
@@ -206,7 +206,7 @@ describe Thron::Gateway::Content do
 
   it 'must call post to player embed codes' do
     route = klass.routes.fetch(:update_player_embed_codes)
-    players = 3.times.map { |i| entity::new(id: "7363#{i}", name: 'SWF Flash player', use_template_id: 'object', embed_target: 'head', enabled: false, values: [ { name: 'extension', value: 'swf', locale: 'EN' } ]) }
+    players = Array::new(3) { |i| entity::new(id: "7363#{i}", name: 'SWF Flash player', use_template_id: 'object', embed_target: 'head', enabled: false, values: [ { name: 'extension', value: 'swf', locale: 'EN' } ]) }
     body = { 
       clientId: instance.client_id,
       contentId: content_id,

@@ -7,7 +7,7 @@ describe Thron::Route do
   let(:text) { klass::new(verb: 'get', url: '/text_api', type: 'plain', format: 'plain') }
 
   it 'must define type constants' do
-    %w[json plain].each do |type|
+    %w[json plain multipart].each do |type|
       klass::Types.const_get(type.upcase).wont_be_nil
     end
   end
@@ -37,7 +37,7 @@ describe Thron::Route do
     end
 
     it 'must create a custom route' do
-      route = klass::factory(name: :test_me, package: package, params: %w[clientid groupid], verb: klass::Verbs::GET, json: false) 
+      route = klass::factory(name: :test_me, package: package, params: %w[clientid groupid], verb: klass::Verbs::GET, type: klass::Types::PLAIN) 
       route.url.must_equal '/xsso/resources/accessmanager/test_me/clientid/groupid'
       route.verb.must_equal klass::Verbs::GET
       route.format.must_be_empty
