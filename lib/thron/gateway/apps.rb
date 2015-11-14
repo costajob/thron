@@ -13,7 +13,7 @@ module Thron
           find_apps: Route::factory(name: 'findByProperties', package: PACKAGE),
           login_app: Route::factory(name: 'loginApp', package: PACKAGE, verb: Route::Verbs::GET),
           login_snippet: Route::factory(name: 'loginSnippet', package: PACKAGE, verb: Route::Verbs::GET),
-          su: Route::factory(name: 'su', package: PACKAGE, format: Route::Types::PLAIN)
+          su: Route::factory(name: 'su', package: PACKAGE, accept: Route::Types::PLAIN)
         }
       end
 

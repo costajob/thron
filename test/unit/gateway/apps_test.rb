@@ -73,7 +73,7 @@ describe Thron::Gateway::Apps do
       appId: app_id,
       username: 'elvis'
     }.to_json
-    mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true), format: 'plain' }) { response }
+    mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.su(app_id: app_id, username: 'elvis')
   end
 end

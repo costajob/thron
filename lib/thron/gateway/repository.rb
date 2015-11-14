@@ -21,7 +21,7 @@ module Thron
           get_quota_usage: Route::factory(name: 'getQuotaUsage', package: PACKAGE, verb: Route::Verbs::GET),
           get_s3_credentials: Route::factory(name: 'getS3UploadCredentials', package: PACKAGE, verb: Route::Verbs::GET),
           get_uploaded_file_list: Route::factory(name: 'getUploadedFileList', package: PACKAGE),
-          upload_file: Route::factory(name: 'uploadFile', package: PACKAGE, type: Route::Types::MULTIPART)
+          upload_file: Route::factory(name: 'uploadFile', package: PACKAGE, type: Route::Types::MULTIPART, accept: Route::Types::JSON)
         }
       end
 
