@@ -27,7 +27,7 @@ module Thron
         end
       end
 
-      def list_apps(criteria:)
+      def list_apps(criteria: {})
         body = { 
           clientId: self.client_id,
           criteria: criteria
@@ -39,7 +39,7 @@ module Thron
         end
       end
 
-      def find_apps(criteria:)
+      def find_apps(criteria: {})
         body = { 
           clientId: self.client_id,
           criteria: criteria

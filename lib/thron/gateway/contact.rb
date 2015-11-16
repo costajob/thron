@@ -53,7 +53,7 @@ module Thron
         end
       end
 
-      def list_contacts(criteria:, options:, offset: 0, limit: 0)
+      def list_contacts(criteria: {}, options: {}, offset: 0, limit: 0)
         body = { 
           criteria: criteria,
           option: options,

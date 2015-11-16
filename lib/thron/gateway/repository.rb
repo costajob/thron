@@ -68,7 +68,7 @@ module Thron
 
       %i[get_ftp_file_list get_uploaded_file_list].each do |message|
         define_method(message) do |args|
-          criteria = args.fetch(:criteria)
+          criteria = args.fetch(:criteria) { {} }
           order_by = args[:order_by]
           offset = args.fetch(:offset) { 0 }
           limit = args.fetch(:limit) { 0 }

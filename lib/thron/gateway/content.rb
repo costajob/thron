@@ -95,7 +95,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def content_detail(content_id:, options:, locale: nil, access_key: nil)
+      def content_detail(content_id:, options: {}, locale: nil, access_key: nil)
         query = { 
           clientId: self.client_id,
           contentId: content_id,
@@ -108,7 +108,7 @@ module Thron
         end
       end
 
-      def find_contents(criteria:, options:, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
+      def find_contents(criteria: {}, options: {}, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
@@ -159,7 +159,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_linked_contents(content_id:, criteria:, category_id: nil)
+      def remove_linked_contents(content_id:, criteria: {}, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: content_id,

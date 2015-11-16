@@ -53,7 +53,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_app(data:, options:)
+      def create_app(data:, options: {})
         body = { 
           clientId: self.client_id,
           app: data,

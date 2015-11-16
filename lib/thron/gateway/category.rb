@@ -74,7 +74,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find_categories(criteria:, locale: nil, order_by: nil, offset: 0, limit: 0)
+      def find_categories(criteria: {}, locale: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id

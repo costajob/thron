@@ -40,7 +40,7 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def group_detail(group_id:, options:, offset: 0, limit: 0)
+      def group_detail(group_id:, options: {}, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: group_id,
@@ -54,7 +54,7 @@ module Thron
         end
       end
 
-      def find_groups(criteria:, order_by: nil, options:, offset: 0, limit: 0)
+      def find_groups(criteria: {}, order_by: nil, options: {}, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria,

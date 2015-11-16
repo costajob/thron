@@ -14,7 +14,7 @@ module Thron
         }
       end
 
-      def show_contents(category_id:, locale: nil, criteria:, recursive: true, order_by: 'contentName_A', limit: 0, offset: 0)
+      def show_contents(category_id:, locale: nil, criteria: {}, recursive: true, order_by: 'contentName_A', limit: 0, offset: 0)
         query = { 
           clientId: self.client_id,
           categoryId: category_id,

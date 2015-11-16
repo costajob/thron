@@ -40,7 +40,7 @@ module Thron
         end
       end
 
-      def user_detail(username:, options:, offset: 0, limit: 0)
+      def user_detail(username:, options: {}, offset: 0, limit: 0)
         query = {
           clientId: self.client_id,
           username: username,
@@ -53,7 +53,7 @@ module Thron
         end
       end
 
-      def find_users(criteria:, order_by: nil, options:, offset: 0, limit: 0)
+      def find_users(criteria: {}, order_by: nil, options: {}, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           criteria: criteria,
