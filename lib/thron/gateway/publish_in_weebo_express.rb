@@ -23,10 +23,10 @@ module Thron
 
       self.routes.keys.each do |message|
         define_method(message) do |args|
-          data = args.fetch(:data) { Entity::Base::new }
+          data = args.fetch(:data)
           body = { 
             clientId: self.client_id,
-            param: data.to_payload
+            param: data
           }
           route(to: message, body: body, token_id: token_id) do |response|
             response.extra(attribute: 'actionsInError')

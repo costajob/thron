@@ -25,10 +25,10 @@ describe Thron::Gateway::Apps do
 
   it 'must call post to list apps' do
     route = klass.routes.fetch(:list_apps)
-    criteria = entity::new(app_type: %w[PLATFORM], app_sub_type: 'INTERNAL', app_ids: %w[id1 id3 id7], app_pretty_ids: %w[34 45 67], app_active: false, app_display_name: 'blue sueder', app_owner_username: 'elvis')
+    criteria = entity::new(app_type: %w[PLATFORM], app_sub_type: 'INTERNAL', app_ids: %w[id1 id3 id7], app_pretty_ids: %w[34 45 67], app_active: false, app_display_name: 'blue sueder', app_owner_username: 'elvis').to_payload
     body = { 
       clientId: instance.client_id,
-      criteria: criteria.to_payload
+      criteria: criteria
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.list_apps(criteria: criteria)
@@ -36,10 +36,10 @@ describe Thron::Gateway::Apps do
 
   it 'must call post to find apps' do
     route = klass.routes.fetch(:find_apps)
-    criteria = entity::new(snippet_ids: %w[id1 id7 id8], snippet_status: %w[CREATED DELETED], snippet_display_name: 'ghetto gun', snippet_type: %w[PLATFORM INTERNAL], snippet_owner_username: 'elvis', app_type: %w[PLATFORM], app_active: false, app_display_name: 'ghetto gun')
+    criteria = entity::new(snippet_ids: %w[id1 id7 id8], snippet_status: %w[CREATED DELETED], snippet_display_name: 'ghetto gun', snippet_type: %w[PLATFORM INTERNAL], snippet_owner_username: 'elvis', app_type: %w[PLATFORM], app_active: false, app_display_name: 'ghetto gun').to_payload
     body = { 
       clientId: instance.client_id,
-      criteria: criteria.to_payload
+      criteria: criteria
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.find_apps(criteria: criteria)

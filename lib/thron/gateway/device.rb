@@ -16,11 +16,11 @@ module Thron
         }
       end
 
-      def connect_device(device_id:, ik: Entity::Base::new, contact_name:)
+      def connect_device(device_id:, ik:, contact_name:)
         body = { 
           clientId: self.client_id,
           deviceId: device_id,
-          ik: ik.to_payload,
+          ik: ik,
           contactName: contact_name
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|

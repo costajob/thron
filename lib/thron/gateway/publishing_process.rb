@@ -78,12 +78,12 @@ module Thron
         end
       end
 
-      def update_publishing_properties(media_content_id:, content_id:, properties: Entity::Base::new)
+      def update_publishing_properties(media_content_id:, content_id:, properties:)
         body = { 
           clientId: self.client_id,
           mediaContentId: media_content_id,
           xcontentId: content_id,
-          properties: properties.to_payload
+          properties: properties
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.extra(attribute: 'actionsInError')
@@ -111,10 +111,10 @@ module Thron
 
       %i[create_content_for_channel new_content new_live_event_content new_pagelet_content new_playlist_content replace_thumbnail].each do |message|
         define_method(message) do |args|
-          data = args.fetch(:data) { Entity::Base::new }
+          data = args.fetch(:data)
           body = { 
             clientId: self.client_id,
-            param: data.to_payload
+            param: data
           }
           route(to: message, body: body, token_id: token_id) do |response|
             response.extra(attribute: 'actionsInError')

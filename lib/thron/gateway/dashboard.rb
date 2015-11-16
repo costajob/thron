@@ -19,10 +19,10 @@ module Thron
         }
       end
 
-      def change_contents_owner(contents: Entity::Base::new)
+      def change_contents_owner(contents:)
         body = { 
           clientId: self.client_id,
-          contents: contents.to_payload
+          contents: contents
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
@@ -47,11 +47,11 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def propagate_acl_to_sub_categories(category_id:, acls: Entity::Base::new, force: false)
+      def propagate_acl_to_sub_categories(category_id:, acls:, force: false)
         body = { 
           clientId: self.client_id,
           categoryId: category_id,
-          acls: acls.to_payload,
+          acls: acls,
           force: force
         }
         route(to: __callee__, body: body, token_id: token_id)

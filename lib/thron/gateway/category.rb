@@ -26,41 +26,41 @@ module Thron
         }
       end
 
-      def create_category(parent_id:, locale: Entity::Base::new, is_private: false, solution: nil, data: Entity::Base::new)
+      def create_category(parent_id:, locale:, is_private: false, solution: nil, data:)
         body = { 
           client: {
             clientId: self.client_id
           },
           upCatId: parent_id,
-          catLocales: locale.to_payload,
+          catLocales: locale,
           isPrivate: is_private,
           private: is_private,
           solution: solution,
-          options: data.to_payload
+          options: data
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_system_category(category_id:, parent_id:, locale: Entity::Base::new, data: Entity::Base::new)
+      def create_system_category(category_id:, parent_id:, locale:, data:)
         body = { 
           client: {
             clientId: self.client_id
           },
           newCategoryId: category_id,
           upCatId: parent_id,
-          catLocales: locale.to_payload,
-          options: data.to_payload
+          catLocales: locale,
+          options: data
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_category_for_locale(category_id:, locale: Entity::Base::new)
+      def add_category_for_locale(category_id:, locale:)
         body = { 
           client: {
             clientId: self.client_id
           },
           catId: category_id,
-          catLocale: locale.to_payload
+          catLocale: locale
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
@@ -69,17 +69,17 @@ module Thron
         body = { 
           clientId: self.client_id,
           categoryId: category_id,
-          prettyId: pretty_id.to_payload
+          prettyId: pretty_id
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find_categories(criteria: Entity::Base::new, locale: nil, order_by: nil, offset: 0, limit: 0)
+      def find_categories(criteria:, locale: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
           },
-          properties: criteria.to_payload,
+          properties: criteria,
           locale: locale,
           orderBy: order_by,
           offset: offset.to_i,
@@ -143,33 +143,33 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update_category(category_id:, data: Entity::Base::new)
+      def update_category(category_id:, data:)
         body = { 
           client: {
             clientId: self.client_id
           },
           categoryId: category_id,
-          update: data.to_payload
+          update: data
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_category_for_locale(category_id:, locale: Entity::Base::new)
+      def update_category_for_locale(category_id:, locale:)
         body = { 
           client: {
             clientId: self.client_id
           },
           catId: category_id,
-          property: locale.to_payload
+          property: locale
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_category_pretty_id(category_id:, pretty_id: Entity::Base::new)
+      def update_category_pretty_id(category_id:, pretty_id:)
         body = { 
           clientId: self.client_id,
           categoryId: category_id,
-          prettyId: pretty_id.to_payload
+          prettyId: pretty_id
         }
         route(to: __callee__, body: body, token_id: token_id)
       end

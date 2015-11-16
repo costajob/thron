@@ -64,12 +64,12 @@ describe Thron::Gateway::PublishingProcess do
 
   it 'must call post to update publishing properties' do
     route = klass.routes.fetch(:update_publishing_properties)
-    properties = entity::new(enable_geo_blocking: true, only_certified_clients: false, use_authentication_web_service: true, countries: %w[US EU AU], as_black_list: false)
+    properties = entity::new(enable_geo_blocking: true, only_certified_clients: false, use_authentication_web_service: true, countries: %w[US EU AU], as_black_list: false).to_payload
     body = { 
       clientId: instance.client_id, 
       mediaContentId: '666',
       xcontentId: '667',
-      properties: properties.to_payload
+      properties: properties
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.update_publishing_properties(media_content_id: '666', content_id: '667', properties: properties)
@@ -97,7 +97,7 @@ describe Thron::Gateway::PublishingProcess do
         param: {}
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(message, {})
+      instance.send(message, data: {})
     end
   end
 end

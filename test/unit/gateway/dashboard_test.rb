@@ -14,10 +14,10 @@ describe Thron::Gateway::Dashboard do
 
   it 'must call post to change contents owner' do
     route = klass.routes.fetch(:change_contents_owner)
-    contents = entity::new(new_user_id: '666', xcontent_ids: Array::new(4) { |i| "XCONTENT_#{i}"})
+    contents = entity::new(new_user_id: '666', xcontent_ids: Array::new(4) { |i| "XCONTENT_#{i}"}).to_payload
     body = { 
       clientId: instance.client_id, 
-      contents: contents.to_payload
+      contents: contents
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.change_contents_owner(contents: contents)
@@ -52,11 +52,11 @@ describe Thron::Gateway::Dashboard do
   it 'must call post to propagate ACLs to sub categories' do
     route = klass.routes.fetch(:propagate_acl_to_sub_categories)
     rules = Array::new(3) { |i| { source_obj_id: i, source_obj_class: "CLASS_#{i}", rules_inverse: [], custom_metadata: [ { name: 'pretty_id', value: "PRETTY_#{i}" } ] } }
-    acls = entity::new(rules: rules)
+    acls = entity::new(rules: rules).to_payload
     body = { 
       clientId: instance.client_id, 
       categoryId: '666',
-      acls: acls.to_payload,
+      acls: acls,
       force: true
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }

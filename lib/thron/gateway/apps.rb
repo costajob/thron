@@ -27,10 +27,10 @@ module Thron
         end
       end
 
-      def list_apps(criteria: Entity::Base::new(app_active: true))
+      def list_apps(criteria:)
         body = { 
           clientId: self.client_id,
-          criteria: criteria.to_payload
+          criteria: criteria
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('apps') { [] }.map do |app|
@@ -39,10 +39,10 @@ module Thron
         end
       end
 
-      def find_apps(criteria: Entity::Base::new(app_active: true))
+      def find_apps(criteria:)
         body = { 
           clientId: self.client_id,
-          criteria: criteria.to_payload
+          criteria: criteria
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = response.body.fetch('apps') { [] }.map do |app|

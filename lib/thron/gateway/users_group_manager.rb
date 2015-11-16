@@ -21,10 +21,10 @@ module Thron
         }
       end
 
-      def create_group(data: Entity::Base::new(active: false))
+      def create_group(data:)
         body = { 
           clientId: self.client_id,
-          usersGroup: data.to_payload
+          usersGroup: data
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('group') { {} })
@@ -40,13 +40,13 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def group_detail(group_id:, options: Entity::Base::new, offset: 0, limit: 0)
+      def group_detail(group_id:, options:, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
           groupId: group_id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
-          fieldsOption: options.to_payload
+          fieldsOption: options
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           group = response.body.delete('group') { {} }
@@ -54,12 +54,12 @@ module Thron
         end
       end
 
-      def find_groups(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+      def find_groups(criteria:, order_by: nil, options:, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
-          criteria: criteria.to_payload,
+          criteria: criteria,
           orderBy: order_by,
-          fieldsOption: options.to_payload,
+          fieldsOption: options,
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
@@ -88,14 +88,14 @@ module Thron
 
       def update_group(group_id:, data:)
         body = {
-          update: data.to_payload
+          update: data
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, group_id])
       end
 
-      def update_group_external_id(group_id:, external_id: Entity::Base::new)
+      def update_group_external_id(group_id:, external_id:)
         body = {
-          externalId: external_id.to_payload
+          externalId: external_id
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, group_id])
       end

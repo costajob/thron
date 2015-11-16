@@ -35,14 +35,14 @@ module Thron
       %w[add update].each do |action|
         define_method("#{action}_content_for_locale") do |args|
           content_id = args.fetch(:content_id)
-          locale = args.fetch(:locale) { Entity::Base::new }
+          locale = args.fetch(:locale)
           category_id = args.fetch(:category_id) { nil }
           body = { 
             client: {
               clientId: self.client_id
             },
             contentId: content_id,
-            detail: locale.to_payload,
+            detail: locale,
             categoryIdForAcl: category_id
           }
           route(to: __callee__, body: body, token_id: token_id)
@@ -50,12 +50,12 @@ module Thron
 
         define_method("#{action}_content_pretty_id") do |args|
           content_id = args.fetch(:content_id)
-          pretty_id = args.fetch(:pretty_id) { Entity::Base::new }
+          pretty_id = args.fetch(:pretty_id)
           category_id = args.fetch(:category_id) { nil }
           body = { 
             clientId: self.client_id,
             contentId: content_id,
-            prettyId: pretty_id.to_payload,
+            prettyId: pretty_id,
             categoryIdForAcl: category_id
           }
           route(to: __callee__, body: body, token_id: token_id)
@@ -63,58 +63,58 @@ module Thron
 
         define_method("#{action}_player_embed_code") do |args|
           content_id = args.fetch(:content_id)
-          data = args.fetch(:data) { Entity::Base::new }
+          data = args.fetch(:data)
           body = { 
             clientId: self.client_id,
             contentId: content_id,
-            embedCode: data.to_payload
+            embedCode: data
           }
           route(to: __callee__, body: body, token_id: token_id)
         end
       end
 
-      def add_linked_content(content_id:, data: Entity::Base::new, category_id: nil)
+      def add_linked_content(content_id:, data:, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: content_id,
-          linkedContent: data.to_payload,
+          linkedContent: data,
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_linked_contents(content_id:, contents: [], category_id: nil)
+      def add_linked_contents(content_id:, contents:, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: content_id,
           linkedContents: {
-            contents: contents.map(&:to_payload)
+            contents: contents
           },
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def content_detail(content_id:, options: Entity::Base::new, locale: nil, access_key: nil)
+      def content_detail(content_id:, options:, locale: nil, access_key: nil)
         query = { 
           clientId: self.client_id,
           contentId: content_id,
           locale: locale,
           pkey: access_key
-        }.merge(options.to_payload)
+        }.merge(options)
         route(to: __callee__, query: query, token_id: token_id) do |response|
           content = response.body.delete('content') { {} }
           response.body = Entity::Base::new(response.body.merge(content))
         end
       end
 
-      def find_contents(criteria: Entity::Base::new, options: Entity::Base::new, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
+      def find_contents(criteria:, options:, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
             clientId: self.client_id
           },
-          criteria: criteria.to_payload,
-          contentFieldOption: options.to_payload,
+          criteria: criteria,
+          contentFieldOption: options,
           locale: locale,
           divArea: div_area,
           orderBy: order_by,
@@ -159,11 +159,11 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_linked_contents(content_id:, criteria: Entity::Base::new, category_id: nil)
+      def remove_linked_contents(content_id:, criteria:, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: content_id,
-          criteria: criteria.to_payload,
+          criteria: criteria,
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -190,34 +190,34 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_content(content_id:, data: Entity::Base::new, category_id: nil)
+      def update_content(content_id:, data:, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: content_id,
-          contentValues: data.to_payload,
+          contentValues: data,
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_player_embed_codes(content_id:, players: [], category_id: nil)
+      def update_player_embed_codes(content_id:, players:, category_id: nil)
         body = { 
           clientId: self.client_id,
           contentId: content_id,
           embedCodes: {
-            embedCodes: players.map(&:to_payload)
+            embedCodes: players
           },
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_user_specific_values(username:, content_id:, data: Entity::Base::new, category_id: nil)
+      def update_user_specific_values(username:, content_id:, data:, category_id: nil)
         body = { 
           clientId: self.client_id,
           username: username,
           contentId: content_id,
-          contentParams: data.to_payload,
+          contentParams: data,
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id)

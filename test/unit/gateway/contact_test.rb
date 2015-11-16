@@ -7,6 +7,7 @@ describe Thron::Gateway::Contact do
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:instance) { klass::new(token_id: token_id) }
   let(:response) { OpenStruct::new(code: 200) }
+  let(:ik) { entity::new(key: 'garment', value: 'blue suede shoes').to_payload }
 
   it 'must set the package' do
     klass::PACKAGE.to_s.must_equal "xcontact/resources/contact"
@@ -14,10 +15,9 @@ describe Thron::Gateway::Contact do
 
   it 'must call post to add contact key' do
     route = klass.routes.fetch(:add_contact_key)
-    ik = entity::new(key: 'garment', value: 'blue suede shoes')
     body = {
       contactId: '666',
-      ik: ik.to_payload
+      ik: ik
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
     instance.add_contact_key(contact_id: '666', ik: ik)
@@ -34,10 +34,9 @@ describe Thron::Gateway::Contact do
 
   it 'must call post to insert a new contact' do
     route = klass.routes.fetch(:insert_contact)
-    ik = entity::new(key: 'garment', value: 'blue suede shoes')
     body = {
       value: {
-        ik: ik.to_payload,
+        ik: ik,
         name: 'elvis'
       }
     }.to_json
@@ -47,11 +46,11 @@ describe Thron::Gateway::Contact do
 
   it 'must call post to list existing contacts' do
     route = klass.routes.fetch(:list_contacts)
-    criteria = entity::new(accessed_date_range: { from: '2015-01-01', to: '2015-10-29' }, ids: Array::new(2) { |i| "ID_#{i}" }, iks: Array::new(4) { |i| { key: "KEY_#{i}", value: "VAL_#{i}" } }, contact_type: 'PLATFORM_USER')
-    options = entity::new(itags: false, keys: true, old_ids: false)
+    criteria = entity::new(accessed_date_range: { from: '2015-01-01', to: '2015-10-29' }, ids: Array::new(2) { |i| "ID_#{i}" }, iks: Array::new(4) { |i| { key: "KEY_#{i}", value: "VAL_#{i}" } }, contact_type: 'PLATFORM_USER').to_payload
+    options = entity::new(itags: false, keys: true, old_ids: false).to_payload
     body = {
-      criteria: criteria.to_payload,
-      option: options.to_payload,
+      criteria: criteria,
+      option: options,
       offset: 40,
       limit: 20
     }.to_json

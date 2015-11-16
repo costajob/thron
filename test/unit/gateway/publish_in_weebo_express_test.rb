@@ -19,7 +19,7 @@ describe Thron::Gateway::PublishInWeeboExpress do
         param: {}
       }.to_json
       mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }
-      instance.send(message, {})
+      instance.send(message, data: {})
     end
   end
 end

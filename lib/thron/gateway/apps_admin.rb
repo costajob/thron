@@ -21,43 +21,43 @@ module Thron
         }
       end
 
-      def add_group_app(app_id:, group_id:, capabilities: Entity::Base::new)
+      def add_group_app(app_id:, group_id:, capabilities:)
         body = { 
           clientId: self.client_id,
           appId: app_id,
           groupId: group_id,
-          userCaps: capabilities.to_payload
+          userCaps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_snippet(app_id:, data: Entity::Base::new, capabilities: Entity::Base::new)
+      def add_snippet(app_id:, data:, capabilities:)
         body = { 
           clientId: self.client_id,
           appId: app_id,
-          snippet: data.to_payload,
-          caps: capabilities.to_payload
+          snippet: data,
+          caps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('snippet') { {} })
         end
       end
 
-      def add_user_app(app_id:, username:, capabilities: Entity::Base::new)
+      def add_user_app(app_id:, username:, capabilities:)
         body = { 
           clientId: self.client_id,
           appId: app_id,
           username: username,
-          userCaps: capabilities.to_payload
+          userCaps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_app(data: Entity::Base::new, options: Entity::Base::new)
+      def create_app(data:, options:)
         body = { 
           clientId: self.client_id,
-          app: data.to_payload,
-          options: options.to_payload
+          app: data,
+          options: options
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('app') { {} })
@@ -99,25 +99,25 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_app(app_id:, data: Entity::Base::new, capabilities: Entity::Base::new)
+      def update_app(app_id:, data:, capabilities:)
         body = { 
           clientId: self.client_id,
           appId: app_id,
-          update: data.to_payload,
-          caps: capabilities.to_payload
+          update: data,
+          caps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('app') { {} })
         end
       end
 
-      def update_snippet(app_id:, snippet_id:, data: Entity::Base::new, capabilities: Entity::Base::new)
+      def update_snippet(app_id:, snippet_id:, data:, capabilities:)
         body = { 
           clientId: self.client_id,
           appId: app_id,
           snippetId: snippet_id,
-          snippet: data.to_payload,
-          caps: capabilities.to_payload
+          snippet: data,
+          caps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('snippet') { {} })

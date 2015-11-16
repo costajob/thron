@@ -27,38 +27,38 @@ module Thron
         }
       end
 
-      def create_user(username:, password:, data: Entity::Base::new(user_type: 'PLATFORM_USER'))
+      def create_user(username:, password:, data:)
         body = { 
           clientId: self.client_id,
           newUser: {
             username: username,
             password: password
           }
-        }.merge(data.to_payload)
+        }.merge(data)
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('user') { {} })
         end
       end
 
-      def user_detail(username:, options: Entity::Base::new, offset: 0, limit: 0)
+      def user_detail(username:, options:, offset: 0, limit: 0)
         query = {
           clientId: self.client_id,
           username: username,
           offset: offset.to_i,
           numberOfResults: limit.to_i
-        }.merge(options.to_payload)
+        }.merge(options)
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
           user = response.body.delete('user') { {} }
           response.body = Entity::Base::new(response.body.merge(user))
         end
       end
 
-      def find_users(criteria: Entity::Base::new(active: true), order_by: nil, options: Entity::Base::new, offset: 0, limit: 0)
+      def find_users(criteria:, order_by: nil, options:, offset: 0, limit: 0)
         body = { 
           clientId: self.client_id,
-          criteria: criteria.to_payload,
+          criteria: criteria,
           orderBy: order_by,
-          fieldsOption: options.to_payload,
+          fieldsOption: options,
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
@@ -101,27 +101,27 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update_status(username:, data: Entity::Base::new)
+      def update_status(username:, data:)
         body = { 
           clientId: self.client_id,
           username: username,
-          properties: data.to_payload
+          properties: data
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_capabilities_and_roles(username:, capabilities: Entity::Base::new)
+      def update_capabilities_and_roles(username:, capabilities:)
         body = { 
           clientId: self.client_id,
           username: username,
-          userCapabilities: capabilities.to_payload
+          userCapabilities: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_external_id(username:, external_id: Entity::Base::new)
+      def update_external_id(username:, external_id:)
         body = {
-          externalId: external_id.to_payload
+          externalId: external_id
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, username])
       end
@@ -130,33 +130,33 @@ module Thron
         body = {
           clientId: self.client_id,
           username: username,
-          buffer: image.to_payload
+          buffer: image
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_settings(username:, settings: Entity::Base::new)
+      def update_settings(username:, settings:)
         body = {
           clientId: self.client_id,
           username: username,
-          settings: settings.to_payload
+          settings: settings
         }
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_user(username:, data: Entity::Base::new)
+      def update_user(username:, data:)
         body = {
-          update: data.to_payload
+          update: data
         }
         route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, username])
       end
 
-      def upgrade_user(username:, password:, data: Entity::Base::new)
+      def upgrade_user(username:, password:, data:)
         body = { 
           clientId: self.client_id,
           username: username,
           newPassword: password
-        }.merge(data.to_payload)
+        }.merge(data)
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('user') { {} })
         end

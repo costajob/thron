@@ -87,7 +87,8 @@ dynamic behaviour while adding some sugar features:
 * it converts the lower-camel-case parameters into (more rubesque) snake-case
 * it does recursive mapping of nested attributes
 * it converts time and date values to appropriate Ruby objects  
-The same object is used when passing complex parameters to some of the APIs (see examples below).
+The same object can be used when passing complex parameters to some of the APIs: in this case is sufficent to call the *#to_payload* method on the entity
+to convert the object in an hash with lower-camle-case keys (see examples below).
 
 ### User Aggregate
 To avoid accessing the multitude of Thron APIs via several objects, an aggregate has been created (DDD anyone?).  
@@ -123,7 +124,7 @@ user.user_detail(username: '<a_username>')
 ```
 Uploads the avatar image for a user (it relies on Linux *file* system call):
 ```ruby
-avatar = Thron::Entity::Image::new(path: '<path_to_an_image>')
+avatar = Thron::Entity::Image::new(path: '<path_to_an_image>').to_payload
 user.update_image(username: '<a_username>', image: avatar)
 ```
 
@@ -154,7 +155,7 @@ Users are arranged into different groups.
 
 Create a new group:
 ```ruby
-group = Thron::Entity::Base::new(active: true, name: 'my new group')
+group = Thron::Entity::Base::new(active: true, name: 'my new group').to_payload
 user.create_group(data: group)
 ```
 List existing groups:

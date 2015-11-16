@@ -14,11 +14,11 @@ describe Thron::Gateway::Device do
 
   it 'must call post to connect device' do
     route = klass.routes.fetch(:connect_device)
-    ik = entity::new(key: 'garment', value: 'blue suede shoes')
+    ik = entity::new(key: 'garment', value: 'blue suede shoes').to_payload
     body = {
       clientId: instance.client_id,
       deviceId: '666',
-      ik: ik.to_payload,
+      ik: ik,
       contactName: 'elvis'
     }.to_json
     mock(klass).post(route.url, { query: {}, body: body, headers: route.headers(token_id: token_id, dash: true) }) { response }

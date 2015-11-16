@@ -22,10 +22,10 @@ module Thron
         }
       end
 
-      def add_contact_key(contact_id:, ik: Entity::Base::new)
+      def add_contact_key(contact_id:, ik:)
         body = { 
           contactId: contact_id,
-          ik: ik.to_payload
+          ik: ik
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('item') { {} })
@@ -41,10 +41,10 @@ module Thron
         end
       end
 
-      def insert_contact(name:, ik: Entity::Base::new)
+      def insert_contact(name:, ik:)
         body = { 
           value: {
-            ik: ik.to_payload,
+            ik: ik,
             name: name
           }
         }
@@ -53,10 +53,10 @@ module Thron
         end
       end
 
-      def list_contacts(criteria: Entity::Base::new, options: Entity::Base::new, offset: 0, limit: 0)
+      def list_contacts(criteria:, options:, offset: 0, limit: 0)
         body = { 
-          criteria: criteria.to_payload,
-          option: options.to_payload,
+          criteria: criteria,
+          option: options,
           offset: offset,
           limit: limit
         }
