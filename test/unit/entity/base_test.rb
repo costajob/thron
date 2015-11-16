@@ -23,10 +23,10 @@ describe Thron::Entity::Base do
   end
 
   it 'must return a key-value form' do
-    instance.to_h.must_equal({:creation_time=>instance.creation_time, :first_name=>"Elvis", :last_name=>"Presley", :further_details=>{:won_grammys=>4, :birth_date=>instance.further_details.birth_date, :is_dead=>true}, :studio_albums=>[{:title=>"Elvis", :year=>1956}, {:title=>"Elvis is back!", :year=>1960}, {:title=>"Something for everybody", :year=>1961}, {:title=>"From Elvis in Memphis", :year=>1969}, {:title=>"Love letters from Elvis", :year=>1971}, {:title=>"Promised land", :year=>1975}]})
+    instance.to_h.must_equal({:creation_time=>instance.creation_time.iso8601, :first_name=>"Elvis", :last_name=>"Presley", :further_details=>{:won_grammys=>4, :birth_date=>instance.further_details.birth_date.iso8601, :is_dead=>true}, :studio_albums=>[{:title=>"Elvis", :year=>1956}, {:title=>"Elvis is back!", :year=>1960}, {:title=>"Something for everybody", :year=>1961}, {:title=>"From Elvis in Memphis", :year=>1969}, {:title=>"Love letters from Elvis", :year=>1971}, {:title=>"Promised land", :year=>1975}]})
   end
 
   it 'must return the payload form' do
-    instance.to_payload.must_equal({"creationTime"=>instance.creation_time, "firstName"=>"Elvis", "lastName"=>"Presley", "furtherDetails"=>{"wonGrammys"=>4, "birthDate"=>instance.further_details.birth_date, "isDead"=>true}, "studioAlbums"=>[{"title"=>"Elvis", "year"=>1956}, {"title"=>"Elvis is back!", "year"=>1960}, {"title"=>"Something for everybody", "year"=>1961}, {"title"=>"From Elvis in Memphis", "year"=>1969}, {"title"=>"Love letters from Elvis", "year"=>1971}, {"title"=>"Promised land", "year"=>1975}]})
+    instance.to_payload.must_equal({"creationTime"=>instance.creation_time.iso8601, "firstName"=>"Elvis", "lastName"=>"Presley", "furtherDetails"=>{"wonGrammys"=>4, "birthDate"=>instance.further_details.birth_date.iso8601, "isDead"=>true}, "studioAlbums"=>[{"title"=>"Elvis", "year"=>1956}, {"title"=>"Elvis is back!", "year"=>1960}, {"title"=>"Something for everybody", "year"=>1961}, {"title"=>"From Elvis in Memphis", "year"=>1969}, {"title"=>"Love letters from Elvis", "year"=>1971}, {"title"=>"Promised land", "year"=>1975}]})
   end
 end

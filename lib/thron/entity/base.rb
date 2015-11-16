@@ -56,6 +56,8 @@ module Thron
           else
             value
           end
+        when Date, Time
+          value.iso8601
         else
           value
         end
