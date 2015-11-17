@@ -22,7 +22,7 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id) do |response|
           name = response.body.delete('name')
           name_hash = name ? { name: name } : {}
-          response.body = Entity::Base::new(response.body.fetch('properties') { {} }.merge(name_hash))
+          response.body = Entity::Base::new(response.body.fetch('properties') { {} }.merge!(name_hash))
         end
       end
       

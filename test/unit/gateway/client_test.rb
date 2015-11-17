@@ -3,7 +3,6 @@ require_relative Thron.root.join('lib', 'thron', 'gateway', 'client')
 
 describe Thron::Gateway::Client do
   let(:klass) { Thron::Gateway::Client }
-  let(:entity) { Thron::Entity::Base }
   let(:token_id) { 'e74c924f-8f40-40f7-b18a-f9011c81972c' }
   let(:instance) { klass::new(token_id: token_id) }
   let(:response) { OpenStruct::new(code: 200) }

@@ -18,13 +18,14 @@ module Thron
       end
     end
 
-    def self.info(query, body, route, token_id, dash, raw)
+    def self.info(host, query, body, route, token_id, dash, raw)
       info = [
         "\n",
         "*" * 50,
         'HTTP REQUEST:',
-        "  * verb: #{route.verb.upcase}",
+        "  * host: #{host}",
         "  * url: #{route.url}",
+        "  * verb: #{route.verb.upcase}",
         "  * query: #{query.inspect}",
         "  * body: #{body.inspect}",
         "  * headers: #{route.headers(token_id: token_id, dash: dash)}",
@@ -56,7 +57,7 @@ module Thron
                             body: body, 
                             headers: route.headers(token_id: token_id, dash: dash) })
         end
-        Routable::info(query, body, route, token_id, dash, raw)
+        Routable::info(self.class.default_options[:base_uri], query, body, route, token_id, dash, raw)
         Response::new(raw.value).tap do |response|
           yield(response) if block_given?
         end
