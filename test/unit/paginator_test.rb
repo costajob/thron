@@ -39,31 +39,23 @@ describe Thron::Paginator do
     -> { klass::new(body: body, preload: klass::MAX_PRELOAD+1) }.must_raise klass::PreloadTooLargeError
   end
 
-  describe '#prev, #next and #to' do
-    { prev: nil, next: nil }.each do |message, args|
-      it "must set total, pages and other_results properly on #{message}" do
-        instance.send(message, *args)
+  describe '#prev, #next' do
+    %i[prev next].each do |message|
+      it "must set total and other_results properly on #{message}" do
+        instance.send(message)
         instance.total.must_equal 1225
-        instance.pages.must_equal 25
         refute instance.instance_variable_get(:@other_results)
       end
-    end
 
-    { prev: nil, next: nil }.each do |message, args|
       it "must detect first page on #{message}" do
-        instance.send(message, *args)
+        instance.send(message)
         assert instance.first?
       end
-    end
-
-    it 'must prevent to if initial load is missing' do
-      instance.to(3).must_equal klass::PREVENT_PAGE_ACCESS
     end
 
     it 'must set the offset' do
       3.times { instance.next }
       instance.prev
-      instance.to(2)
       instance.offset.must_equal 50
     end
 
@@ -71,7 +63,6 @@ describe Thron::Paginator do
       instance.next
       instance.next.res.must_equal (50..99).to_a
       instance.prev.res.must_equal (0..49).to_a
-      instance.to(7).res.must_equal (300..349).to_a
     end
 
     it 'must limit previous offset' do
@@ -81,18 +72,6 @@ describe Thron::Paginator do
 
     it 'must limit next offset' do
       100.times { instance.next }
-      instance.offset.must_equal 1200
-      assert instance.last?
-    end
-
-    it 'must set get the page' do
-      3.times { instance.next }
-      instance.page.must_equal 3
-    end
-
-    it 'must limit max page once total is known' do
-      instance.next
-      instance.to(100)
       instance.offset.must_equal 1200
       assert instance.last?
     end
@@ -114,11 +93,6 @@ describe Thron::Paginator do
         3.times { instance.next }
         instance.offset.must_equal 100
       end
-
-      it 'must prevent use of #to method' do
-        instance.next
-        instance.to(3).must_equal klass::PREVENT_PAGE_ACCESS
-      end
     end
 
     describe 'preloading' do
@@ -136,7 +110,6 @@ describe Thron::Paginator do
 
       it 'must preload next set when over threshold' do
         instance.next
-        instance.to 3
         6.times { instance.next }
         instance.instance_variable_get(:@cache).keys.must_equal (0..450).step(instance.limit).to_a
       end

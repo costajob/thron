@@ -5,13 +5,14 @@ module Thron
   class User
     extend Forwardable
     
+    def_delegators :@access_gateway, *Gateway::AccessManager::routes.keys
+
     def self.session_gateways
       @session_gateways ||= Gateway::constants.select do |name|
         Gateway.const_get(name) < Gateway::Session
       end
     end
 
-    def_delegators :@access_gateway, *Gateway::AccessManager::routes.keys
     self.session_gateways.each do |name|
       gateway = Gateway.const_get(name)
       def_delegators "@gateways[:#{name}]", *(gateway.routes::keys + gateway.paginator_methods)

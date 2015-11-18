@@ -60,9 +60,8 @@ Thron APIs that return a list of results are limited to a maximum of **50**.
 To avoid repeating the same call many times by passing an augmented offset, 
 is possible to call a wrapper method on the gateway objects that returns a paginator object.
 Once the paginator is loaded, it allows to navigate the results by using the following interface:
-* **next**: loads the first offset and move forward
-* **prev**: move backwards
-* **to**: move directly to the specified page (only if a first load happened)
+* **next**: loads the first offset and move forward, returning last when max offset is reached
+* **prev**: move backwards from the current offset, returning first when minimum offset is reached
 
 Each paginator object is stored as an instance variable of the gateway objects and keeps an internal cache to avoid hitting the remote service uselessly.
 That said, remember to reset the instance variables to avoid stale results by using
@@ -136,9 +135,7 @@ Find the contents by using the paginator object with a preload of 10:
 ```ruby
 user.find_contents_paginator(preload: 10)
 user.find_contents_paginator.next   # call the APIs 10 times to fetch results (until it finds data)
-user.find_contents_paginator.to(3)  # loads page 3
-user.find_contents_paginator.prev   # return to page 2
-user.find_contents_paginator.to(10)
+9.times { paginator.next }          # move to the last cached offset
 user.find_contents_paginator.next   # preloads next 10 offsets (until it finds data) 
 ```
 Show the contents by category (slightly more efficient):

@@ -28,13 +28,13 @@ module Thron
       end
 
       def list_comments(criteria: {}, locale:, order_by: nil, offset: 0, limit: 0)
+        order_by = order_by ? { orderBy: order_by } : {}
         query = { 
           clientId: self.client_id,
           locale: locale,
-          orderBy: order_by,
           offset: offset,
           numberOfResults: limit
-        }.merge(criteria)
+        }.merge(criteria).merge(order_by)
         route(to: __callee__, query: query, token_id: token_id) do |response|
           response.body = response.body.fetch('comments') { [] }.map do |comment|
             Entity::Base::new(comment)
