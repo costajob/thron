@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'logger')
+require 'thron/logger'
 
 describe Thron do
   let(:file) { Tempfile::new('thron.log') }

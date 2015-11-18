@@ -1,9 +1,9 @@
 require 'httparty'
-require_relative 'config'
-require_relative 'route'
-require_relative 'response'
-require_relative 'circuit_breaker'
-require_relative 'logger'
+require 'thron/config'
+require 'thron/route'
+require 'thron/response'
+require 'thron/circuit_breaker'
+require 'thron/logger'
 
 module Thron
   module Routable
@@ -32,7 +32,6 @@ module Thron
         "*" * 50,
         "\n"
       ]
-      puts info if Config::logger::verbose
       Thron::logger.debug(info.join("\n"))
     end
 

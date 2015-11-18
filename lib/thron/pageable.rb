@@ -1,4 +1,4 @@
-require_relative 'paginator'
+require 'thron/paginator'
 
 module Thron
   module Pageable

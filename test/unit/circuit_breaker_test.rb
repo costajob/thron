@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron::root.join('lib', 'thron', 'circuit_breaker')
+require 'thron/circuit_breaker'
 
 module Mock
   class SpecificError < StandardError; end

@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'entity', 'base')
+require 'thron/entity/base'
 
 describe Thron::Entity::Base do
   let(:klass) { Thron::Entity::Base }

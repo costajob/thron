@@ -3,7 +3,7 @@ require 'erb'
 require 'dotenv'
 require 'ostruct'
 require 'logger'
-require_relative 'root'
+require 'thron/root'
 
 module Thron
   module Config
@@ -18,9 +18,8 @@ module Thron
 
     def logger
       @logger ||= begin
-                    verbose = dump_yaml.fetch('logger').fetch('verbose')
                     level = dump_yaml.fetch('logger').fetch('level')
-                    OpenStruct.new(verbose: verbose, level: Logger::const_get(level.upcase))
+                    OpenStruct.new(level: Logger::const_get(level.upcase))
                   end
     end
 

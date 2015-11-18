@@ -1,4 +1,4 @@
-require_relative 'string_extensions'
+require 'thron/string_extensions'
 
 module Thron
   using StringExtensions

@@ -1,5 +1,5 @@
-require_relative 'base'
-require_relative '../pageable'
+require 'thron/gateway/base'
+require 'thron/pageable'
 
 module Thron
   module Gateway

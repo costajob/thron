@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'gateway', 'users_group_manager')
+require 'thron/gateway/users_group_manager'
 
 describe Thron::Gateway::UsersGroupManager do
   let(:klass) { Thron::Gateway::UsersGroupManager }

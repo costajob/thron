@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron.root.join('lib', 'thron', 'entity', 'image')
+require 'thron/entity/image'
 
 describe Thron::Entity::Image do
   let(:klass) { Thron::Entity::Image }

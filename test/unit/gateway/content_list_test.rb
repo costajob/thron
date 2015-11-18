@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'gateway', 'content_list')
+require 'thron/gateway/content_list'
 
 describe Thron::Gateway::ContentList do
   let(:klass) { Thron::Gateway::ContentList }

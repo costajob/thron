@@ -1,5 +1,5 @@
 require 'logger'
-require_relative 'config'
+require 'thron/config'
 
 module Thron
   extend self

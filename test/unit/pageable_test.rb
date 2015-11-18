@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron::root.join('lib', 'thron', 'pageable')
+require 'thron/pageable'
 
 module Mock
   class Gateway

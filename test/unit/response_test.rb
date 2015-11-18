@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron.root.join('lib', 'thron', 'response')
+require 'thron/response'
 
 describe Thron::Response do
   let(:klass) { Thron::Response }

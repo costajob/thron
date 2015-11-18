@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron::root.join('lib', 'thron', 'route')
+require 'thron/route'
 
 describe Thron::Route do
   let(:klass) { Thron::Route }

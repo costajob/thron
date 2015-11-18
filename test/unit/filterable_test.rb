@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron::root.join('lib', 'thron', 'filterable')
+require 'thron/filterable'
 
 module Mock
   class Klass

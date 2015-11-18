@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron::root.join('lib', 'thron', 'config')
+require 'thron/config'
 
 describe Thron::Config do
   it 'must dump yaml' do
@@ -7,7 +7,7 @@ describe Thron::Config do
   end
 
   it 'must valorize the logger configuration' do
-    %i[verbose level].each do |message|
+    %i[level].each do |message|
       Thron::Config::logger.send(message).wont_be_nil
     end
   end

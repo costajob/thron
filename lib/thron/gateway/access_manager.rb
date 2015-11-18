@@ -1,4 +1,4 @@
-require_relative 'base'
+require 'thron/gateway/base'
 
 module Thron
   module Gateway

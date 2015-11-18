@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'gateway', 'publishing_process')
+require 'thron/gateway/publishing_process'
 
 describe Thron::Gateway::PublishingProcess do
   let(:klass) { Thron::Gateway::PublishingProcess }

@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron::root.join('lib', 'thron', 'user')
+require 'thron/user'
 
 describe Thron::User do
   let(:klass) { Thron::User }

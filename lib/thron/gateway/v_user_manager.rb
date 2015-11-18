@@ -1,5 +1,5 @@
-require_relative 'session'
-require_relative '../entity/image'
+require 'thron/gateway/session'
+require 'thron/entity/image'
 
 module Thron
   module Gateway

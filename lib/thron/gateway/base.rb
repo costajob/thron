@@ -1,7 +1,6 @@
 require 'httparty'
-require_relative '../entity/base'
-require_relative '../routable'
-require_relative '../filterable'
+require 'thron/entity/base'
+require 'thron/routable'
 
 module Thron
   module Gateway

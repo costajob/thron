@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'string_extensions')
+require 'thron/string_extensions'
 
 using Thron::StringExtensions
 

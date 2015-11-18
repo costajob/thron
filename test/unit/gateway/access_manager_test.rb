@@ -1,5 +1,5 @@
 require 'test_helper'
-require Thron.root.join('lib', 'thron', 'gateway', 'access_manager')
+require 'thron/gateway/access_manager'
 
 describe Thron::Gateway::AccessManager do
   let(:klass) { Thron::Gateway::AccessManager }

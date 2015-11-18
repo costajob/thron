@@ -1,4 +1,4 @@
-require_relative 'session'
+require 'thron/gateway/session'
 
 module Thron
   module Gateway

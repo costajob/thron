@@ -1,5 +1,5 @@
 require 'test_helper'
-require_relative Thron.root.join('lib', 'thron', 'gateway', 'publish_in_weebo_express')
+require 'thron/gateway/publish_in_weebo_express'
 
 describe Thron::Gateway::PublishInWeeboExpress do
   let(:klass) { Thron::Gateway::PublishInWeeboExpress }
