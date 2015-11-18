@@ -39,7 +39,7 @@ module Thron
           category_id = args.fetch(:category_id) { nil }
           body = { 
             client: {
-              clientId: self.client_id
+              clientId: client_id
             },
             contentId: content_id,
             detail: locale,
@@ -53,7 +53,7 @@ module Thron
           pretty_id = args.fetch(:pretty_id)
           category_id = args.fetch(:category_id) { nil }
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             contentId: content_id,
             prettyId: pretty_id,
             categoryIdForAcl: category_id
@@ -65,7 +65,7 @@ module Thron
           content_id = args.fetch(:content_id)
           data = args.fetch(:data)
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             contentId: content_id,
             embedCode: data
           }
@@ -75,7 +75,7 @@ module Thron
 
       def add_linked_content(content_id:, data:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           linkedContent: data,
           categoryIdForAcl: category_id
@@ -85,7 +85,7 @@ module Thron
 
       def add_linked_contents(content_id:, contents:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           linkedContents: {
             contents: contents
@@ -97,7 +97,7 @@ module Thron
 
       def content_detail(content_id:, options: {}, locale: nil, access_key: nil)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           locale: locale,
           pkey: access_key
@@ -111,7 +111,7 @@ module Thron
       def find_contents(criteria: {}, options: {}, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           criteria: criteria,
           contentFieldOption: options,
@@ -131,7 +131,7 @@ module Thron
       
       def move_linked_content(content_id:, from: 0, to: 0, link_type: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           xcontentId: content_id,
           oldPosition: from.to_i,
           newPosition: to.to_i,
@@ -142,7 +142,7 @@ module Thron
 
       def remove_content_for_locale(content_id:, locale:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           locale: locale
         }
@@ -151,7 +151,7 @@ module Thron
 
       def remove_content_pretty_id(content_id:, locale:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           locale: locale,
           categoryIdForAcl: category_id
@@ -161,7 +161,7 @@ module Thron
 
       def remove_linked_contents(content_id:, criteria: {}, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           criteria: criteria,
           categoryIdForAcl: category_id
@@ -171,7 +171,7 @@ module Thron
 
       def remove_player_embed_code(content_id:, player_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           embedCodeId: player_id
         }
@@ -180,7 +180,7 @@ module Thron
 
       def update_available_solutions(content_id:, solutions: [], category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           contentValues: {
             availableInSolutions: solutions
@@ -192,7 +192,7 @@ module Thron
 
       def update_content(content_id:, data:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           contentValues: data,
           categoryIdForAcl: category_id
@@ -202,7 +202,7 @@ module Thron
 
       def update_player_embed_codes(content_id:, players:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           embedCodes: {
             embedCodes: players
@@ -214,7 +214,7 @@ module Thron
 
       def update_user_specific_values(username:, content_id:, data:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           contentId: content_id,
           contentParams: data,

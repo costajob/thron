@@ -26,7 +26,7 @@ module Thron
 
       def change_channel_status(media_content_id:, content_id:, channel:, active: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           mediaContentId: media_content_id,
           xcontentId: content_id,
           channel: channel,
@@ -40,7 +40,7 @@ module Thron
 
       def get_content_types(file_names:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           files: { fileNames: file_names }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -52,7 +52,7 @@ module Thron
 
       def unpublish_content(media_content_id:, content_id:, force: false, remove_source_files: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           mediaContentId: media_content_id,
           xcontentId: content_id,
           force: force,
@@ -66,7 +66,7 @@ module Thron
 
       def update_pagelet_content(media_content_id:, content_id:, body:, mime_type:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           mediaContentId: media_content_id,
           xcontentId: content_id,
           body: body,
@@ -80,7 +80,7 @@ module Thron
 
       def update_publishing_properties(media_content_id:, content_id:, properties:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           mediaContentId: media_content_id,
           xcontentId: content_id,
           properties: properties
@@ -97,7 +97,7 @@ module Thron
           content_id = args.fetch(:content_id)
           channel = args.fetch(:channel)
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             mediaContentId: media_content_id,
             xcontentId: content_id,
             channel: channel
@@ -113,7 +113,7 @@ module Thron
         define_method(message) do |args|
           data = args.fetch(:data)
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             param: data
           }
           route(to: message, body: body, token_id: token_id) do |response|

@@ -19,7 +19,7 @@ module Thron
 
       def app_detail(app_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -29,7 +29,7 @@ module Thron
 
       def list_apps(criteria: {})
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           criteria: criteria
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -41,7 +41,7 @@ module Thron
 
       def find_apps(criteria: {})
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           criteria: criteria
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -53,7 +53,7 @@ module Thron
 
       def login_app(app_id:)
         query = {
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
@@ -63,7 +63,7 @@ module Thron
 
       def login_snippet(app_id:, snippet_id:)
         query = {
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           snippetId: snippet_id,
         }
@@ -74,7 +74,7 @@ module Thron
 
       def su(app_id:, username:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           username: username
         }

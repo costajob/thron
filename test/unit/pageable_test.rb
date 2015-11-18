@@ -17,7 +17,7 @@ end
 
 describe Thron::Pageable do
   let(:klass) { Mock::Gateway }
-  let(:instance) { Mock::Gateway::new }
+  let(:instance) { klass::new }
 
   it 'must initialize class variables' do
     assert klass.instance_variable_defined?(:@paginated_apis)
@@ -32,23 +32,6 @@ describe Thron::Pageable do
   it 'must return a paginator instance' do
     klass::paginator_methods.each do |message|
       instance.send(message).must_be_instance_of Thron::Paginator
-    end
-  end
-
-  it 'must cache paginator instances' do
-    klass::paginator_methods.each do |message|
-      instance.send(message)
-      assert instance.instance_variable_defined?(:"@#{message}")
-    end
-  end
-
-  it 'must reset paginator instances' do
-    klass::paginator_methods.each do |message|
-      instance.send(message)
-    end
-    instance.reset_paginators
-    klass::paginator_methods.each do |message|
-      instance.instance_variable_get(:"@#{message}").must_be_nil
     end
   end
 

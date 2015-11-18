@@ -1,6 +1,7 @@
 require 'httparty'
 require_relative '../entity/base'
 require_relative '../routable'
+require_relative '../filterable'
 
 module Thron
   module Gateway
@@ -27,14 +28,13 @@ module Thron
         @client_id ||= Config.thron.client_id
       end
 
-      attr_reader :client_id
       attr_accessor :token_id
 
       def client_id
         self.class.client_id
       end
 
-      private def check_session
+      def check_session
         fail NoActiveSessionError, NO_ACTIVE_SESSION unless token_id
       end
     end

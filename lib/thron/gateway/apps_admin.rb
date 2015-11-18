@@ -23,7 +23,7 @@ module Thron
 
       def add_group_app(app_id:, group_id:, capabilities:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           groupId: group_id,
           userCaps: capabilities
@@ -33,7 +33,7 @@ module Thron
 
       def add_snippet(app_id:, data:, capabilities:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           snippet: data,
           caps: capabilities
@@ -45,7 +45,7 @@ module Thron
 
       def add_user_app(app_id:, username:, capabilities:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           username: username,
           userCaps: capabilities
@@ -55,7 +55,7 @@ module Thron
 
       def create_app(data:, options: {})
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           app: data,
           options: options
         }
@@ -66,7 +66,7 @@ module Thron
 
       def remove_app(app_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -74,7 +74,7 @@ module Thron
 
       def remove_group_app(app_id:, group_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           groupId: group_id
         }
@@ -83,7 +83,7 @@ module Thron
 
       def remove_snippet(app_id:, snippet_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           snippetId: snippet_id
         }
@@ -92,7 +92,7 @@ module Thron
 
       def remove_user_app(app_id:, username:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           username: username
         }
@@ -101,7 +101,7 @@ module Thron
 
       def update_app(app_id:, data:, capabilities:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           update: data,
           caps: capabilities
@@ -113,7 +113,7 @@ module Thron
 
       def update_snippet(app_id:, snippet_id:, data:, capabilities:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           appId: app_id,
           snippetId: snippet_id,
           snippet: data,

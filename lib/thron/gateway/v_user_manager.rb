@@ -29,7 +29,7 @@ module Thron
 
       def create_user(username:, password:, data:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           newUser: {
             username: username,
             password: password
@@ -42,7 +42,7 @@ module Thron
 
       def user_detail(username:, options: {}, offset: 0, limit: 0)
         query = {
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           offset: offset.to_i,
           numberOfResults: limit.to_i
@@ -55,7 +55,7 @@ module Thron
 
       def find_users(criteria: {}, order_by: nil, options: {}, offset: 0, limit: 0)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           criteria: criteria,
           orderBy: order_by,
           fieldsOption: options,
@@ -72,7 +72,7 @@ module Thron
 
       def check_credentials(username:, password:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           password: password
         }
@@ -84,7 +84,7 @@ module Thron
 
       def temporary_token(username:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -94,7 +94,7 @@ module Thron
 
       def update_password(username:, password:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           newpassword: password
         }
@@ -103,7 +103,7 @@ module Thron
 
       def update_status(username:, data:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           properties: data
         }
@@ -112,7 +112,7 @@ module Thron
 
       def update_capabilities_and_roles(username:, capabilities:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           userCapabilities: capabilities
         }
@@ -123,12 +123,12 @@ module Thron
         body = {
           externalId: external_id
         }
-        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, username])
+        route(to: __callee__, body: body, token_id: token_id, params: [client_id, username])
       end
 
       def update_image(username:, image:)
         body = {
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           buffer: image
         }
@@ -137,7 +137,7 @@ module Thron
 
       def update_settings(username:, settings:)
         body = {
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           settings: settings
         }
@@ -148,12 +148,12 @@ module Thron
         body = {
           update: data
         }
-        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, username])
+        route(to: __callee__, body: body, token_id: token_id, params: [client_id, username])
       end
 
       def upgrade_user(username:, password:, data:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           username: username,
           newPassword: password
         }.merge(data)

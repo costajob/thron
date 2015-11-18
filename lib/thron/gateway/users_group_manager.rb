@@ -23,7 +23,7 @@ module Thron
 
       def create_group(data:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           usersGroup: data
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -33,7 +33,7 @@ module Thron
 
       def remove_group(group_id:, force: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           groupId: group_id,
           force: force
         }
@@ -42,7 +42,7 @@ module Thron
 
       def group_detail(group_id:, options: {}, offset: 0, limit: 0)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           groupId: group_id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
@@ -56,7 +56,7 @@ module Thron
 
       def find_groups(criteria: {}, order_by: nil, options: {}, offset: 0, limit: 0)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           criteria: criteria,
           orderBy: order_by,
           fieldsOption: options,
@@ -76,7 +76,7 @@ module Thron
           group_id = args.last.fetch(:group_id)
           usernames = args.last.fetch(:usernames) { [] }
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             userList: {
               usernames: usernames
             },
@@ -90,14 +90,14 @@ module Thron
         body = {
           update: data
         }
-        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, group_id])
+        route(to: __callee__, body: body, token_id: token_id, params: [client_id, group_id])
       end
 
       def update_group_external_id(group_id:, external_id:)
         body = {
           externalId: external_id
         }
-        route(to: __callee__, body: body, token_id: token_id, params: [self.client_id, group_id])
+        route(to: __callee__, body: body, token_id: token_id, params: [client_id, group_id])
       end
     end
   end

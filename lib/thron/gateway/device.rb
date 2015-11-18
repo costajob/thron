@@ -18,7 +18,7 @@ module Thron
 
       def connect_device(device_id:, ik:, contact_name:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           deviceId: device_id,
           ik: ik,
           contactName: contact_name
@@ -30,7 +30,7 @@ module Thron
 
       def disconnect_device(device_id:, contact_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           deviceId: device_id,
           contactId: contact_id
         }

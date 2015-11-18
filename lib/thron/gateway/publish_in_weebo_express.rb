@@ -25,7 +25,7 @@ module Thron
         define_method(message) do |args|
           data = args.fetch(:data)
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             param: data
           }
           route(to: message, body: body, token_id: token_id) do |response|

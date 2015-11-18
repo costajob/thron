@@ -12,7 +12,7 @@ describe Thron::Gateway::PublishInWeeboExpress do
   end
   
   Thron::Gateway::PublishInWeeboExpress.routes.keys.each do |message|
-    it "must call post to publish #{message}" do
+    it "must call post to publish #{message.to_s.split('_').join(' ')}" do
       route = klass.routes.fetch(message)
       body = { 
         clientId: instance.client_id,

@@ -26,7 +26,7 @@ module Thron
 
       def add_files(files:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           files: { files: files }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -36,7 +36,7 @@ module Thron
 
       def add_s3_resource(resource:, remove_resource: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           resource: resource,
           remove_resource_if_possible: remove_resource
         }
@@ -47,7 +47,7 @@ module Thron
 
       def add_web_resource(resource:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           webResource: resource
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -59,7 +59,7 @@ module Thron
         define_method(message) do |args|
           file = args.fetch(:file)
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             file: file
           }
           route(to: __callee__, body: body, token_id: token_id)
@@ -73,7 +73,7 @@ module Thron
           offset = args.fetch(:offset) { 0 }
           limit = args.fetch(:limit) { 0 }
           body = { 
-            clientId: self.client_id,
+            clientId: client_id,
             criteria: criteria,
             orderByField: order_by,
             offset: offset.to_i,
@@ -89,7 +89,7 @@ module Thron
 
       def get_quota_usage
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body)
@@ -98,7 +98,7 @@ module Thron
 
       def get_s3_credentials
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
           response.body = Entity::Base::new(response.body.fetch('credentials') { {} })

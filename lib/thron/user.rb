@@ -13,10 +13,14 @@ module Thron
       end
     end
 
-    self.session_gateways.each do |name|
-      gateway = Gateway.const_get(name)
-      def_delegators "@gateways[:#{name}]", *(gateway.routes::keys + gateway.paginator_methods)
+    def self.delegate_to_gateways
+      self.session_gateways.each do |name|
+        gateway = Gateway.const_get(name)
+        def_delegators "@gateways[:#{name}]", *(gateway.routes::keys + gateway.paginator_methods)
+      end
     end
+
+    delegate_to_gateways
     
     attr_reader :token_id, :gateways
 
@@ -67,7 +71,6 @@ module Thron
       @access_gateway.token_id = @token_id
       @gateways.each do |name, gateway|
         gateway.token_id = @token_id
-        gateway.reset_paginators
       end
     end
   end

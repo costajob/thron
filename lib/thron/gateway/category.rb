@@ -29,7 +29,7 @@ module Thron
       def create_category(parent_id:, locale:, is_private: false, solution: nil, data:)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           upCatId: parent_id,
           catLocales: locale,
@@ -44,7 +44,7 @@ module Thron
       def create_system_category(category_id:, parent_id:, locale:, data:)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           newCategoryId: category_id,
           upCatId: parent_id,
@@ -57,7 +57,7 @@ module Thron
       def add_category_for_locale(category_id:, locale:)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           catId: category_id,
           catLocale: locale
@@ -67,7 +67,7 @@ module Thron
 
       def add_category_pretty_id(category_id:, pretty_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           categoryId: category_id,
           prettyId: pretty_id
         }
@@ -77,7 +77,7 @@ module Thron
       def find_categories(criteria: {}, locale: nil, order_by: nil, offset: 0, limit: 0)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           properties: criteria,
           locale: locale,
@@ -95,7 +95,7 @@ module Thron
 
       def category_detail(category_id:, recursive: false, locale: nil)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           categoryId: category_id,
           cascade: recursive,
           locale: locale
@@ -107,7 +107,7 @@ module Thron
 
       def remove_category(category_id:, recursive: false)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           catId: category_id,
           cascade: recursive
         }
@@ -117,7 +117,7 @@ module Thron
       def remove_category_for_locale(category_id:, locale:)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           catId: category_id,
           locale: locale
@@ -127,7 +127,7 @@ module Thron
 
       def remove_category_pretty_id(category_id:, locale:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           categoryId: category_id,
           locale: locale
         }
@@ -136,7 +136,7 @@ module Thron
 
       def set_parent_category(category_id:, parent_id:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           categoryId: category_id,
           categoryParentId: parent_id
         }
@@ -146,7 +146,7 @@ module Thron
       def update_category(category_id:, data:)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           categoryId: category_id,
           update: data
@@ -157,7 +157,7 @@ module Thron
       def update_category_for_locale(category_id:, locale:)
         body = { 
           client: {
-            clientId: self.client_id
+            clientId: client_id
           },
           catId: category_id,
           property: locale
@@ -167,7 +167,7 @@ module Thron
 
       def update_category_pretty_id(category_id:, pretty_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           categoryId: category_id,
           prettyId: pretty_id
         }

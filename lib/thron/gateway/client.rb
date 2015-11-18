@@ -17,7 +17,7 @@ module Thron
 
       def client_detail
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
           name = response.body.delete('name')
@@ -28,7 +28,7 @@ module Thron
       
       def update_audit_duration_days(days:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           auditDurationDays: days.to_i
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -36,7 +36,7 @@ module Thron
 
       def enable_secure_connection(enabled:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           secureConnectionEnabled: !!enabled
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -44,7 +44,7 @@ module Thron
 
       def trash_properties_older_than(days:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           properties: {
             removeContentsOlderThan: days.to_i
           }

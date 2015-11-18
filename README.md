@@ -63,9 +63,6 @@ Once the paginator is loaded, it allows to navigate the results by using the fol
 * **next**: loads the first offset and move forward, returning last when max offset is reached
 * **prev**: move backwards from the current offset, returning first when minimum offset is reached
 
-Each paginator object is stored as an instance variable of the gateway objects and keeps an internal cache to avoid hitting the remote service uselessly.
-That said, remember to reset the instance variables to avoid stale results by using
-the *::reset_paginators* method available on gateway objects. 
 To speed up loading of results, the paginator accepts a *preload* parameter (an integer).
 If the parameter is specified, the APIs are called the specified number of times by automatically augmenting the offset and caching the results (preloading is limited to 30 threads).
 
@@ -133,10 +130,10 @@ methods at your disposal:
 
 Find the contents by using the paginator object with a preload of 10:
 ```ruby
-user.find_contents_paginator(preload: 10)
-user.find_contents_paginator.next   # call the APIs 10 times to fetch results (until it finds data)
-9.times { paginator.next }          # move to the last cached offset
-user.find_contents_paginator.next   # preloads next 10 offsets (until it finds data) 
+paginator = user.find_contents_paginator(preload: 10)
+paginator.next             # call the APIs 10 times to fetch results (until it finds data)
+9.times { paginator.next } # move to the last cached offset
+paginator.next             # preloads next 10 offsets (until it finds data) 
 ```
 Show the contents by category (slightly more efficient):
 ```ruby
@@ -164,10 +161,9 @@ paginator.next
 ### Categories
 Thron contents are organized by categories.
 
-List existing categories with and without paginator object:
+List existing categories (without paginator):
 ```ruby
-user.find_categories_paginator.next # with paginator
-user.find_categories # without paginator
+user.find_categories
 ```
 Create a new locale for a category:
 ```ruby

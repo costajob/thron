@@ -19,7 +19,7 @@ module Thron
 
       def comment_detail(comment_id:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           commentId: comment_id
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
@@ -30,7 +30,7 @@ module Thron
       def list_comments(criteria: {}, locale:, order_by: nil, offset: 0, limit: 0)
         order_by = order_by ? { orderBy: order_by } : {}
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           locale: locale,
           offset: offset,
           numberOfResults: limit
@@ -44,7 +44,7 @@ module Thron
 
       def insert_comment(content_id:, data:, category_id: nil)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentId: content_id,
           comment: data,
           categoryIdForAcl: category_id
@@ -56,7 +56,7 @@ module Thron
 
       def report_comment_abuse(comment_id:, user_id:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           commentId: comment_id,
           userId: user_id
         }

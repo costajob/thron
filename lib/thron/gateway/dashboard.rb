@@ -21,7 +21,7 @@ module Thron
 
       def change_contents_owner(contents:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contents: contents
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -29,7 +29,7 @@ module Thron
 
       def download_source_file(content_id:, save_as:)
         query = { 
-          clientId: self.client_id,
+          clientId: client_id,
           tokenId: token_id,
           xcontentId: content_id,
           saveAs: save_as
@@ -39,7 +39,7 @@ module Thron
 
       def migrate_user_stuff(user_id1:, user_id2:, remove_user_id1: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           userId1: user_id1,
           userId2: user_id2,
           removeUserId1: remove_user_id1
@@ -49,7 +49,7 @@ module Thron
 
       def propagate_acl_to_sub_categories(category_id:, acls:, force: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           categoryId: category_id,
           acls: acls,
           force: force
@@ -59,7 +59,7 @@ module Thron
 
       def replace_source_files(media_content_id:, content_id:, file_ids:, remove_original_files: false)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           mediaContentId: media_content_id,
           xcontentId: content_id,
           sourceFiles: { repositoryFileIds: file_ids },
@@ -70,7 +70,7 @@ module Thron
 
       def reset_content_user_preferences(content_id:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           xcontentId: content_id
         }
         route(to: __callee__, body: body, token_id: token_id)
@@ -78,7 +78,7 @@ module Thron
 
       def trash_contents(contents:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentList: { contentsToTrash: contents.map(&:payload) }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
@@ -88,7 +88,7 @@ module Thron
       
       def untrash_contents(new_user_id:, content_ids:)
         body = { 
-          clientId: self.client_id,
+          clientId: client_id,
           contentList: { 
             newUserId: new_user_id,
             xcontentIds: content_ids
