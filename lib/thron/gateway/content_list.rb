@@ -25,9 +25,7 @@ module Thron
           offset: offset
         }.merge(criteria)
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = response.body.fetch('contents') { [] }.map do |content|
-            Entity::Base::new(content)
-          end
+          response.body = Entity::Base::factory(response.body.fetch('contents') { [] })
         end
       end
     end

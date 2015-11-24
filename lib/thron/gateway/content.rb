@@ -104,7 +104,7 @@ module Thron
         }.merge(options)
         route(to: __callee__, query: query, token_id: token_id) do |response|
           content = response.body.delete('content') { {} }
-          response.body = Entity::Base::new(response.body.merge(content))
+          response.body = Entity::Base::factory(response.body.merge!(content))
         end
       end
 
@@ -122,10 +122,7 @@ module Thron
           numberOfresults: limit.to_i
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('contents') { [] }.map do |content|
-            detail = content.delete('content') { {} }
-            Entity::Base::new(content.merge!(detail))
-          end
+          response.body = Entity::Base::factory(response.body.fetch('contents') { [] })
         end
       end
       

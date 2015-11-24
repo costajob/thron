@@ -24,7 +24,7 @@ module Thron
           contactName: contact_name
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
@@ -35,7 +35,7 @@ module Thron
           contactId: contact_id
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
@@ -44,7 +44,7 @@ module Thron
           deviceId: device_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
     end

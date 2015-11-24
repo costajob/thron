@@ -27,7 +27,7 @@ module Thron
           usersGroup: data
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('group') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('group') { {} })
         end
       end
 
@@ -50,7 +50,7 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           group = response.body.delete('group') { {} }
-          response.body = Entity::Base::new(response.body.merge(group))
+          response.body = Entity::Base::factory(response.body.merge!(group))
         end
       end
 
@@ -64,10 +64,7 @@ module Thron
           numberOfResult: limit.to_i
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('groups') { [] }.map do |group|
-            detail = group.delete('groupDetail') { {} }
-            Entity::Base::new(group.merge(detail))
-          end
+          response.body = Entity::Base::factory(response.body.fetch('groups') { [] })
         end
       end
 

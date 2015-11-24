@@ -2,7 +2,6 @@
 * [Summary](#summary)
 * [Setup](#setup)
 * [HTTPArty](#httparty)
-  * [Async Calls](#async-calls)
 * [Architecture](#architecture)
   * [Gateways](#gateways)
     * [Routing](#routing)
@@ -34,13 +33,6 @@ inside of your *.env* file, this way the gem can reads from it and configure its
 This gem uses the [HTTParty](https://github.com/jnunemaker/httparty) library to communicate with the Thron APIs.
 HTTParty has proven to be reliable and simple, so it's a natural candidate.
 
-### Async Calls
-Each HTTP call to the Thron API is wrapped inside a Ruby thread: since GIL does not
-block on external calls, this allow for a true parallelization.  
-Said that consider doing some benchmarking before creating thousands of threads,
-since each workstation has its own hotspot (that's why i limit paginator preloading
-to 30 threads).
-
 ## Architecture
 This gem is architected on these concepts:
 
@@ -60,11 +52,13 @@ Thron APIs that return a list of results are limited to a maximum of **50**.
 To avoid repeating the same call many times by passing an augmented offset, 
 is possible to call a wrapper method on the gateway objects that returns a paginator object.
 Once the paginator is loaded, it allows to navigate the results by using the following interface:
-* **next**: loads the first offset and move forward, returning last when max offset is reached
+* **next**: loads the first offset and move forward
 * **prev**: move backwards from the current offset, returning first when minimum offset is reached
+* **preload**: does not move the offset, but indeed preload the specified number of
+  data by performing an asynchronous call (wrapped in a thread).
 
-To speed up loading of results, the paginator accepts a *preload* parameter (an integer).
-If the parameter is specified, the APIs are called the specified number of times by automatically augmenting the offset and caching the results (preloading is limited to 30 threads).
+Paginator keeps an internal cache to avoid hitting the remote service more than
+once. Keep that in mind when you need to get fresh data.
 
 ### Response
 The HTTParty response has been wrapped in order to return a logical object that wraps the APIs return values.  
@@ -128,12 +122,11 @@ user.update_image(username: '<a_username>', image: avatar)
 Thron is all about managing users contents, so no surprise there is a plethora of
 methods at your disposal:
 
-Find the contents by using the paginator object with a preload of 10:
+Find the contents by using the paginator object:
 ```ruby
-paginator = user.find_contents_paginator(preload: 10)
-paginator.next             # call the APIs 10 times to fetch results (until it finds data)
-9.times { paginator.next } # move to the last cached offset
-paginator.next             # preloads next 10 offsets (until it finds data) 
+paginator = user.find_contents_paginator
+paginator.preload(10) # preload the first 10 calls
+paginator.next        # fetch first result set from preloaded cache
 ```
 Show the contents by category (slightly more efficient):
 ```ruby

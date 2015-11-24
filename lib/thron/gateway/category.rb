@@ -86,10 +86,7 @@ module Thron
           numberOfResult: limit.to_i
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('categories') { [] }.map do |category|
-            detail = category.delete('category') { {} }
-            Entity::Base::new(category.merge!(detail))
-          end
+          response.body = Entity::Base::factory(response.body.fetch('categories') { [] })
         end
       end
 
@@ -101,7 +98,7 @@ module Thron
           locale: locale
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('category') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('category') { {} })
         end
       end
 

@@ -34,7 +34,7 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.extra(attribute: 'actionsInError')
-          response.body = Entity::Base::new(response.body.fetch('content') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('content') { {} })
         end
       end
 
@@ -44,9 +44,7 @@ module Thron
           files: { fileNames: file_names }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('fileContentTypes') { [] }.map do |content_type|
-            Entity::Base::new(content_type)
-          end
+          response.body = Entity::Base::factory(response.body.fetch('fileContentTypes') { [] })
         end
       end
 
@@ -60,7 +58,7 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.extra(attribute: 'actionsInError')
-          response.body = Entity::Base::new(response.body.fetch('content') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('content') { {} })
         end
       end
 
@@ -74,7 +72,7 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.extra(attribute: 'actionsInError')
-          response.body = Entity::Base::new(response.body.fetch('content') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('content') { {} })
         end
       end
 
@@ -87,7 +85,7 @@ module Thron
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           response.extra(attribute: 'actionsInError')
-          response.body = Entity::Base::new(response.body.fetch('content') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('content') { {} })
         end
       end
 
@@ -104,7 +102,7 @@ module Thron
           }
           route(to: __callee__, body: body, token_id: token_id) do |response|
             response.extra(attribute: 'actionsInError')
-            response.body = Entity::Base::new(response.body.fetch('content') { {} })
+            response.body = Entity::Base::factory(response.body.fetch('content') { {} })
           end
         end
       end
@@ -118,7 +116,7 @@ module Thron
           }
           route(to: message, body: body, token_id: token_id) do |response|
             response.extra(attribute: 'actionsInError')
-            response.body = Entity::Base::new(response.body.fetch('content') { {} })
+            response.body = Entity::Base::factory(response.body.fetch('content') { {} })
           end
         end
       end

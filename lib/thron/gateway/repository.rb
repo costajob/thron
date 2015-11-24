@@ -30,7 +30,7 @@ module Thron
           files: { files: files }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
@@ -41,7 +41,7 @@ module Thron
           remove_resource_if_possible: remove_resource
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
@@ -51,7 +51,7 @@ module Thron
           webResource: resource
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
@@ -80,9 +80,7 @@ module Thron
             numberOfResult: limit.to_i
           }
           route(to: __callee__, body: body, token_id: token_id) do |response|
-            response.body = response.body.fetch('uploadedFiles') { [] }.map do |file|
-              Entity::Base::new(file)
-            end
+            response.body = Entity::Base::factory(response.body.fetch('uploadedFiles') { [] })
           end
         end
       end
@@ -92,7 +90,7 @@ module Thron
           clientId: client_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
@@ -101,7 +99,7 @@ module Thron
           clientId: client_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('credentials') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('credentials') { {} })
         end
       end
     end

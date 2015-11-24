@@ -39,7 +39,7 @@ module Thron
           caps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('snippet') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('snippet') { {} })
         end
       end
 
@@ -60,7 +60,7 @@ module Thron
           options: options
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('app') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('app') { {} })
         end
       end
 
@@ -107,7 +107,7 @@ module Thron
           caps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('app') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('app') { {} })
         end
       end
 
@@ -120,7 +120,7 @@ module Thron
           caps: capabilities
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('snippet') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('snippet') { {} })
         end
       end
     end

@@ -1,9 +1,8 @@
+require 'thron/response'
+
 module Thron
   class Paginator
     MAX_LIMIT = 50
-    MAX_PRELOAD = 30
-
-    class PreloadTooLargeError < StandardError; end
 
     def self.check_limit(limit)
       limit.to_i.tap do |limit|
@@ -11,77 +10,52 @@ module Thron
       end
     end
     
-    attr_reader :total, :offset, :limit
+    attr_reader :offset, :limit, :cache
 
-    def initialize(body:, limit: MAX_LIMIT, preload: 0)
+    def initialize(body:, limit: MAX_LIMIT)
       fail ArgumentError, 'body must be a proc object' unless body.is_a?(Proc)
       fail ArgumentError, 'body must accept the limit and offset attributes' unless body.arity == 2
-      fail PreloadTooLargeError, "preload must be lower than #{MAX_PRELOAD}" if preload > MAX_PRELOAD 
       @body    = body
       @limit   = self.class.check_limit(limit)
       @offset  = offset.to_i
-      @preload = preload.to_i
       @cache   = {}
     end
 
     def prev
       @offset = prev_offset
-      call
+      fetch.value
     end
 
     def next
-      preload!
       @offset = next_offset
-      call
+      fetch.value
     end
 
-    def first?
-      @offset.zero?
-    end
-
-    def last?
-      return false unless @total
-      (@offset + @limit) >= @total.to_i
+    def preload(n)
+      n.to_i.times do |i|
+        index  = @offset.zero? ? i : i+1
+        offset = @offset + index * @limit
+        fetch(offset)
+      end
     end
 
     private
 
-    def call(offset = @offset)
+    def fetch(offset = @offset)
       @cache.fetch(offset) do
-        @body.call(@limit, offset).tap do |response|
-          @total ||= response.total.to_i
-          @other_results = response.other_results
-          @cache[offset] = response
+        call(offset).tap do |raw|
+          @cache[offset] = raw
         end
       end
     end
 
-    def preload?
-      @offset == last_cached 
-    end
-
-    def preload!
-      @preload.times do |i|
-        index  = @offset.zero? ? i : i+1
-        break if stop_preloading?(index)
-        offset = @offset + index * @limit
-        call(offset)
-      end if preload?
-    end
-
-    def stop_preloading?(index)
-      !@other_results && @total && @total <= index * @limit
-    end
-
-    def last_cached
-      @cache.keys.max.to_i
+    def call(offset)
+      Thread::new { @body.call(@limit, offset) }
     end
 
     def next_offset
-      (@offset + @limit).tap do |offset|
-        return offset if @other_results
-        return @offset if (@offset + @limit) >= @total.to_i
-      end
+      return 0 if cache.empty?
+      @offset + @limit
     end
 
     def prev_offset

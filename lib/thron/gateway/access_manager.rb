@@ -22,8 +22,8 @@ module Thron
           password: password
         }
         route(to: __callee__, query: query, dash: false) do |response|
-          @token_id = response.body['tokenId']
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
+          @token_id = response.body.token_id
         end
       end
 
@@ -57,7 +57,7 @@ module Thron
           username: username
         }
         route(to: __callee__, query: query, token_id: @token_id, dash: false) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
     end

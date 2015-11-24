@@ -35,9 +35,8 @@ describe Thron::Pageable do
     end
   end
 
-  it 'must accepts preload and limit options' do
-    paginator = instance.users_paginator(preload: 10, limit: 30)
-    paginator.instance_variable_get(:@preload).must_equal 10
+  it 'must accepts limit' do
+    paginator = instance.users_paginator(limit: 30)
     paginator.limit.must_equal 30
   end
 end

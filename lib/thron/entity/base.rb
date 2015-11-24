@@ -9,6 +9,15 @@ module Thron
       TIME_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.+/
       DATE_REGEX = /\A\d{4}-\d{2}-\d{2}/
 
+      def self.factory(args)
+        case args
+        when Hash
+          new(args)
+        when Array
+          args.map { |data| new(data) }
+        end
+      end
+
       def initialize(hash = {})
         @table = {}
         hash.each do |k,v|

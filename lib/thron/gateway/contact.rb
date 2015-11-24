@@ -28,7 +28,7 @@ module Thron
           ik: ik
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('item') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('item') { {} })
         end
       end
 
@@ -37,7 +37,7 @@ module Thron
           contactId: contact_id,
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('item') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('item') { {} })
         end
       end
 
@@ -49,7 +49,7 @@ module Thron
           }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('item') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('item') { {} })
         end
       end
 
@@ -61,9 +61,7 @@ module Thron
           limit: limit
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('items') { [] }.map do |item|
-            Entity::Base::new(item)
-          end
+          response.body = Entity::Base::factory(response.body.fetch('items') { [] })
         end
       end
 
@@ -86,7 +84,7 @@ module Thron
           key: key
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('item') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('item') { {} })
         end
       end
 
@@ -98,7 +96,7 @@ module Thron
           }
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('item') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('item') { {} })
         end
       end
     end

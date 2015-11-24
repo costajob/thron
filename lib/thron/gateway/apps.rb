@@ -23,7 +23,7 @@ module Thron
           appId: app_id
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('app') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('app') { {} })
         end
       end
 
@@ -33,9 +33,7 @@ module Thron
           criteria: criteria
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('apps') { [] }.map do |app|
-            Entity::Base::new(app)
-          end
+          response.body = Entity::Base::factory(response.body.fetch('apps') { [] })
         end
       end
 
@@ -45,9 +43,7 @@ module Thron
           criteria: criteria
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('apps') { [] }.map do |app|
-            Entity::Base::new(app)
-          end
+          response.body = Entity::Base::factory(response.body.fetch('apps') { [] })
         end
       end
 
@@ -57,7 +53,7 @@ module Thron
           appId: app_id
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
-          response.body = Entity::Base::new(response.body.fetch('app') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('app') { {} })
         end
       end
 
@@ -68,7 +64,7 @@ module Thron
           snippetId: snippet_id,
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
-          response.body = Entity::Base::new(response.body.fetch('snippet') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('snippet') { {} })
         end
       end
 
@@ -79,7 +75,7 @@ module Thron
           username: username
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body)
+          response.body = Entity::Base::factory(response.body)
         end
       end
     end

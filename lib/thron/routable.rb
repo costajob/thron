@@ -1,8 +1,8 @@
 require 'httparty'
 require 'thron/config'
 require 'thron/route'
-require 'thron/response'
 require 'thron/circuit_breaker'
+require 'thron/response'
 require 'thron/logger'
 
 module Thron
@@ -18,7 +18,7 @@ module Thron
       end
     end
 
-    def self.info(host, query, body, route, token_id, dash, raw)
+    def self.info(host, query, body, route, token_id, dash)
       info = [
         "\n",
         "*" * 50,
@@ -32,7 +32,8 @@ module Thron
         "*" * 50,
         "\n"
       ]
-      Thron::logger.debug(info.join("\n"))
+      puts info
+      Thron::logger.debug info.join("\n")
     end
 
     module ClassMethods
@@ -49,16 +50,14 @@ module Thron
       route = fetch_route(to, params)
       body = body.to_json if !body.empty? && route.json?
       self.class.circuit_breaker.monitor do
-        raw = Thread.new do 
-          self.class.send(route.verb, 
-                          route.url, 
-                          { query: query, 
-                            body: body, 
-                            headers: route.headers(token_id: token_id, dash: dash) })
-        end
-        Routable::info(self.class.default_options[:base_uri], query, body, route, token_id, dash, raw)
-        Response::new(raw.value).tap do |response|
-          yield(response) if block_given?
+        raw = self.class.send(route.verb, 
+                              route.url, 
+                              { query: query, 
+                                body: body, 
+                                headers: route.headers(token_id: token_id, dash: dash) })
+        Routable::info(self.class.default_options[:base_uri], query, body, route, token_id, dash)
+        Response::new(raw).tap do |response|
+          yield(response) if response.is_200? && block_given?
         end
       end
     rescue CircuitBreaker::OpenError

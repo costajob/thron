@@ -7,10 +7,9 @@ module Thron
         (@paginated_apis = apis).each do |api|
           define_method("#{api}_paginator") do |*args|
             options = args.empty? ? {} : args.last
-            preload = options.delete(:preload) { 0 }
             limit = options.delete(:limit) { Paginator::MAX_LIMIT }
             body = ->(limit, offset) { send(api, options.merge!({ offset: offset, limit: limit })) }
-            Paginator::new(body: body, preload: preload, limit: limit)
+            Paginator::new(body: body, limit: limit)
           end
         end
       end

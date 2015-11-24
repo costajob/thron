@@ -23,7 +23,7 @@ module Thron
           commentId: comment_id
         }
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('comment') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('comment') { {} })
         end
       end
 
@@ -36,9 +36,7 @@ module Thron
           numberOfResults: limit
         }.merge(criteria).merge(order_by)
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          response.body = response.body.fetch('comments') { [] }.map do |comment|
-            Entity::Base::new(comment)
-          end
+          Entity::Base::factory(response.body.fetch('comments') { [] })
         end
       end
 
@@ -50,7 +48,7 @@ module Thron
           categoryIdForAcl: category_id
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('comment') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('comment') { {} })
         end
       end
 

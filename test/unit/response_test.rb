@@ -26,7 +26,7 @@ describe Thron::Response do
     end
 
     it 'must remove response keys and leave body data' do
-      instance.body.must_equal({ "field1" => "Elvis", "field2" => "Presley" })
+      instance.body.keys.must_equal %w[field1 field2]
     end
 
     it 'must valorize other response keys' do
@@ -41,11 +41,6 @@ describe Thron::Response do
       instance.body.must_equal({ id: id.parsed_response })
     end
 
-    it 'must set body attribute only for 200 responses' do
-      instance.body = :data
-      instance.body.must_equal :data
-    end
-
     it 'must set attributes to nil if response is unparsed' do
       instance = klass::new(unparsed)
       %i[result_code sso_code error].each do |message|
@@ -53,6 +48,9 @@ describe Thron::Response do
       end
     end
 
+    it 'must detect is successful' do
+      assert instance.is_200?
+    end
   end
 
   describe 'non 200' do
@@ -61,21 +59,20 @@ describe Thron::Response do
       instance.error.must_equal 'Not found'
     end
 
-    it 'must valorize the extra attribute' do
-      instance = klass::new(extra)
-      instance.extra(attribute: 'actionsInError')
-      instance.actions_in_error.must_equal %w[action1 action2 action5]
-    end
-
     it 'must valorize string error' do
       instance = klass::new(ko_str)
       instance.error.must_equal 'Forbidden'
     end
 
-    it 'must prevent set of body attribute for non-200 responses' do
+    it 'must detect is unsuccessful' do
       instance = klass::new(ko_str)
-      instance.body = :data
-      instance.body.must_equal({})
+      refute instance.is_200?
     end
+  end
+
+  it 'must valorize the extra attribute' do
+    instance = klass::new(extra)
+    instance.extra(attribute: 'actionsInError')
+    instance.actions_in_error.must_equal %w[action1 action2 action5]
   end
 end

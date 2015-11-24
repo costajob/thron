@@ -36,7 +36,7 @@ module Thron
           }
         }.merge(data)
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('user') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('user') { {} })
         end
       end
 
@@ -49,7 +49,7 @@ module Thron
         }.merge(options)
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
           user = response.body.delete('user') { {} }
-          response.body = Entity::Base::new(response.body.merge(user))
+          response.body = Entity::Base::factory(response.body.merge!(user))
         end
       end
 
@@ -63,10 +63,7 @@ module Thron
           numberOfResult: limit.to_i
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = response.body.fetch('users') { [] }.map do |user|
-            detail = user.delete('userDetail') { {} }
-            Entity::Base::new(user.merge(detail))
-          end
+          response.body = Entity::Base::factory(response.body.fetch('users') { [] })
         end
       end
 
@@ -78,7 +75,7 @@ module Thron
         }
         route(to: __callee__, query: query, token_id: token_id, dash: false) do |response|
           user = response.body.delete('user') { {} }
-          response.body = Entity::Base::new(response.body.merge(user))
+          response.body = Entity::Base::factory(response.body.merge!(user))
         end
       end
 
@@ -158,7 +155,7 @@ module Thron
           newPassword: password
         }.merge(data)
         route(to: __callee__, body: body, token_id: token_id) do |response|
-          response.body = Entity::Base::new(response.body.fetch('user') { {} })
+          response.body = Entity::Base::factory(response.body.fetch('user') { {} })
         end
       end
     end
