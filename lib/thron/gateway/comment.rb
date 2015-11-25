@@ -36,7 +36,7 @@ module Thron
           numberOfResults: limit
         }.merge(criteria).merge(order_by)
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          Entity::Base::factory(response.body.fetch('comments') { [] })
+          response.body = Entity::Base::factory(response.body.fetch('comments') { [] })
         end
       end
 
