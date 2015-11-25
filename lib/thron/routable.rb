@@ -32,7 +32,6 @@ module Thron
         "*" * 50,
         "\n"
       ]
-      puts info
       Thron::logger.debug info.join("\n")
     end
 

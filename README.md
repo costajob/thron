@@ -52,13 +52,13 @@ Thron APIs that return a list of results are limited to a maximum of **50**.
 To avoid repeating the same call many times by passing an augmented offset, 
 is possible to call a wrapper method on the gateway objects that returns a paginator object.
 Once the paginator is loaded, it allows to navigate the results by using the following interface:
-* **next**: loads the first offset and move forward
+* **next**: loads the first offset and move forward, returning last when max offset is reached
 * **prev**: move backwards from the current offset, returning first when minimum offset is reached
 * **preload**: does not move the offset, but indeed preload the specified number of
   data by performing an asynchronous call (wrapped in a thread).
 
 Paginator keeps an internal cache to avoid hitting the remote service more than
-once. Keep that in mind when you need to get fresh data.
+once. The same is used when preloading results. Keep that in mind when you need to get fresh data.
 
 ### Response
 The HTTParty response has been wrapped in order to return a logical object that wraps the APIs return values.  

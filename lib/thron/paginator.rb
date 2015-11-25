@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'thron/response'
 
 module Thron
@@ -32,11 +33,18 @@ module Thron
     end
 
     def preload(n)
-      n.to_i.times do |i|
-        index  = @offset.zero? ? i : i+1
-        offset = @offset + index * @limit
+      starting_offset = max_offset
+      (n).to_i.times do |i|
+        index  = starting_offset.zero? ? i : (i + 1)
+        offset = starting_offset + (index * @limit)
         fetch(offset)
       end
+    end
+
+    def total
+      return @total if @total
+      return 0 if cache.empty?
+      @total = cache.fetch(0).value.total
     end
 
     private
@@ -55,12 +63,18 @@ module Thron
 
     def next_offset
       return 0 if cache.empty?
+      return @offset if total > 0 && (@offset + @limit) >= total
       @offset + @limit
     end
 
     def prev_offset
       return 0 if @offset <= @limit
       @offset - @limit
+    end
+
+    def max_offset
+      return 0 if cache.empty?
+      @cache.max.first
     end
   end
 end

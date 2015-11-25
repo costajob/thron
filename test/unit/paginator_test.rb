@@ -3,12 +3,16 @@ require 'thron/paginator'
 
 module Mock
   class Gateway
+    attr_reader :total, :limit
+
     def initialize(total = 2000)
+      @total = total
       @results = Array::new(total) { |i| { name: "name#{i}", id: (i + 1000) } }
     end
 
     def find(limit: 50, offset: 0)
-      OpenStruct::new(results: @results.slice(offset, limit))
+      @limit = limit
+      OpenStruct::new(total: @total, other_results: (offset * limit < @total), results: @results.slice(offset, limit))
     end
   end
 end
@@ -53,6 +57,13 @@ describe Thron::Paginator do
   it 'must limit previous offset' do
     3.times { instance.prev }
     instance.offset.must_equal 0
+    instance.cache.size.must_equal 1
+  end
+
+  it 'must limit next offset' do
+    50.times { instance.next }
+    instance.offset.must_equal 1950
+    instance.cache.size.must_equal (gateway.total / gateway.limit)
   end
 
   it 'must set cache' do
@@ -64,13 +75,33 @@ describe Thron::Paginator do
     instance.next.equal? instance.prev
   end
 
+  it 'must set total to zero if cache is empty' do
+    instance.total.must_equal 0
+  end
+
+  it 'must set total when fetching first result' do
+    instance.next
+    instance.total.must_equal gateway.total
+  end
+
   it 'must preload results' do
     instance.preload(15)
     instance.cache.size.must_equal 15
   end
 
+  it 'must fetch preloaded results' do
+    instance.preload(5)
+    instance.cache[200].value.results.first.must_equal({ name: 'name200', id: 1200 })
+  end
+
   it 'preload must not move the offset' do
     instance.preload(15)
     instance.offset.must_equal 0
+  end
+
+  it 'must preload multiple times' do
+    instance.preload(15)
+    instance.preload(10)
+    instance.cache.size.must_equal 25
   end
 end
