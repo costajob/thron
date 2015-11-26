@@ -14,60 +14,59 @@ describe Thron::Gateway::Delivery do
 
   it 'must call get to fetch content metadata' do
     route = klass.routes.fetch(:content_metadata)
-    data = entity::new(content_id: '666', locale: 'en', linked_channel_type: 'CH-666', linked_user_agent: 'Mozilla', div_area: '125x500', pkey: 'KEY-666', lcid: 'ID-666')
+    criteria = entity::new(locale: 'en', linked_channel_type: 'CH-666', linked_user_agent: 'Mozilla', div_area: '125x500', pkey: 'KEY-666', lcid: 'ID-666').to_payload
     query = {
       clientId: instance.client_id,
-      xcontentId: data.content_id,
-      locale: data.locale,
-      linkedChannelType: data.linked_channel_type,
-      linkedUserAgent: data.linked_user_agent,
-      divArea: data.div_area,
-      pkey: data.pkey,
-      lcid: data.lcid
-    }
+      xcontentId: '666',
+    }.merge!(criteria)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.content_metadata(data.to_h)
+    instance.content_metadata(content_id: '666', criteria: criteria)
   end
 
-  it 'must call get to fetch content cuepoints' do
-    route = klass.routes.fetch(:content_cuepoints)
-    data = entity::new(content_id: '6666', publisher_id: 'ELVIS-666', cuepoint_types: Array::new(3) { |i| "TYPE-#{i}" }, actions: Array::new(4) { |i| "ACT-#{i}" }, start_time: (Time.now - 60*60).to_i, end_time: Time.now.to_i, draft: true, username: 'elvis', cuepoint_group: 'blue suede shoes', pkey: 'KEY-666', lcid: 'ID-666')
-    query = { 
-      clientId: instance.client_id,
-      xcontentId: data.content_id,
-      xpublisherId: data.publisher_id,
-      cuePointTypes: data.cuepoint_types,
-      actions: data.actions,
-      startTime: data.start_time,
-      endTime: data.end_time,
-      draft: data.draft,
-      username: data.username,
-      cuePointGroup: data.cuepoint_group,
-      pkey: data.pkey,
-      lcid: data.lcid,
-      offset: 0,
-      numberOfResult: 0
-    }
-    mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.content_cuepoints(data.to_h.merge!(offset: 0, limit: 0))
+  %i[content_cuepoints downloadable_contents playlist_contents].each do |message|
+    it "must call get to fetch #{message.to_s.split('_').join(' ')}" do
+      route = klass.routes.fetch(message)
+      criteria = entity::new(xpublisher_id: 'ELVIS-666', locale: 'en', linked_channel_type: 'CH-666', linked_user_agent: 'Mozilla', div_area: '125x500', pkey: 'KEY-666', admin: true).to_payload
+      query = {
+        clientId: instance.client_id,
+        xcontentId: '666',
+        offset: 0,
+        numberOfResult: 0
+      }.merge!(criteria)
+      mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
+      instance.send(message, content_id: '666', criteria: criteria, offset: 0, limit: 0)
+    end
   end
 
-  it 'must call get to fetch downloadable contents' do
-    route = klass.routes.fetch(:downloadable_contents)
-    data = entity::new(content_id: '666', publisher_id: 'ELVIS-666', locale: 'en', admin: true, div_area: '125x500', pkey: 'KEY-666', lcid: 'ID-666')
+  it 'must call get to fetch recommended contents' do
+    route = klass.routes.fetch(:recommended_contents)
+    criteria = entity::new(xpublisher_id: 'ELVIS-666', locale: 'en', linked_channel_type: 'CH-666', linked_user_agent: 'Mozilla', div_area: '125x500', admin: true).to_payload
     query = {
       clientId: instance.client_id,
-      xpublisherId: data.publisher_id,
-      xcontentId: data.content_id,
-      locale: data.locale,
-      admin: data.admin,
-      divArea: data.div_area,
-      pkey: data.pkey,
-      lcid: data.lcid,
+      xcontentId: '666',
+      pkey: 'KEY-666',
       offset: 0,
       numberOfResult: 0
-    }
+    }.merge!(criteria)
     mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
-    instance.downloadable_contents(data.to_h.merge!(offset: 0, limit: 0))
+    instance.recommended_contents(content_id: '666', pkey: 'KEY-666', criteria: criteria, offset: 0, limit: 0)
+  end
+
+  it 'must call get to fetch content subtitles' do
+    route = klass.routes.fetch(:content_subtitles)
+    criteria = entity::new(pkey: 'KEY-666', lcid: 'ID-666').to_payload
+    query = {
+      clientId: instance.client_id,
+      xcontentId: '666',
+      locale: 'en'
+    }.merge!(criteria)
+    mock(klass).get(route.url, { query: query, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
+    instance.content_subtitles(content_id: '666', locale: 'en', criteria: criteria)
+  end
+
+  it 'must call get to fetch content thumbnail' do
+    route = klass.routes.fetch(:content_thumbnail).call([instance.client_id, '125x600', '666.jpg'])
+    mock(klass).get(route.url, { query: {}, body: {}, headers: route.headers(token_id: token_id, dash: true) }) { response }
+    instance.content_thumbnail(content_id: '666.jpg', div_area: '125x600')
   end
 end

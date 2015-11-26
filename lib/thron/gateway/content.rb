@@ -103,8 +103,7 @@ module Thron
           pkey: access_key
         }.merge(options)
         route(to: __callee__, query: query, token_id: token_id) do |response|
-          content = response.body.delete('content') { {} }
-          response.body = Entity::Base::factory(response.body.merge!(content))
+          response.body = Entity::Base::factory(response.body)
         end
       end
 
