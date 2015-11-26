@@ -19,7 +19,8 @@ module Thron
     def logger
       @logger ||= begin
                     level = dump_yaml.fetch('logger').fetch('level')
-                    OpenStruct.new(level: Logger::const_get(level.upcase))
+                    verbose = dump_yaml.fetch('logger').fetch('verbose')
+                    OpenStruct.new(level: Logger::const_get(level.upcase), verbose: verbose)
                   end
     end
 

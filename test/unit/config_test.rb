@@ -7,7 +7,7 @@ describe Thron::Config do
   end
 
   it 'must valorize the logger configuration' do
-    %i[level].each do |message|
+    %i[level verbose].each do |message|
       Thron::Config::logger.send(message).wont_be_nil
     end
   end

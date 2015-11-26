@@ -32,6 +32,7 @@ module Thron
         "*" * 50,
         "\n"
       ]
+      puts info if Config::logger::verbose
       Thron::logger.debug info.join("\n")
     end
 

@@ -1,5 +1,6 @@
 logger:
   level: <%= ENV.fetch('LOGGER_LEVEL') { 'warn' } %>
+  verbose: <%= ENV.fetch('VERBOSE') { false } %>
 
 thron:
   client_id: <%= ENV.fetch('THRON_CLIENT_ID') { 'none' } %>
