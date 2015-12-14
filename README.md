@@ -160,7 +160,7 @@ user.find_categories
 ```
 Create a new locale for a category:
 ```ruby
-locale = Thron::Entity::Base::new(name: 'photos', description: 'JPG and PNG images', locale: 'EN')
+locale = Thron::Entity::Base::new(name: 'photos', description: 'JPG and PNG images', locale: 'EN').to_payload
 user.create_category_locale(category_id: '<a_category_id>', locale: locale)
 ```
 
