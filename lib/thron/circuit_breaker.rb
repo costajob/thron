@@ -6,14 +6,15 @@ module Thron
       const_set(name.upcase.to_sym, name.to_sym)
     end
 
-    def initialize(threshold: 5, ignored: [])
-      @state       = CLOSED
-      @threshold   = threshold
+    def initialize(options = {})
+      @state = CLOSED
+      @threshold = options.fetch(:threshold) { 5 }
       @error_count = 0
-      @ignored     = Array(ignored)
+      @ignored = options[:ignored].to_a
     end
 
     def monitor
+      return yield if @threshold.zero?
       fail OpenError, 'the circuit breaker is open!' if open?
       result = yield
       handle_success

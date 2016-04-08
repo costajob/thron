@@ -14,7 +14,14 @@ module Thron
         }
       end
 
-      def show_contents(category_id:, locale: nil, criteria: {}, recursive: true, order_by: 'contentName_A', limit: 0, offset: 0)
+      def show_contents(options = {})
+        category_id = options[:category_id]
+        locale = options[:locale]
+        criteria = options.fetch(:criteria) { {} }
+        recursive = options.fetch(:recursive) { true }
+        order_by = options.fetch(:order_by) { 'contentName_A' }
+        limit = options[:limit].to_i
+        offset = options[:offset].to_i
         query = { 
           clientId: client_id,
           categoryId: category_id,

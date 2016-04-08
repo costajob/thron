@@ -3,7 +3,6 @@ require 'time'
 require 'thron/string_extensions'
 
 module Thron
-  using StringExtensions
   module Entity
     class Base < OpenStruct
       TIME_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.+/
@@ -55,7 +54,9 @@ module Thron
         end
       end
 
-      private def fetch_value(value, message)
+      private
+      
+      def fetch_value(value, message)
         case value
         when Base
           value.send(message)

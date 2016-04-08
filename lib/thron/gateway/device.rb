@@ -16,7 +16,10 @@ module Thron
         }
       end
 
-      def connect_device(device_id:, ik:, contact_name:)
+      def connect_device(options = {})
+        device_id = options[:device_id]
+        ik = options[:ik]
+        contact_name = options[:contact_name]
         body = { 
           clientId: client_id,
           deviceId: device_id,
@@ -28,7 +31,9 @@ module Thron
         end
       end
 
-      def disconnect_device(device_id:, contact_id:)
+      def disconnect_device(options = {})
+        device_id = options[:device_id]
+        contact_id = options[:contact_id]
         body = { 
           clientId: client_id,
           deviceId: device_id,
@@ -39,7 +44,8 @@ module Thron
         end
       end
 
-      def get_device(device_id: nil)
+      def get_device(options = {})
+        device_id = options[:device_id]
         query = { 
           deviceId: device_id,
         }

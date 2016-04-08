@@ -2,6 +2,9 @@ logger:
   level: <%= ENV.fetch('LOGGER_LEVEL') { 'warn' } %>
   verbose: <%= ENV.fetch('VERBOSE') { false } %>
 
+circuit_breaker:
+  threshold: <%= ENV.fetch('CIRCUIT_BREAKER_THRESHOLD') { 0 } %> 
+
 thron:
   client_id: <%= ENV.fetch('THRON_CLIENT_ID') { 'none' } %>
   protocol: <%= ENV.fetch('THRON_PROTOCOL') { 'https' } %>

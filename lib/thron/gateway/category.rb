@@ -26,7 +26,12 @@ module Thron
         }
       end
 
-      def create_category(parent_id:, locale:, is_private: false, solution: nil, data:)
+      def create_category(options = {})
+        parent_id = options[:parent_id]
+        locale = options[:locale]
+        is_private = options.fetch(:is_private) { false }
+        solution = options[:solution]
+        data = options[:data]
         body = { 
           client: {
             clientId: client_id
@@ -41,7 +46,11 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_system_category(category_id:, parent_id:, locale:, data:)
+      def create_system_category(options = {})
+        category_id = options[:category_id]
+        parent_id = options[:parent_id]
+        locale = options[:locale]
+        data = options[:data]
         body = { 
           client: {
             clientId: client_id
@@ -54,7 +63,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_category_for_locale(category_id:, locale:)
+      def add_category_for_locale(options = {})
+        category_id = options[:category_id]
+        locale = options[:locale]
         body = { 
           client: {
             clientId: client_id
@@ -65,7 +76,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_category_pretty_id(category_id:, pretty_id:)
+      def add_category_pretty_id(options = {})
+        category_id = options[:category_id]
+        pretty_id = options[:pretty_id]
         body = { 
           clientId: client_id,
           categoryId: category_id,
@@ -74,7 +87,12 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def find_categories(criteria: {}, locale: nil, order_by: nil, offset: 0, limit: 0)
+      def find_categories(options = {})
+        criteria = options.fetch(:criteria) { {} }
+        locale = options[:locale]
+        order_by = options[:order_by]
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         body = { 
           client: {
             clientId: client_id
@@ -90,7 +108,10 @@ module Thron
         end
       end
 
-      def category_detail(category_id:, recursive: false, locale: nil)
+      def category_detail(options = {})
+        category_id = options[:category_id]
+        recursive = options.fetch(:recursive) { false }
+        locale = options[:locale]
         query = { 
           clientId: client_id,
           categoryId: category_id,
@@ -102,7 +123,9 @@ module Thron
         end
       end
 
-      def remove_category(category_id:, recursive: false)
+      def remove_category(options = {})
+        category_id = options[:category_id]
+        recursive = options.fetch(:recursive) { false }
         query = { 
           clientId: client_id,
           catId: category_id,
@@ -111,7 +134,9 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def remove_category_for_locale(category_id:, locale:)
+      def remove_category_for_locale(options = {})
+        category_id = options[:category_id]
+        locale = options[:locale]
         body = { 
           client: {
             clientId: client_id
@@ -122,7 +147,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_category_pretty_id(category_id:, locale:)
+      def remove_category_pretty_id(options = {})
+        category_id = options[:category_id]
+        locale = options[:locale]
         body = { 
           clientId: client_id,
           categoryId: category_id,
@@ -131,7 +158,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def set_parent_category(category_id:, parent_id:)
+      def set_parent_category(options = {})
+        category_id = options[:category_id]
+        parent_id = options[:parent_id]
         query = { 
           clientId: client_id,
           categoryId: category_id,
@@ -140,7 +169,9 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id, dash: false)
       end
 
-      def update_category(category_id:, data:)
+      def update_category(options = {})
+        category_id = options[:category_id]
+        data = options[:data]
         body = { 
           client: {
             clientId: client_id
@@ -151,7 +182,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_category_for_locale(category_id:, locale:)
+      def update_category_for_locale(options = {})
+        category_id = options[:category_id]
+        locale = options[:locale]
         body = { 
           client: {
             clientId: client_id
@@ -162,7 +195,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_category_pretty_id(category_id:, pretty_id:)
+      def update_category_pretty_id(options = {})
+        category_id = options[:category_id]
+        pretty_id = options[:pretty_id]
         body = { 
           clientId: client_id,
           categoryId: category_id,

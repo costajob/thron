@@ -24,6 +24,10 @@ module Thron
                   end
     end
 
+    def circuit_breaker
+      @circuit_breaker ||= OpenStruct.new(dump_yaml['circuit_breaker'])
+    end
+
     def thron
       @thron ||= OpenStruct.new(dump_yaml['thron'])
     end

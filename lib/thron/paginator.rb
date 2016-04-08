@@ -13,13 +13,15 @@ module Thron
     
     attr_reader :offset, :limit, :cache
 
-    def initialize(body:, limit: MAX_LIMIT)
+    def initialize(options = {})
+      body = options[:body]
+      limit = options.fetch(:limit) { MAX_LIMIT }
       fail ArgumentError, 'body must be a proc object' unless body.is_a?(Proc)
       fail ArgumentError, 'body must accept the limit and offset attributes' unless body.arity == 2
-      @body    = body
-      @limit   = self.class.check_limit(limit)
-      @offset  = offset.to_i
-      @cache   = {}
+      @body = body
+      @limit = self.class.check_limit(limit)
+      @offset = offset.to_i
+      @cache = {}
     end
 
     def prev

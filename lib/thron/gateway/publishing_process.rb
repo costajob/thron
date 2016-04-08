@@ -24,7 +24,11 @@ module Thron
         }
       end
 
-      def change_channel_status(media_content_id:, content_id:, channel:, active: false)
+      def change_channel_status(options = {})
+        media_content_id = options[:media_content_id]
+        content_id = options[:content_id]
+        channel = options[:channel]
+        active = options.fetch(:active) { false }
         body = { 
           clientId: client_id,
           mediaContentId: media_content_id,
@@ -38,7 +42,8 @@ module Thron
         end
       end
 
-      def get_content_types(file_names:)
+      def get_content_types(options = {})
+        file_names = options[:file_names]
         body = { 
           clientId: client_id,
           files: { fileNames: file_names }
@@ -48,7 +53,11 @@ module Thron
         end
       end
 
-      def unpublish_content(media_content_id:, content_id:, force: false, remove_source_files: false)
+      def unpublish_content(options = {})
+        media_content_id = options[:media_content_id]
+        content_id = options[:content_id]
+        force = options.fetch(:force) { false }
+        remove_source_files = options.fetch(:remove_source_files) { false }
         body = { 
           clientId: client_id,
           mediaContentId: media_content_id,
@@ -62,7 +71,11 @@ module Thron
         end
       end
 
-      def update_pagelet_content(media_content_id:, content_id:, body:, mime_type:)
+      def update_pagelet_content(options = {})
+        media_content_id = options[:media_content_id]
+        content_id = options[:content_id]
+        body = options[:body]
+        mime_type = options[:mime_type]
         body = { 
           clientId: client_id,
           mediaContentId: media_content_id,
@@ -76,7 +89,10 @@ module Thron
         end
       end
 
-      def update_publishing_properties(media_content_id:, content_id:, properties:)
+      def update_publishing_properties(options = {})
+        media_content_id = options[:media_content_id]
+        content_id = options[:content_id]
+        properties = options[:properties]
         body = { 
           clientId: client_id,
           mediaContentId: media_content_id,
@@ -90,10 +106,10 @@ module Thron
       end
 
       %i[publish remove].each do |action|
-        define_method "#{action}_channel" do |args|
-          media_content_id = args.fetch(:media_content_id)
-          content_id = args.fetch(:content_id)
-          channel = args.fetch(:channel)
+        define_method "#{action}_channel" do |options|
+          media_content_id = options.fetch(:media_content_id)
+          content_id = options.fetch(:content_id)
+          channel = options.fetch(:channel)
           body = { 
             clientId: client_id,
             mediaContentId: media_content_id,
@@ -108,8 +124,8 @@ module Thron
       end
 
       %i[create_content_for_channel new_content new_live_event_content new_pagelet_content new_playlist_content replace_thumbnail].each do |message|
-        define_method(message) do |args|
-          data = args.fetch(:data)
+        define_method(message) do |options|
+          data = options[:data]
           body = { 
             clientId: client_id,
             param: data

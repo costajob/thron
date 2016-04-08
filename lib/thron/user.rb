@@ -28,8 +28,8 @@ module Thron
       @access_gateway = Gateway::AccessManager::new
     end 
 
-    def login(args)
-      @access_gateway.login(args).tap do |response|
+    def login(options)
+      @access_gateway.login(options).tap do |response|
         @token_id = @access_gateway.token_id
         refresh_gateways
       end
@@ -41,8 +41,8 @@ module Thron
       @gateways = nil
     end
 
-    def disguise(args)
-      response = su(args)
+    def disguise(options)
+      response = su(options)
       response.body[:id].tap do |token_id|
         return response.error unless token_id
         original_token, @token_id = @token_id, token_id

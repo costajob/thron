@@ -20,7 +20,9 @@ module Thron
         }
       end
 
-      def content_metadata(content_id:, criteria: {})
+      def content_metadata(options = {})
+        content_id = options[:content_id]
+        criteria = options.fetch(:criteria) { {} }
         query = { 
           clientId: client_id,
           xcontentId: content_id
@@ -30,7 +32,11 @@ module Thron
         end
       end
 
-      def content_cuepoints(content_id:, criteria: {}, offset: 0, limit: 0)
+      def content_cuepoints(options = {})
+        content_id = options[:content_id]
+        criteria = options.fetch(:criteria) { {} }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         query = { 
           clientId: client_id,
           xcontentId: content_id,
@@ -42,7 +48,11 @@ module Thron
         end
       end
 
-      def downloadable_contents(content_id:, criteria: {}, offset: 0, limit: 0)
+      def downloadable_contents(options = {})
+        content_id = options[:content_id]
+        criteria = options.fetch(:criteria) { {} }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         query = { 
           clientId: client_id,
           xcontentId: content_id,
@@ -54,7 +64,11 @@ module Thron
         end
       end
 
-      def playlist_contents(content_id:, criteria: {}, offset: 0, limit: 0)
+      def playlist_contents(options = {})
+        content_id = options[:content_id]
+        criteria = options.fetch(:criteria) { {} }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         query = { 
           clientId: client_id,
           xcontentId: content_id,
@@ -66,7 +80,12 @@ module Thron
         end
       end
 
-      def recommended_contents(content_id:, pkey:, criteria: { admin: true }, offset: 0, limit: 0)
+      def recommended_contents(options = {})
+        content_id = options[:content_id]
+        pkey = options[:pkey]
+        criteria = options.fetch(:criteria) { { admin: true } }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         query = { 
           clientId: client_id,
           xcontentId: content_id,
@@ -79,7 +98,10 @@ module Thron
         end
       end
 
-      def content_subtitles(content_id:, locale:, criteria: {})
+      def content_subtitles(options = {})
+        content_id = options[:content_id]
+        locale = options[:locale]
+        criteria = options.fetch(:criteria) { {} }
         query = { 
           clientId: client_id,
           xcontentId: content_id,
@@ -88,7 +110,9 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id)
       end
 
-      def content_thumbnail(content_id:, div_area:)
+      def content_thumbnail(options = {})
+        content_id = options[:content_id]
+        div_area = options[:div_area]
         route(to: __callee__, token_id: token_id, params: [client_id, div_area, content_id]) do |response|
           response.body = Entity::Base::factory(response.body)
         end

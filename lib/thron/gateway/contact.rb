@@ -22,7 +22,9 @@ module Thron
         }
       end
 
-      def add_contact_key(contact_id:, ik:)
+      def add_contact_key(options = {})
+        contact_id = options[:contact_id]
+        ik = options[:ik]
         body = { 
           contactId: contact_id,
           ik: ik
@@ -32,7 +34,8 @@ module Thron
         end
       end
 
-      def contact_detail(contact_id:)
+      def contact_detail(options = {})
+        contact_id = options[:contact_id]
         query = { 
           contactId: contact_id,
         }
@@ -41,7 +44,9 @@ module Thron
         end
       end
 
-      def insert_contact(name:, ik:)
+      def insert_contact(options = {})
+        name = options[:name]
+        ik = options[:ik]
         body = { 
           value: {
             ik: ik,
@@ -53,10 +58,14 @@ module Thron
         end
       end
 
-      def list_contacts(criteria: {}, options: {}, offset: 0, limit: 0)
+      def list_contacts(options = {})
+        criteria = options.fetch(:criteria) { {} }
+        option = options.fetch(:option) { {} }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         body = { 
           criteria: criteria,
-          option: options,
+          option: option,
           offset: offset,
           limit: limit
         }
@@ -65,7 +74,10 @@ module Thron
         end
       end
 
-      def list_contact_keys(search_key: nil, offset: 0, limit: 0)
+      def list_contact_keys(options = {})
+        search_key = options[:search_key]
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         body = { 
           criteria: {
             searchKey: search_key
@@ -78,7 +90,9 @@ module Thron
         end
       end
 
-      def remove_contact_key(contact_id:, key:)
+      def remove_contact_key(options = {})
+        contact_id = options[:contact_id]
+        key = options[:key]
         body = { 
           contactId: contact_id,
           key: key
@@ -88,7 +102,9 @@ module Thron
         end
       end
 
-      def update_contact(contact_id:, name:)
+      def update_contact(options = {})
+        contact_id = options[:contact_id]
+        name = options[:name]
         body = { 
           contactId: contact_id,
           update: {

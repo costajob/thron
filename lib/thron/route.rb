@@ -17,15 +17,21 @@ module Thron
     class UnsupportedVerbError < StandardError; end
     class UnsupportedTypeError < StandardError; end
 
-    def self.factory(name:, package:, params: [], verb: Verbs::POST, type: Types::JSON, accept: Types::JSON)
+    def self.factory(options = {})
+      name = options[:name]
+      package = options[:package]
+      params = options[:params].to_a
+      verb = options.fetch(:verb) { Verbs::POST }
+      type = options.fetch(:type) { Types::JSON }
+      accept = options.fetch(:accept) { Types::JSON }
       url = "/#{package}/#{name}"
       url << "/#{params.join('/')}" unless params.empty?
       Route::new(verb: verb, url: url, type: type, accept: accept)
     end
 
-    def self.lazy_factory(args)
-      args.delete(:params)
-      ->(params) { factory(args.merge({ params: params })) }
+    def self.lazy_factory(options)
+      options.delete(:params)
+      ->(params) { factory(options.merge({ params: params })) }
     end
 
     def self.header_type(type)
@@ -43,11 +49,11 @@ module Thron
 
     attr_reader :verb, :url
 
-    def initialize(verb:, url:, type:, accept:)
-      @verb   = check_verb(verb)
-      @url    = url
-      @type   = check_type(type)
-      @accept = check_type(accept)
+    def initialize(options = {})
+      @verb   = check_verb(options[:verb])
+      @url    = options[:url]
+      @type   = check_type(options[:type])
+      @accept = check_type(options[:accept])
     end
 
     def call(*args)
@@ -63,12 +69,12 @@ module Thron
       { format: @format }
     end
 
-    def headers(token_id: nil, dash: nil)
+    def headers(options = {})
       @headers = { 
         'Accept' => self.class.header_type(@accept), 
-        content_type_key(dash) => self.class.header_type(@type)
+        content_type_key(options[:dash]) => self.class.header_type(@type)
       }.tap do |headers|
-        headers.merge!({ 'X-TOKENID' => token_id }) if token_id
+        headers.merge!({ 'X-TOKENID' => options[:token_id] }) if options[:token_id]
       end
     end
 

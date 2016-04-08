@@ -17,7 +17,8 @@ module Thron
         }
       end
 
-      def comment_detail(comment_id:)
+      def comment_detail(options = {})
+        comment_id = options[:comment_id]
         query = { 
           clientId: client_id,
           commentId: comment_id
@@ -27,7 +28,12 @@ module Thron
         end
       end
 
-      def list_comments(criteria: {}, locale:, order_by: nil, offset: 0, limit: 0)
+      def list_comments(options = {})
+        criteria = options.fetch(:criteria) { {} }
+        locale = options[:locale]
+        order_by = options[:order_by]
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         order_by = order_by ? { orderBy: order_by } : {}
         query = { 
           clientId: client_id,
@@ -40,7 +46,10 @@ module Thron
         end
       end
 
-      def insert_comment(content_id:, data:, category_id: nil)
+      def insert_comment(options = {})
+        content_id = options[:content_id]
+        data = options[:data]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -52,7 +61,9 @@ module Thron
         end
       end
 
-      def report_comment_abuse(comment_id:, user_id:)
+      def report_comment_abuse(options = {})
+        comment_id = options[:comment_id]
+        user_id = options[:user_id]
         query = { 
           clientId: client_id,
           commentId: comment_id,

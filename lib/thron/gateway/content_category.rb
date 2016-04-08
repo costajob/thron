@@ -14,10 +14,10 @@ module Thron
       end
 
       self.routes.keys.each do |message|
-        define_method(message) do |args|
-          category_id = args.fetch(:category_id)
-          content_id = args.fetch(:content_id)
-          apply_acl = args.fetch(:apply_acl) { false }
+        define_method(message) do |options|
+          category_id = options[:category_id]
+          content_id = options[:content_id]
+          apply_acl = options.fetch(:apply_acl) { false }
           query = { 
             clientId: client_id,
             categoryId: category_id,

@@ -1,7 +1,6 @@
 require 'thron/string_extensions'
 
 module Thron
-  using StringExtensions
   class Response
     attr_accessor :body
     attr_reader :http_code, :result_code, :sso_code, :total, :other_results, :error
@@ -19,7 +18,8 @@ module Thron
       @error         = @body.delete(ERROR_KEY)
     end
 
-    def extra(attribute:)
+    def extra(options = {})
+      attribute = options[:attribute].to_s
       name = attribute.snakecase 
       self.class.send(:attr_reader, name)
       instance_variable_set(:"@#{name}", body.delete(attribute))

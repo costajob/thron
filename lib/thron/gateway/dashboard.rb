@@ -19,7 +19,8 @@ module Thron
         }
       end
 
-      def change_contents_owner(contents:)
+      def change_contents_owner(options = {})
+        contents = options[:contents]
         body = { 
           clientId: client_id,
           contents: contents
@@ -27,7 +28,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def download_source_file(content_id:, save_as:)
+      def download_source_file(options = {})
+        content_id = options[:content_id]
+        save_as = options[:save_as]
         query = { 
           clientId: client_id,
           tokenId: token_id,
@@ -37,7 +40,10 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id)
       end
 
-      def migrate_user_stuff(user_id1:, user_id2:, remove_user_id1: false)
+      def migrate_user_stuff(options = {})
+        user_id1 = options[:user_id1]
+        user_id2 = options[:user_id2]
+        remove_user_id1 = options.fetch(:remove_user_id1) { false }
         body = { 
           clientId: client_id,
           userId1: user_id1,
@@ -47,7 +53,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def propagate_acl_to_sub_categories(category_id:, acls:, force: false)
+      def propagate_acl_to_sub_categories(options = {})
+        category_id = options[:category_id]
+        acls = options[:acls]
+        force = options.fetch(:force) { false }
         body = { 
           clientId: client_id,
           categoryId: category_id,
@@ -57,7 +66,11 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def replace_source_files(media_content_id:, content_id:, file_ids:, remove_original_files: false)
+      def replace_source_files(options = {})
+        media_content_id = options[:media_content_id]
+        content_id = options[:content_id]
+        file_ids = options[:file_ids]
+        remove_original_files = options.fetch(:remove_original_files) { false }
         body = { 
           clientId: client_id,
           mediaContentId: media_content_id,
@@ -68,7 +81,8 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def reset_content_user_preferences(content_id:)
+      def reset_content_user_preferences(options = {})
+        content_id = options[:content_id]
         body = { 
           clientId: client_id,
           xcontentId: content_id
@@ -76,7 +90,8 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def trash_contents(contents:)
+      def trash_contents(options = {})
+        contents = options[:contents]
         body = { 
           clientId: client_id,
           contentList: { contentsToTrash: contents.map(&:payload) }
@@ -86,7 +101,9 @@ module Thron
         end
       end
       
-      def untrash_contents(new_user_id:, content_ids:)
+      def untrash_contents(options = {})
+        new_user_id = options[:new_user_id]
+        content_ids = options[:content_ids]
         body = { 
           clientId: client_id,
           contentList: { 

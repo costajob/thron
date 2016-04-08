@@ -16,10 +16,10 @@ module Thron
         }
       end
 
-      def login(username:, password:)
+      def login(options = {})
         query = {
-          username: username,
-          password: password
+          username: options[:username],
+          password: options[:password]
         }
         route(to: __callee__, query: query, dash: false) do |response|
           response.body = Entity::Base::factory(response.body)
@@ -34,7 +34,8 @@ module Thron
         end
       end
 
-      def validate_capabilities(capabilities: [])
+      def validate_capabilities(options = {})
+        capabilities = options.fetch(:capabilities) { [] }
         check_session
         query = {
           capabilities: capabilities.join(',')
@@ -42,7 +43,9 @@ module Thron
         route(to: __callee__, query: query, token_id: @token_id, dash: false)
       end
 
-      def validate_roles(roles: [], xor: false)
+      def validate_roles(options = {})
+        roles = options.fetch(:roles) { [] }
+        xor = options.fetch(:xor) { false }
         check_session
         separator = xor ? '|' : ','
         query = {
@@ -51,7 +54,8 @@ module Thron
         route(to: __callee__, query: query, token_id: @token_id, dash: false)
       end
 
-      def validate_token(username: nil)
+      def validate_token(options = {})
+        username = options[:username]
         check_session
         query = {
           username: username

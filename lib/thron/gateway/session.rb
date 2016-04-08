@@ -6,7 +6,8 @@ module Thron
     class Session < Base
       include Pageable
 
-      def initialize(token_id:)
+      def initialize(options = {})
+        token_id = options[:token_id]
         @token_id = token_id
       end
     end

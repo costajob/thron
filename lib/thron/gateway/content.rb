@@ -33,10 +33,10 @@ module Thron
       end
 
       %w[add update].each do |action|
-        define_method("#{action}_content_for_locale") do |args|
-          content_id = args.fetch(:content_id)
-          locale = args.fetch(:locale)
-          category_id = args.fetch(:category_id) { nil }
+        define_method("#{action}_content_for_locale") do |options|
+          content_id = options[:content_id]
+          locale = options[:locale]
+          category_id = options[:category_id]
           body = { 
             client: {
               clientId: client_id
@@ -48,10 +48,10 @@ module Thron
           route(to: __callee__, body: body, token_id: token_id)
         end
 
-        define_method("#{action}_content_pretty_id") do |args|
-          content_id = args.fetch(:content_id)
-          pretty_id = args.fetch(:pretty_id)
-          category_id = args.fetch(:category_id) { nil }
+        define_method("#{action}_content_pretty_id") do |options|
+          content_id = options[:content_id]
+          pretty_id = options[:pretty_id]
+          category_id = options[:category_id]
           body = { 
             clientId: client_id,
             contentId: content_id,
@@ -61,9 +61,9 @@ module Thron
           route(to: __callee__, body: body, token_id: token_id)
         end
 
-        define_method("#{action}_player_embed_code") do |args|
-          content_id = args.fetch(:content_id)
-          data = args.fetch(:data)
+        define_method("#{action}_player_embed_code") do |options|
+          content_id = options[:content_id]
+          data = options[:data]
           body = { 
             clientId: client_id,
             contentId: content_id,
@@ -73,7 +73,10 @@ module Thron
         end
       end
 
-      def add_linked_content(content_id:, data:, category_id: nil)
+      def add_linked_content(options = {})
+        content_id = options[:content_id]
+        data = options[:data]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -83,7 +86,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_linked_contents(content_id:, contents:, category_id: nil)
+      def add_linked_contents(options = {})
+        content_id = options[:content_id]
+        contents = options[:contents]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -95,25 +101,36 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def content_detail(content_id:, options: {}, locale: nil, access_key: nil)
+      def content_detail(options = {})
+        content_id = options[:content_id]
+        extra = options.fetch(:extra) { {} }
+        locale = options[:locale]
+        access_key = options[:access_key]
         query = { 
           clientId: client_id,
           contentId: content_id,
           locale: locale,
           pkey: access_key
-        }.merge(options)
+        }.merge(extra)
         route(to: __callee__, query: query, token_id: token_id) do |response|
           response.body = Entity::Base::factory(response.body)
         end
       end
 
-      def find_contents(criteria: {}, options: {}, locale: nil, div_area: nil, order_by: nil, offset: 0, limit: 0)
+      def find_contents(options = {})
+        criteria = options.fetch(:criteria) { {} }
+        field_option = options.fetch(:field_option) { {} }
+        locale = options[:locale]
+        div_area = options[:div_area]
+        order_by = options[:order_by]
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         body = { 
           client: {
             clientId: client_id
           },
           criteria: criteria,
-          contentFieldOption: options,
+          contentFieldOption: field_option,
           locale: locale,
           divArea: div_area,
           orderBy: order_by,
@@ -125,7 +142,11 @@ module Thron
         end
       end
       
-      def move_linked_content(content_id:, from: 0, to: 0, link_type: nil)
+      def move_linked_content(options = {})
+        content_id = options[:content_id]
+        from = options[:from].to_i
+        to = options[:to].to_i
+        link_type = options[:link_type]
         body = { 
           clientId: client_id,
           xcontentId: content_id,
@@ -136,7 +157,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_content_for_locale(content_id:, locale:)
+      def remove_content_for_locale(options = {})
+        content_id = options[:content_id]
+        locale = options[:locale]
         query = { 
           clientId: client_id,
           contentId: content_id,
@@ -145,7 +168,10 @@ module Thron
         route(to: __callee__, query: query, token_id: token_id)
       end
 
-      def remove_content_pretty_id(content_id:, locale:, category_id: nil)
+      def remove_content_pretty_id(options = {})
+        content_id = options[:content_id]
+        locale = options[:locale]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -155,7 +181,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_linked_contents(content_id:, criteria: {}, category_id: nil)
+      def remove_linked_contents(options = {})
+        content_id = options[:content_id]
+        criteria = options.fetch(:criteria) { {} }
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -165,7 +194,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_player_embed_code(content_id:, player_id:)
+      def remove_player_embed_code(options = {})
+        content_id = options[:content_id]
+        player_id = options[:player_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -174,7 +205,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_available_solutions(content_id:, solutions: [], category_id: nil)
+      def update_available_solutions(options = {})
+        content_id = options[:content_id]
+        solutions = options[:solutions].to_a
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -186,7 +220,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_content(content_id:, data:, category_id: nil)
+      def update_content(options = {})
+        content_id = options[:content_id]
+        data = options[:data]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -196,7 +233,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_player_embed_codes(content_id:, players:, category_id: nil)
+      def update_player_embed_codes(options = {})
+        content_id = options[:content_id]
+        players = options[:players]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           contentId: content_id,
@@ -208,7 +248,11 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_user_specific_values(username:, content_id:, data:, category_id: nil)
+      def update_user_specific_values(options = {})
+        username = options[:username]
+        content_id = options[:content_id]
+        data = options[:data]
+        category_id = options[:category_id]
         body = { 
           clientId: client_id,
           username: username,

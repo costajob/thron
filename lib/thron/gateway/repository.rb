@@ -24,7 +24,8 @@ module Thron
         }
       end
 
-      def add_files(files:)
+      def add_files(options = {})
+        files = options[:files]
         body = { 
           clientId: client_id,
           files: { files: files }
@@ -34,7 +35,9 @@ module Thron
         end
       end
 
-      def add_s3_resource(resource:, remove_resource: false)
+      def add_s3_resource(options = {})
+        resource = options[:resource]
+        remove_resource = options.fetch(:remove_resource) { false }
         body = { 
           clientId: client_id,
           resource: resource,
@@ -45,7 +48,8 @@ module Thron
         end
       end
 
-      def add_web_resource(resource:)
+      def add_web_resource(options = {})
+        resource = options[:resource]
         body = { 
           clientId: client_id,
           webResource: resource
@@ -56,8 +60,8 @@ module Thron
       end
 
       %i[delete_ftp_file delete_uploaded_file].each do |message|
-        define_method(message) do |args|
-          file = args.fetch(:file)
+        define_method(message) do |options|
+          file = options.fetch(:file)
           body = { 
             clientId: client_id,
             file: file
@@ -67,11 +71,11 @@ module Thron
       end
 
       %i[get_ftp_file_list get_uploaded_file_list].each do |message|
-        define_method(message) do |args|
-          criteria = args.fetch(:criteria) { {} }
-          order_by = args[:order_by]
-          offset = args.fetch(:offset) { 0 }
-          limit = args.fetch(:limit) { 0 }
+        define_method(message) do |options|
+          criteria = options.fetch(:criteria) { {} }
+          order_by = options[:order_by]
+          offset = options[:offset].to_i
+          limit = options[:limit].to_i
           body = { 
             clientId: client_id,
             criteria: criteria,

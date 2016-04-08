@@ -26,7 +26,8 @@ module Thron
         end
       end
       
-      def update_audit_duration_days(days:)
+      def update_audit_duration_days(options = {})
+        days = options[:days]
         body = { 
           clientId: client_id,
           auditDurationDays: days.to_i
@@ -34,7 +35,8 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def enable_secure_connection(enabled:)
+      def enable_secure_connection(options = {})
+        enabled = options[:enabled]
         body = { 
           clientId: client_id,
           secureConnectionEnabled: !!enabled
@@ -42,7 +44,8 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def trash_properties_older_than(days:)
+      def trash_properties_older_than(options = {})
+        days = options[:days]
         body = { 
           clientId: client_id,
           properties: {

@@ -22,8 +22,8 @@ module Thron
       end
 
       self.routes.keys.each do |message|
-        define_method(message) do |args|
-          data = args.fetch(:data)
+        define_method(message) do |options|
+          data = options[:data]
           body = { 
             clientId: client_id,
             param: data

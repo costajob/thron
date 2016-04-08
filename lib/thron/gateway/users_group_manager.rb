@@ -21,7 +21,8 @@ module Thron
         }
       end
 
-      def create_group(data:)
+      def create_group(options = {})
+        data = options[:data]
         body = { 
           clientId: client_id,
           usersGroup: data
@@ -31,7 +32,9 @@ module Thron
         end
       end
 
-      def remove_group(group_id:, force: false)
+      def remove_group(options = {})
+        group_id = options[:group_id]
+        force = options.fetch(:force) { false }
         body = { 
           clientId: client_id,
           groupId: group_id,
@@ -40,13 +43,17 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def group_detail(group_id:, options: {}, offset: 0, limit: 0)
+      def group_detail(options = {})
+        group_id = options[:group_id]
+        fields_option = options.fetch(:fields_option) { {} }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         body = { 
           clientId: client_id,
           groupId: group_id,
           offset: offset.to_i,
           numberOfResult: limit.to_i,
-          fieldsOption: options
+          fieldsOption: fields_option
         }
         route(to: __callee__, body: body, token_id: token_id) do |response|
           group = response.body.delete('group') { {} }
@@ -54,12 +61,17 @@ module Thron
         end
       end
 
-      def find_groups(criteria: {}, order_by: nil, options: {}, offset: 0, limit: 0)
+      def find_groups(options = {})
+        criteria = options.fetch(:criteria) { {} }
+        order_by = options[:order_by]
+        fields_option = options.fetch(:fields_option) { {} }
+        offset = options[:offset].to_i
+        limit = options[:limit].to_i
         body = { 
           clientId: client_id,
           criteria: criteria,
           orderBy: order_by,
-          fieldsOption: options,
+          fieldsOption: fields_option,
           offset: offset.to_i,
           numberOfResult: limit.to_i
         }
@@ -69,9 +81,9 @@ module Thron
       end
 
       %i[link_users_to_group unlink_users_to_group].each do |name|
-        define_method(name) do |*args|
-          group_id = args.last.fetch(:group_id)
-          usernames = args.last.fetch(:usernames) { [] }
+        define_method(name) do |*options|
+          group_id = options.last[:group_id]
+          usernames = options.last[:usernames].to_a
           body = { 
             clientId: client_id,
             userList: {
@@ -83,14 +95,18 @@ module Thron
         end
       end
 
-      def update_group(group_id:, data:)
+      def update_group(options = {})
+        group_id = options[:group_id]
+        data = options[:data]
         body = {
           update: data
         }
         route(to: __callee__, body: body, token_id: token_id, params: [client_id, group_id])
       end
 
-      def update_group_external_id(group_id:, external_id:)
+      def update_group_external_id(options = {})
+        group_id = options[:group_id]
+        external_id = options[:external_id]
         body = {
           externalId: external_id
         }

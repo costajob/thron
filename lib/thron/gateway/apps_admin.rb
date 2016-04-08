@@ -21,7 +21,10 @@ module Thron
         }
       end
 
-      def add_group_app(app_id:, group_id:, capabilities:)
+      def add_group_app(options = {})
+        app_id = options[:app_id]
+        group_id = options[:group_id]
+        capabilities = options[:capabilities]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -31,7 +34,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def add_snippet(app_id:, data:, capabilities:)
+      def add_snippet(options = {})
+        app_id = options[:app_id]
+        data = options[:data]
+        capabilities = options[:capabilities]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -43,7 +49,10 @@ module Thron
         end
       end
 
-      def add_user_app(app_id:, username:, capabilities:)
+      def add_user_app(options = {})
+        app_id = options[:app_id]
+        username = options[:username]
+        capabilities = options[:capabilities]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -53,7 +62,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def create_app(data:, options: {})
+      def create_app(options = {})
+        data = options[:data]
+        options = options.fetch(:options) { {} }
         body = { 
           clientId: client_id,
           app: data,
@@ -64,7 +75,8 @@ module Thron
         end
       end
 
-      def remove_app(app_id:)
+      def remove_app(options = {})
+        app_id = options[:app_id]
         body = { 
           clientId: client_id,
           appId: app_id
@@ -72,7 +84,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_group_app(app_id:, group_id:)
+      def remove_group_app(options = {})
+        app_id = options[:app_id]
+        group_id = options[:group_id]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -81,7 +95,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_snippet(app_id:, snippet_id:)
+      def remove_snippet(options = {})
+        app_id = options[:app_id]
+        snippet_id = options[:snippet_id]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -90,7 +106,9 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def remove_user_app(app_id:, username:)
+      def remove_user_app(options = {})
+        app_id = options[:app_id]
+        username = options[:username]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -99,7 +117,10 @@ module Thron
         route(to: __callee__, body: body, token_id: token_id)
       end
 
-      def update_app(app_id:, data:, capabilities:)
+      def update_app(options = {})
+        app_id = options[:app_id]
+        data = options[:data]
+        capabilities = options[:capabilities]
         body = { 
           clientId: client_id,
           appId: app_id,
@@ -111,7 +132,11 @@ module Thron
         end
       end
 
-      def update_snippet(app_id:, snippet_id:, data:, capabilities:)
+      def update_snippet(options = {})
+        app_id = options[:app_id]
+        snippet_id = options[:snippet_id]
+        data = options[:data]
+        capabilities = options[:capabilities]
         body = { 
           clientId: client_id,
           appId: app_id,

@@ -17,7 +17,8 @@ module Thron
         }
       end
 
-      def app_detail(app_id:)
+      def app_detail(options = {})
+        app_id = options[:app_id]
         body = { 
           clientId: client_id,
           appId: app_id
@@ -27,7 +28,8 @@ module Thron
         end
       end
 
-      def list_apps(criteria: {})
+      def list_apps(options = {})
+        criteria = options.fetch(:criteria) { {} }
         body = { 
           clientId: client_id,
           criteria: criteria
@@ -37,7 +39,8 @@ module Thron
         end
       end
 
-      def find_apps(criteria: {})
+      def find_apps(options = {})
+        criteria = options.fetch(:criteria) { {} }
         body = { 
           clientId: client_id,
           criteria: criteria
@@ -47,7 +50,8 @@ module Thron
         end
       end
 
-      def login_app(app_id:)
+      def login_app(options = {})
+        app_id = options[:app_id]
         query = {
           clientId: client_id,
           appId: app_id
@@ -57,7 +61,9 @@ module Thron
         end
       end
 
-      def login_snippet(app_id:, snippet_id:)
+      def login_snippet(options = {})
+        app_id = options[:app_id]
+        snippet_id = options[:snippet_id]
         query = {
           clientId: client_id,
           appId: app_id,
@@ -68,7 +74,9 @@ module Thron
         end
       end
 
-      def su(app_id:, username:)
+      def su(options = {})
+        app_id = options[:app_id]
+        username = options[:username]
         body = { 
           clientId: client_id,
           appId: app_id,

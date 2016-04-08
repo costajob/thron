@@ -38,7 +38,7 @@ module Thron
 
     module ClassMethods
       def circuit_breaker
-        @circuit_breaker ||= CircuitBreaker::new
+        @circuit_breaker ||= CircuitBreaker::new(threshold: Config::circuit_breaker.threshold)
       end
 
       def routes
@@ -46,7 +46,13 @@ module Thron
       end
     end
 
-    def route(to:, query: {}, body: {}, token_id: nil, dash: true, params: [])
+    def route(options = {})
+      to = options[:to]
+      query = options.fetch(:query) { {} }
+      body = options.fetch(:body) { {} }
+      token_id = options[:token_id]
+      dash = options.fetch(:dash) { true }
+      params = options[:params].to_a
       route = fetch_route(to, params)
       body = body.to_json if !body.empty? && route.json?
       self.class.circuit_breaker.monitor do
@@ -65,7 +71,9 @@ module Thron
       Response::new(OpenStruct::new(code: 200))
     end
 
-    private def fetch_route(to, params)
+    private
+    
+    def fetch_route(to, params)
       self.class.routes.fetch(to) { fail NoentRouteError, "#{to} route does not exist!" }.call(params)
     end
   end
