@@ -3,6 +3,7 @@ require 'time'
 require 'thron/string_extensions'
 
 module Thron
+  using StringExtensions
   module Entity
     class Base < OpenStruct
       TIME_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.+/

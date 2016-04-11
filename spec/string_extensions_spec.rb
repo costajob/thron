@@ -1,7 +1,8 @@
 require 'spec_helper'
 require 'thron/string_extensions'
+using Thron::StringExtensions
 
-describe String do
+describe Thron::StringExtensions do
   it 'must snakecase words' do
     "SnakeCaseThis".snakecase.must_equal "snake_case_this"
     "snake_case_this".snakecase.must_equal "snake_case_this"

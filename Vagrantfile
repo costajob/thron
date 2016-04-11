@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
     "sudo apt-add-repository ppa:brightbox/ruby-ng",
     "sudo apt-get update",
     "sudo apt-get -y -q install build-essential libssl-dev git",
-    "sudo apt-get -y -q install ruby2.2 ruby2.2-dev",
+    "sudo apt-get -y -q install ruby2.3 ruby2.3-dev",
     "sudo gem install bundler"]
 
   config.vm.provision "shell", inline: $script.join(" && ")

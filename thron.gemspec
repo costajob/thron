@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Thron APIs ruby client}
   s.homepage = "https://github.com/costajob/thron.git"
   s.license = "MIT"
-  s.required_ruby_version = ">= 1.9.1"
+  s.required_ruby_version = ">= 2.1.1"
   s.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec|s|features)/}) }
   s.bindir = "exe"
   s.executables = s.files.grep(%r{^exe/}) { |f| File.basename(f) }

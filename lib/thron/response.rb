@@ -1,6 +1,7 @@
 require 'thron/string_extensions'
 
 module Thron
+  using StringExtensions
   class Response
     attr_accessor :body
     attr_reader :http_code, :result_code, :sso_code, :total, :other_results, :error
