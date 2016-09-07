@@ -1,5 +1,5 @@
 ## Table of Contents
-* [Summary](#summary)
+* [Scope](#scope)
 * [Setup](#setup)
 * [HTTPArty](#httparty)
 * [Architecture](#architecture)
@@ -16,7 +16,7 @@
   * [Categories](#categories)
   * [Disguise](#disguise)
 
-## Summary
+## Scope
 This gem provides a simple Ruby client for the [Thron](https://developer.4me.it/index.php) (ex 4me) APIs.
 The aim of this gem is to provide a simple interface for your ruby application
 that need to communicate with Thron services. 
