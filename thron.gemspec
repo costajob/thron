@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/costajob/thron.git"
   s.license = "MIT"
   s.required_ruby_version = ">= 2.1.1"
+
   s.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec|s|features)/}) }
   s.bindir = "exe"
   s.executables = s.files.grep(%r{^exe/}) { |f| File.basename(f) }
@@ -20,6 +21,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "httparty"
   s.add_development_dependency "bundler", "~> 1.10"
   s.add_development_dependency "rake", "~> 10.0"
-  s.add_development_dependency "minitest"
-  s.add_development_dependency "rr"
+  s.add_development_dependency "minitest", "~> 5.9"
+  s.add_development_dependency "rr", "~> 1.2"
 end

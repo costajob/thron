@@ -1,4 +1,5 @@
 ## Table of Contents
+* [Warning](#warning)
 * [Scope](#scope)
 * [Setup](#setup)
 * [HTTPArty](#httparty)
@@ -15,6 +16,9 @@
   * [Groups](#groups)
   * [Categories](#categories)
   * [Disguise](#disguise)
+
+## Warning
+I do not maintain this gem anymore. Please do copy with latest Thron APIs and integrate them into this facade if you need to use it.
 
 ## Scope
 This gem provides a simple Ruby client for the [Thron](https://developer.4me.it/index.php) (ex 4me) APIs.
